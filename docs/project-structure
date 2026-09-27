@@ -1,0 +1,301 @@
+memory-training-app/
+│
+├── 📂 src/
+│   │
+│   ├── 📂 app/                          # App entry & navigation
+│   │   ├── App.tsx                      # Root component
+│   │   ├── Navigation.tsx               # Navigation container
+│   │   ├── RootNavigator.tsx            # Stack + Tab navigators
+│   │   └── providers/
+│   │       ├── AuthProvider.tsx         # Auth context
+│   │       ├── ThemeProvider.tsx        # Theme context
+│   │       └── QueryProvider.tsx        # React Query provider
+│   │
+│   ├── 📂 features/                     # Feature-based modules
+│   │   │
+│   │   ├── 📂 auth/                     # Authentication
+│   │   │   ├── screens/
+│   │   │   │   ├── LoginScreen.tsx
+│   │   │   │   ├── RegisterScreen.tsx
+│   │   │   │   └── SplashScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── AuthInput.tsx
+│   │   │   │   └── SocialButton.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useLogin.ts
+│   │   │   │   └── useRegister.ts
+│   │   │   ├── api/
+│   │   │   │   └── authApi.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── 📂 home/                     # Home screen
+│   │   │   ├── screens/
+│   │   │   │   └── HomeScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── Header.tsx           # Avatar, XP, streak
+│   │   │   │   ├── DailyChallengeCard.tsx
+│   │   │   │   ├── QuickStats.tsx       # 3 numbers
+│   │   │   │   ├── GameCard.tsx         # Game selection
+│   │   │   │   ├── RecentAchievements.tsx
+│   │   │   │   └── RecentHistory.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useHomeData.ts
+│   │   │   ├── api/
+│   │   │   │   └── homeApi.ts
+│   │   │   └── types.ts
+│   │   │
+│   │   ├── 📂 game-cards/               # Cards game (feature 1)
+│   │   │   ├── screens/
+│   │   │   │   ├── CardGameScreen.tsx   # Main state manager
+│   │   │   │   ├── MemorizeScreen.tsx
+│   │   │   │   ├── RecallScreen.tsx
+│   │   │   │   └── ResultScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── PlayingCard.tsx
+│   │   │   │   ├── CardDeck.tsx
+│   │   │   │   ├── RecallSlot.tsx
+│   │   │   │   ├── Timer.tsx
+│   │   │   │   └── CountdownOverlay.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useCardGame.ts
+│   │   │   │   ├── useTimer.ts
+│   │   │   │   └── useCardDeck.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── cardUtils.ts
+│   │   │   │   └── scoring.ts
+│   │   │   ├── api/
+│   │   │   │   └── cardsApi.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── 📂 game-numbers/             # Numbers game (feature 2)
+│   │   │   ├── screens/
+│   │   │   │   ├── NumbersGameScreen.tsx
+│   │   │   │   ├── MemorizeScreen.tsx
+│   │   │   │   ├── RecallScreen.tsx
+│   │   │   │   └── ResultScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── NumberGrid.tsx
+│   │   │   │   ├── NumberInput.tsx
+│   │   │   │   └── CountdownOverlay.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useNumbersGame.ts
+│   │   │   │   └── useTimer.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── numberUtils.ts
+│   │   │   │   └── scoring.ts
+│   │   │   ├── api/
+│   │   │   │   └── numbersApi.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── 📂 game-words/               # Words game (feature 3)
+│   │   │   ├── screens/
+│   │   │   │   ├── WordsGameScreen.tsx
+│   │   │   │   ├── MemorizeScreen.tsx
+│   │   │   │   ├── RecallScreen.tsx
+│   │   │   │   └── ResultScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── WordList.tsx
+│   │   │   │   ├── WordInput.tsx
+│   │   │   │   └── CountdownOverlay.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useWordsGame.ts
+│   │   │   │   └── useTimer.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── wordUtils.ts
+│   │   │   │   └── scoring.ts
+│   │   │   ├── api/
+│   │   │   │   └── wordsApi.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── 📂 progress/                 # Progress & statistics
+│   │   │   ├── screens/
+│   │   │   │   ├── ProgressScreen.tsx
+│   │   │   │   ├── StatisticsScreen.tsx
+│   │   │   │   └── HistoryDetailScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── SessionCard.tsx
+│   │   │   │   ├── Chart.tsx
+│   │   │   │   ├── StatCard.tsx
+│   │   │   │   └── FilterTabs.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useProgress.ts
+│   │   │   ├── api/
+│   │   │   │   └── progressApi.ts
+│   │   │   └── types.ts
+│   │   │
+│   │   ├── 📂 gamification/             # XP, Level, Streak, Achievement
+│   │   │   ├── screens/
+│   │   │   │   ├── AchievementsScreen.tsx
+│   │   │   │   └── DailyChallengeScreen.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── XPBar.tsx
+│   │   │   │   ├── LevelUpModal.tsx
+│   │   │   │   ├── StreakBadge.tsx
+│   │   │   │   ├── AchievementCard.tsx
+│   │   │   │   └── AchievementPopup.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useXP.ts
+│   │   │   │   ├── useStreak.ts
+│   │   │   │   └── useAchievements.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── levelCalculator.ts
+│   │   │   │   └── achievementChecker.ts
+│   │   │   ├── api/
+│   │   │   │   └── gamificationApi.ts
+│   │   │   └── types.ts
+│   │   │
+│   │   └── 📂 profile/                  # User profile & settings
+│   │       ├── screens/
+│   │       │   ├── ProfileScreen.tsx
+│   │       │   ├── EditProfileScreen.tsx
+│   │       │   └── SettingsScreen.tsx
+│   │       ├── components/
+│   │       │   ├── AvatarUpload.tsx
+│   │       │   └── SettingItem.tsx
+│   │       ├── hooks/
+│   │       │   └── useProfile.ts
+│   │       ├── api/
+│   │       │   └── profileApi.ts
+│   │       └── types.ts
+│   │
+│   ├── 📂 shared/                       # Shared across features
+│   │   │
+│   │   ├── 📂 components/               # Reusable UI components
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Card.tsx
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Toast.tsx
+│   │   │   ├── Loading.tsx
+│   │   │   ├── Skeleton.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── Avatar.tsx
+│   │   │   ├── Badge.tsx
+│   │   │   ├── ProgressBar.tsx
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── 📂 hooks/                    # Reusable hooks
+│   │   │   ├── useDebounce.ts
+│   │   │   ├── useKeyboard.ts
+│   │   │   ├── useNetworkStatus.ts
+│   │   │   ├── useAppState.ts
+│   │   │   └── useAsyncStorage.ts
+│   │   │
+│   │   ├── 📂 utils/                    # Reusable utilities
+│   │   │   ├── format.ts                # formatDate, formatTime
+│   │   │   ├── validation.ts            # validateEmail, validatePassword
+│   │   │   ├── storage.ts               # AsyncStorage wrapper
+│   │   │   ├── logger.ts
+│   │   │   └── constants.ts
+│   │   │
+│   │   ├── 📂 types/                    # Global types
+│   │   │   ├── user.ts
+│   │   │   ├── session.ts
+│   │   │   ├── game.ts
+│   │   │   ├── achievement.ts
+│   │   │   └── api.ts
+│   │   │
+│   │   └── 📂 theme/                    # Design system
+│   │       ├── colors.ts
+│   │       ├── typography.ts
+│   │       ├── spacing.ts
+│   │       ├── shadows.ts
+│   │       └── index.ts
+│   │
+│   ├── 📂 services/                     # External services
+│   │   ├── 📂 api/
+│   │   │   ├── client.ts                # Axios instance
+│   │   │   ├── interceptors.ts          # Request/response interceptors
+│   │   │   ├── endpoints.ts             # API endpoints constants
+│   │   │   └── types.ts                 # API response types
+│   │   ├── 📂 storage/
+│   │   │   ├── secureStorage.ts         # Keychain/Keystore
+│   │   │   └── asyncStorage.ts
+│   │   ├── 📂 analytics/
+│   │   │   └── analytics.ts
+│   │   ├── 📂 notifications/
+│   │   │   └── pushNotifications.ts
+│   │   └── 📂 sound/
+│   │       └── soundManager.ts
+│   │
+│   ├── 📂 store/                        # Global state (Zustand/Redux)
+│   │   ├── authStore.ts
+│   │   ├── userStore.ts
+│   │   ├── gameStore.ts
+│   │   └── index.ts
+│   │
+│   ├── 📂 navigation/                   # Navigation configs
+│   │   ├── AuthStack.tsx
+│   │   ├── MainTabs.tsx
+│   │   ├── HomeStack.tsx
+│   │   ├── GameStack.tsx
+│   │   ├── ProgressStack.tsx
+│   │   ├── ProfileStack.tsx
+│   │   └── types.ts                     # Navigation param types
+│   │
+│   ├── 📂 localization/                 # i18n
+│   │   ├── vi.json
+│   │   ├── en.json
+│   │   └── i18n.ts
+│   │
+│   └── 📂 config/                       # App config
+│       ├── env.ts                       # Environment variables
+│       ├── appConfig.ts                 # App constants
+│       └── featureFlags.ts
+│
+├── 📂 assets/                           # Static assets
+│   ├── 📂 images/
+│   │   ├── logo.png
+│   │   ├── onboarding/
+│   │   └── cards/                       # Card images
+│   ├── 📂 icons/
+│   │   ├── games/
+│   │   ├── achievements/
+│   │   └── tabs/
+│   ├── 📂 sounds/
+│   │   ├── card-place.mp3
+│   │   ├── success.mp3
+│   │   └── fail.mp3
+│   ├── 📂 animations/                   # Lottie files
+│   │   ├── level-up.json
+│   │   ├── streak-fire.json
+│   │   └── achievement.json
+│   └── 📂 fonts/
+│       ├── Inter-Regular.ttf
+│       ├── Inter-Bold.ttf
+│       └── ...
+│
+├── 📂 __tests__/                        # Tests
+│   ├── unit/
+│   │   ├── utils/
+│   │   └── hooks/
+│   ├── integration/
+│   └── e2e/
+│       └── detox/
+│
+├── 📂 android/                          # Android native
+│   └── app/
+│       ├── build.gradle
+│       └── src/
+│
+├── 📂 ios/                              # iOS native
+│   ├── MemoryTraining/
+│   └── Podfile
+│
+├── 📄 .env                              # Environment (gitignored)
+├── 📄 .env.example                      # Example env
+├── 📄 .eslintrc.js                      # ESLint config
+├── 📄 .prettierrc                       # Prettier config
+├── 📄 .gitignore
+├── 📄 app.json                          # App config
+├── 📄 babel.config.js
+├── 📄 metro.config.js
+├── 📄 tsconfig.json                     # TypeScript config
+├── 📄 package.json
+├── 📄 README.md
+└── 📄 CHANGELOG.md
