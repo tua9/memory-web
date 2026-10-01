@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { CardsGame } from "@/features/cards-game/components/CardsGame";
 
 function App() {
     return (
         <>
-            <Button className="bg-red-200">Hello</Button>
-            <Button>Click me</Button>
+            <CardsGame />
         </>
     );
 }
