@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from '@/app/providers/AuthProvider';
+import { router } from '@/app/router';
 
 function App() {
     return (
-        <>
-            <Button className="bg-red-200">Hello</Button>
-            <Button>Click me</Button>
-        </>
+        <AuthProvider>
+            <RouterProvider router={router} />
+        </AuthProvider>
     );
 }
 
