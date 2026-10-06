@@ -1,32 +1,16 @@
-import {
-    createDeck,
-    shuffle,
-    getCardCountForLevel,
-} from "@/features/cards-game/utils/cardUtils";
-import { useState } from "react";
-import { Timer } from "./Timer";
-import { PlayingCard } from "./PlayingCard";
+import { useGameStore } from "../store/gameStore";
+import { SettingsPhase } from "./SettingsPhase";
+import { MemorizePhase } from "./MemorizePhase";
+import { RecallPhase } from "./RecallPhase";
+import { ResultPhase } from "./ResultPhase";
 
 export const CardsGame = () => {
-    const [selectedCards] = useState(() => {
-        const deck = shuffle(createDeck());
-        const cardCount = getCardCountForLevel(3);
+    const { phase } = useGameStore();
 
-        return deck.slice(0, cardCount);
-    });
-    return (
-        <>
-            <div>Deck: {selectedCards.length} cards</div>
-            <Timer />
-            <div className="flex flex-wrap gap-3 p-4">
-                {selectedCards.map((card) => (
-                    <PlayingCard
-                        key={`${card.suit}-${card.rank}`}
-                        card={card}
-                        size="medium"
-                    />
-                ))}
-            </div>
-        </>
-    );
+    if (phase === "idle") return <SettingsPhase />;
+    if (phase === "memorize") return <MemorizePhase />;
+    if (phase === "recall") return <RecallPhase />;
+    if (phase === "result") return <ResultPhase />;
+
+    return null;
 };

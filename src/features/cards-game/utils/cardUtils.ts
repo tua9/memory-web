@@ -26,6 +26,8 @@ export const createDeck = (): Card[] => {
     return deck;
 };
 
+export const createPokerDeck = createDeck;
+
 export const shuffle = <T>(array: T[]): T[] => {
     const shuffledArray = [...array];
 
@@ -40,13 +42,6 @@ export const shuffle = <T>(array: T[]): T[] => {
     return shuffledArray;
 };
 
-// #Unuse
-// export const getRandomCards = (count: number): Card[] => {
-//     const deck = shuffle(createDeck());
-//     const cardCount = Math.max(0, Math.min(Math.floor(count), deck.length));
-
-//     return deck.slice(0, cardCount);
-// };
 
 export const calculateScore = (correct: Card[], userAnswer: Card[]): number => {
     return correct.reduce((score, correctCard, index) => {
@@ -60,8 +55,9 @@ export const calculateScore = (correct: Card[], userAnswer: Card[]): number => {
 };
 
 export const getCardCountForLevel = (level: number): number => {
-    level = level > 25 && level > 0 ? 25 : level;
-    const safeLevel = level < 1 ? 1 : level;
-
-    return Math.min(4 + (safeLevel - 1) * 2, 52);
+    const safeLevel = Math.max(1, Math.min(10, level));
+    // Level 1 = 4 cards, Level 10 = 52 cards
+    // 48 cards distributed over 9 level steps -> ~5.33 cards per step
+    const count = Math.round(4 + (safeLevel - 1) * (48 / 9));
+    return Math.min(count, 52);
 };
