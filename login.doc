@@ -1,0 +1,814 @@
+import { FormEvent, useState } from "react";
+import vector6 from "./vector-6.svg";
+
+type Feature = {
+  title: string;
+  description: string;
+};
+
+const features: Feature[] = [
+  {
+    title: "Học tập theo hành trình",
+    description:
+      "Mỗi bước tiến nhỏ giúp bạn tiến gần hơn đến mục tiêu của mình.",
+  },
+  {
+    title: "Theo dõi tiến bộ",
+    description: "Dễ dàng quản lý thói quen và duy trì động lực mỗi ngày.",
+  },
+  {
+    title: "Phát triển bền vững",
+    description: "Xây dựng những thay đổi tích cực theo cách phù hợp với bạn.",
+  },
+];
+
+export const LearningJourneyIllustrationSection = (): JSX.Element => {
+  return (
+    <section
+      aria-labelledby="learning-journey-title"
+      className="absolute left-[61px] top-[150px] w-[610px] min-h-[590px]"
+    >
+      <div className="relative flex min-h-[590px] flex-col justify-center px-[62px]">
+        <div className="absolute left-[112px] top-[12px] h-[286px] w-[286px] rounded-full bg-[#eaf8eff0]" />
+        <div className="absolute bottom-[25px] left-[22px] h-[112px] w-[112px] rounded-full bg-[#f4c95d38]" />
+        <div className="absolute right-[35px] top-[112px] h-[150px] w-[150px] rounded-full bg-[#eaf6fc]" />
+        <div className="relative z-10 max-w-[480px]">
+          <span className="mb-5 inline-flex rounded-full bg-[#eaf8ef] px-4 py-2 [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[13px] font-semibold leading-5 text-[#2e7d32]">
+            Chào mừng bạn đến với Memio
+          </span>
+          <h1
+            id="learning-journey-title"
+            className="mb-5 max-w-[470px] [font-family:'Be_Vietnam_Pro-Bold',Helvetica] text-[42px] font-bold leading-[1.2] tracking-[-0.5px] text-[#1f2937]"
+          >
+            Cùng bạn xây dựng hành trình phát triển bản thân
+          </h1>
+          <p className="mb-8 max-w-[430px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[17px] leading-7 text-[#667085]">
+            Tạo thói quen tốt, khám phá tiềm năng và biến những mục tiêu nhỏ
+            thành kết quả lớn mỗi ngày.
+          </p>
+          <ul
+            className="relative z-10 space-y-4"
+            aria-label="Lợi ích của Memio"
+          >
+            {features.map((feature) => (
+              <li key={feature.title} className="flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2e7d32] text-sm font-bold text-white"
+                >
+                  ✓
+                </span>
+                <div>
+                  <h2 className="[font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[15px] font-semibold leading-6 text-[#1f2937]">
+                    {feature.title}
+                  </h2>
+                  <p className="[font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#667085]">
+                    {feature.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div
+          aria-hidden="true"
+          className="absolute bottom-[18px] right-[72px] z-10 flex h-[150px] w-[150px] items-center justify-center rounded-[44px] bg-white shadow-memio-shadow-soft"
+        >
+          <div className="relative h-[88px] w-[88px] rounded-[28px] bg-[#eaf8ef]">
+            <div className="absolute left-[20px] top-[20px] h-[48px] w-[48px] rounded-full bg-[#2e7d32]" />
+            <div className="absolute left-[35px] top-[33px] h-[19px] w-[8px] rotate-[-45deg] rounded-full border-b-[3px] border-l-[3px] border-white" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const LoginFormSection = (): JSX.Element => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(false);
+
+    if (!email.trim() || !password) {
+      setError("Vui lòng nhập đầy đủ email và mật khẩu.");
+      return;
+    }
+
+    setError("");
+    setSubmitted(true);
+  };
+
+  return (
+    <section
+      aria-labelledby="login-title"
+      className="absolute left-[790px] top-[155px] w-[500px]"
+    >
+      <div className="relative rounded-[24px] bg-white px-[54px] py-[44px] shadow-memio-shadow-soft">
+        <div className="mb-8">
+          <h2
+            id="login-title"
+            className="[font-family:'Be_Vietnam_Pro-Bold',Helvetica] text-[30px] font-bold leading-10 text-[#1f2937]"
+          >
+            Đăng nhập
+          </h2>
+          <p className="mt-2 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[14px] leading-6 text-[#667085]">
+            Chào mừng bạn quay trở lại với Memio
+          </p>
+        </div>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="mb-5">
+            <label
+              htmlFor="email"
+              className="mb-2 block [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[13px] font-semibold leading-5 text-[#1f2937]"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Nhập email của bạn"
+              className="h-12 w-full rounded-[12px] border border-[#e3ebe6] px-4 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[14px] leading-5 text-[#1f2937] placeholder:text-[#98a2b3] focus:border-[#2e7d32] focus:ring-2 focus:ring-[#2e7d3230]"
+            />
+          </div>
+          <div className="mb-3">
+            <label
+              htmlFor="password"
+              className="mb-2 block [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[13px] font-semibold leading-5 text-[#1f2937]"
+            >
+              Mật khẩu
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Nhập mật khẩu"
+                className="h-12 w-full rounded-[12px] border border-[#e3ebe6] px-4 pr-12 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[14px] leading-5 text-[#1f2937] placeholder:text-[#98a2b3] focus:border-[#2e7d32] focus:ring-2 focus:ring-[#2e7d3230]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-[#667085] hover:bg-[#eaf8ef] hover:text-[#2e7d32]"
+              >
+                {showPassword ? "⌣" : "◉"}
+              </button>
+            </div>
+          </div>
+          <div className="mb-7 flex items-center justify-between">
+            <label className="flex cursor-pointer items-center gap-2 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#1f2937]">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
+                className="h-5 w-5 rounded-[5px] border-2 border-[#e3ebe6] accent-[#2e7d32] focus:ring-2 focus:ring-[#2e7d3230]"
+              />
+              Duy trì đăng nhập
+            </label>
+            <a
+              href="#forgot-password"
+              className="[font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[13px] font-semibold leading-5 text-[#2e7d32] hover:text-[#236527]"
+            >
+              Quên mật khẩu?
+            </a>
+          </div>
+          {error && (
+            <p
+              role="alert"
+              className="mb-4 rounded-[8px] bg-[#fff1f0] px-3 py-2 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#b42318]"
+            >
+              {error}
+            </p>
+          )}
+
+          {submitted && (
+            <p
+              role="status"
+              className="mb-4 rounded-[8px] bg-[#eaf8ef] px-3 py-2 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#2e7d32]"
+            >
+              Đăng nhập thành công.
+            </p>
+          )}
+
+          <button
+            type="submit"
+            className="h-12 w-full rounded-[12px] bg-[#2e7d32] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[15px] font-semibold leading-6 text-white transition-colors hover:bg-[#236527] focus:outline-none focus:ring-2 focus:ring-[#2e7d3266] focus:ring-offset-2"
+          >
+            Đăng nhập
+          </button>
+        </form>
+        <div className="my-7 flex items-center gap-3" aria-hidden="true">
+          <div className="h-px flex-1 bg-[#e3ebe6]" />
+          <span className="[font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[12px] text-[#98a2b3]">
+            hoặc
+          </span>
+          <div className="h-px flex-1 bg-[#e3ebe6]" />
+        </div>
+        <p className="text-center [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#667085]">
+          Chưa có tài khoản?{" "}
+          <a
+            href="#register"
+            className="[font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-[#2e7d32] hover:text-[#236527]"
+          >
+            Đăng ký ngay
+          </a>
+        </p>
+      </div>
+    </section>
+  );
+};
+
+export const LoginDesktop = (): JSX.Element => {
+  return (
+    <main className="relative min-h-[900px] w-full min-w-[1024px] overflow-hidden bg-[#f8fbf8]">
+      <div className="absolute left-[55px] top-[85px] h-[170px] w-[170px] rounded-[85px] bg-[#ddf2e4b2]" />
+      <div className="absolute left-[1210px] top-[60px] h-[110px] w-[110px] rounded-[55px] bg-[#f4c95d47]" />
+      <div className="absolute left-[1260px] top-[690px] h-[150px] w-[150px] rounded-[75px] bg-[#f6d7c747]" />
+      <a
+        href="/"
+        aria-label="Memio trang chủ"
+        className="absolute left-16 top-[34px] flex w-[180px] items-center gap-[var(--memio-semantic-space-12)]"
+      >
+        <span className="relative h-11 w-11 bg-[url(/vector-5.svg)] bg-[100%_100%]">
+          <img
+            className="absolute left-[20.45%] top-[22.9%] h-[77.1%] w-[79.55%]"
+            alt=""
+            src={vector6}
+          />
+        </span>
+        <span className="relative w-[124px] [font-family:'Be_Vietnam_Pro-Bold',Helvetica] text-[22px] font-bold leading-8 text-[#2e7d32]">
+          Memio
+        </span>
+      </a>
+      <p className="absolute left-[1050px] top-[45px] w-[170px] text-right [font-family:'Be_Vietnam_Pro-Regular',Helvetica] text-[13px] leading-5 text-[#667085]">
+        Chưa có tài khoản?
+      </p>
+      <a
+        href="#register"
+        className="absolute left-[1240px] top-[34px] flex h-11 w-[136px] items-center justify-center rounded-[14px] bg-white [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] text-[15px] font-semibold leading-6 text-[#2e7d32] shadow-sm hover:bg-[#eaf8ef]"
+      >
+        Đăng ký
+      </a>
+      <LearningJourneyIllustrationSection />
+      <LoginFormSection />
+    </main>
+  );
+};
+
+export default LoginDesktop;
+
+import cake from "./cake.svg";
+import frame from "./frame.svg";
+import image from "./image.svg";
+import mascot from "./mascot.png";
+import memioMascot from "./memio-mascot.svg";
+import vector from "./vector.svg";
+import vector2 from "./vector-2.svg";
+import vector3 from "./vector-3.svg";
+import vector4 from "./vector-4.svg";
+
+export const LearningJourneyIllustrationSection = (): JSX.Element => {
+  return (
+    <section
+      aria-label="Hành trình học tập"
+      className="absolute top-[100px] left-[86px] w-[720px] h-[728px]"
+    >
+      <div
+        aria-hidden="true"
+        className="absolute top-[55px] left-[50px] w-[600px] h-[600px] bg-[#eaf8eff5] rounded-[300px] shadow-[inset_0px_4px_4px_#00000040]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-5 left-[480px] w-[100px] h-[100px] bg-[#f4c95d7a] rounded-[50px]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-[525px] left-[30px] w-[90px] h-[90px] bg-[#3fa7d629] rounded-[45px]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-[500px] left-[535px] w-[95px] h-[95px] bg-[#f6d7c77a] rounded-[47.5px]"
+      />
+      <article className="absolute top-[120px] left-[72px] w-[150px] h-[124px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <div className="absolute top-2.5 left-2.5 w-[130px] h-[90px] flex bg-[#ddf2e4] rounded-[11px] overflow-hidden">
+          <div className="mt-2.5 w-[130px] h-[34px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#009e83] text-[32px] text-center tracking-[0] leading-[34px]">
+            ▱
+          </div>
+        </div>
+        <div className="absolute top-[103px] left-0 w-[150px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Câu chuyện
+        </div>
+        <div className="absolute top-0.5 left-[23px] w-[104px] h-[104px]">
+          <div className="relative w-[80.00%] h-[65.17%] top-[18.83%] left-[10.00%]">
+            <img
+              className="absolute w-[101.88%] h-[102.30%] top-[-2.30%] left-0"
+              alt=""
+              src={vector}
+            />
+            <img
+              className="absolute w-[87.81%] h-[87.47%] top-[12.53%] left-[12.19%]"
+              alt=""
+              src={image}
+            />
+          </div>
+        </div>
+      </article>
+      <article className="absolute top-[92px] left-[490px] w-[150px] h-[124px] flex flex-col gap-[3px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <img className="ml-2.5 w-[130px] h-[90px] mt-2.5" alt="" src={frame} />
+        <div className="h-3.5 [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Con số
+        </div>
+      </article>
+      <article className="absolute top-[430px] left-[470px] w-[150px] h-[124px] flex flex-col gap-[3px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <div className="ml-2.5 w-[130px] h-[90px] mt-2.5 flex bg-[#eaf6fb] rounded-[11px] overflow-hidden">
+          <div className="mt-2 w-[130px] h-9 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#3fa7d6] text-[34px] text-center tracking-[0] leading-9">
+            ▯
+          </div>
+        </div>
+        <div className="h-3.5 [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Không gian
+        </div>
+      </article>
+      <article className="absolute top-[430px] left-[470px] w-[150px] h-[124px] flex flex-col gap-[3px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <div className="ml-2.5 w-[130px] h-[90px] mt-2.5 bg-[#eaf6fb] rounded-[11px] overflow-hidden">
+          <div className="relative w-[43.02%] h-[85.16%] top-[7.78%] left-[28.46%]">
+            <img
+              className="absolute w-[102.78%] h-[102.03%] top-[-2.03%] left-[-2.78%]"
+              alt=""
+              src={vector2}
+            />
+            <img
+              className="absolute w-[87.96%] h-[90.31%] top-[9.69%] left-[12.04%]"
+              alt=""
+              src={vector3}
+            />
+            <img
+              className="absolute w-[40.74%] h-[43.24%] top-[56.76%] left-[59.26%]"
+              alt=""
+              src={vector4}
+            />
+          </div>
+        </div>
+        <div className="h-3.5 [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Không gian
+        </div>
+      </article>
+      <article className="absolute top-[470px] left-[72px] w-[150px] h-[124px] flex flex-col gap-[3px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <div className="ml-2.5 w-[130px] h-[90px] mt-2.5 flex bg-[#f5f8f6] rounded-[11px] overflow-hidden">
+          <div className="mt-2 w-[130px] h-8 [font-family:'Be_Vietnam_Pro-Bold',Helvetica] font-bold text-[#2e7d32] text-3xl text-center tracking-[0] leading-8">
+            ✦
+          </div>
+        </div>
+        <div className="h-3.5 [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Trò chơi
+        </div>
+      </article>
+      <article className="absolute top-[470px] left-[72px] w-[150px] h-[124px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e3ebe6]">
+        <div className="absolute top-2.5 left-2.5 w-[130px] h-[90px] bg-[#f6d7c7] rounded-[11px]" />
+        <div className="absolute top-[103px] left-0 w-[150px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[11px] text-center tracking-[0] leading-[14px]">
+          Trò chơi
+        </div>
+        <img
+          className="absolute top-0 left-0 w-[150px] h-[124px]"
+          alt="Minh họa chiếc bánh"
+          src={cake}
+        />
+      </article>
+      <img
+        className="absolute top-[205px] left-[270px] w-[190px] h-[190px]"
+        alt="Linh vật minh họa"
+        src={mascot}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-40 left-[260px] w-[18px] h-[18px] bg-[#2e7d32] rounded-[9px]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-[360px] left-[500px] w-3.5 h-3.5 bg-[#009e83] rounded-[7px]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-[425px] left-[235px] w-3 h-3 bg-[#f4c95d] rounded-md"
+      />
+      <p className="absolute top-[610px] left-[190px] w-[340px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-[#2e7d32] text-xs text-center tracking-[0] leading-[18px]">
+        NHỚ THEO CÁCH CỦA BẠN
+      </p>
+      <p className="absolute top-[640px] left-[100px] w-[540px] [font-family:'Be_Vietnam_Pro-ExtraBold',Helvetica] font-extrabold text-gray-800 text-3xl text-center tracking-[0] leading-[38px]">
+        Chơi một chút.
+        <br />
+        Nhớ thêm một chút.
+      </p>
+      <img
+        className="absolute top-[279px] left-[287px] w-[135px] h-[136px]"
+        alt="Linh vật Memio"
+        src={memioMascot}
+      />
+    </section>
+  );
+};
+
+import { FormEvent, useState } from "react";
+
+export const LoginFormSection = (): JSX.Element => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  return (
+    <section
+      aria-labelledby="login-heading"
+      className="absolute top-[120px] left-[845px] w-[531px] h-[688px] bg-white rounded-[28px] overflow-hidden border border-solid border-[#e3ebe6]"
+    >
+      <h1
+        id="login-heading"
+        className="absolute top-10 left-11 w-[460px] [font-family:'Be_Vietnam_Pro-Bold',Helvetica] font-bold text-[#15233a] text-2xl tracking-[0] leading-[48px]"
+      >
+        Chào mừng bạn trở lại!
+      </h1>
+      <p className="absolute top-[86px] left-11 w-[460px] font-memio-body-default font-[number:var(--memio-body-default-font-weight)] text-memio-semantic-color-muted text-[length:var(--memio-body-default-font-size)] tracking-[var(--memio-body-default-letter-spacing)] leading-[var(--memio-body-default-line-height)] [font-style:var(--memio-body-default-font-style)]">
+        Đăng nhập để tiếp tục học và luyện tập cùng Memio.
+      </p>
+      <form onSubmit={handleSubmit} noValidate>
+        <label
+          htmlFor="email"
+          className="absolute top-[135px] left-11 w-[460px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-xs tracking-[0] leading-[18px]"
+        >
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="you@example.com"
+          aria-label="Email"
+          className="absolute top-[161px] left-9 w-[460px] h-[54px] px-[15px] bg-white rounded-[13px] overflow-hidden border border-solid border-[#e3ebe6] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#667085] text-sm tracking-[0] leading-5 outline-none focus:border-[#2e7d32] focus:ring-1 focus:ring-[#2e7d32]"
+        />
+        <label
+          htmlFor="password"
+          className="absolute top-[219px] left-11 w-[460px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-xs tracking-[0] leading-[18px]"
+        >
+          Mật khẩu
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="••••••••"
+          aria-label="Mật khẩu"
+          className="absolute top-[241px] left-9 w-[460px] h-[54px] px-[15px] bg-white rounded-[13px] overflow-hidden border border-solid border-[#e3ebe6] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#667085] text-sm tracking-[0] leading-5 outline-none focus:border-[#2e7d32] focus:ring-1 focus:ring-[#2e7d32]"
+        />
+        <label className="absolute top-[301px] left-9 flex h-[20px] w-[245px] items-center gap-2 [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#667085] text-xs tracking-[0] leading-[18px]">
+          <input
+            type="checkbox"
+            name="rememberMe"
+            checked={rememberMe}
+            onChange={(event) => setRememberMe(event.target.checked)}
+            className="h-4 w-4 rounded-[4px] border border-solid border-[#e3ebe6] accent-[#2e7d32]"
+          />
+          <span>Duy trì đăng nhập trên thiết bị này</span>
+        </label>
+        <button
+          type="button"
+          className="absolute top-[308px] left-[377px] w-[200px] text-left [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-[#2e7d32] text-sm tracking-[0] leading-5"
+        >
+          Quên mật khẩu?
+        </button>
+        <button
+          type="submit"
+          className="absolute top-[344px] left-9 w-[460px] h-[54px] bg-[#2e7d32] rounded-[14px] overflow-hidden text-white [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-[15px] text-center tracking-[0] leading-6 transition-colors hover:bg-[#256b29] focus:outline-none focus:ring-2 focus:ring-[#2e7d32] focus:ring-offset-2"
+        >
+          Đăng nhập
+        </button>
+      </form>
+      <div
+        aria-hidden="true"
+        className="absolute top-[424px] left-9 w-[460px] [font-family:'Be_Vietnam_Pro-Medium',Helvetica] font-medium text-[#667085] text-xs text-center tracking-[0] leading-[18px]"
+      >
+        hoặc
+      </div>
+      <button
+        type="button"
+        className="absolute top-[450px] left-11 w-[460px] h-[52px] bg-white rounded-[14px] overflow-hidden [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-gray-800 text-[15px] text-center tracking-[0] leading-6 transition-colors hover:bg-[#f8faf9] focus:outline-none focus:ring-2 focus:ring-[#2e7d32] focus:ring-offset-2"
+      >
+        <span className="absolute top-3.5 left-0 w-[460px]">
+          Tiếp tục với Google
+        </span>
+        <span
+          aria-hidden="true"
+          className="absolute top-2.5 left-[115px] flex h-[26px] w-[26px] items-center justify-center rounded-[13px] bg-[#ddf2e4] [font-family:'Be_Vietnam_Pro-Bold',Helvetica] font-bold text-[#2e7d32] text-sm tracking-[0] leading-5"
+        >
+          G
+        </span>
+      </button>
+      <p className="absolute top-[502px] left-[171px] w-[190px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#667085] text-[13px] text-center tracking-[0] leading-5">
+        Chưa có tài khoản?
+      </p>
+      <button
+        type="button"
+        className="absolute top-[533px] left-[216px] w-[100px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-[#2e7d32] text-[13px] text-center tracking-[0] leading-5 focus:outline-none focus:ring-2 focus:ring-[#2e7d32] focus:ring-offset-2"
+      >
+        Đăng ký
+      </button>
+      <p className="absolute top-[605px] left-9 w-[460px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#667085] text-xs text-center tracking-[0] leading-[18px]">
+        Không cần nhớ nhiều. Chỉ cần bắt đầu.
+      </p>
+    </section>
+  );
+};
+
+module.exports = {
+  content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
+  corePlugins: { preflight: true },
+  theme: {
+    extend: {
+      colors: {
+        "memio-semantic-color-blue": "var(--memio-semantic-color-blue)",
+        "memio-semantic-color-border": "var(--memio-semantic-color-border)",
+        "memio-semantic-color-green": "var(--memio-semantic-color-green)",
+        "memio-semantic-color-hover": "var(--memio-semantic-color-hover)",
+        "memio-semantic-color-ink": "var(--memio-semantic-color-ink)",
+        "memio-semantic-color-mint": "var(--memio-semantic-color-mint)",
+        "memio-semantic-color-muted": "var(--memio-semantic-color-muted)",
+        "memio-semantic-color-page": "var(--memio-semantic-color-page)",
+        "memio-semantic-color-paleblue": "var(--memio-semantic-color-paleblue)",
+        "memio-semantic-color-paleyellow":
+          "var(--memio-semantic-color-paleyellow)",
+        "memio-semantic-color-teal": "var(--memio-semantic-color-teal)",
+        "memio-semantic-color-white": "var(--memio-semantic-color-white)",
+        "memio-semantic-color-yellow": "var(--memio-semantic-color-yellow)",
+      },
+      fontFamily: {
+        "memio-body-default": "var(--memio-body-default-font-family)",
+        "memio-body-large": "var(--memio-body-large-font-family)",
+        "memio-card-title": "var(--memio-card-title-font-family)",
+        "memio-heading-desktop": "var(--memio-heading-desktop-font-family)",
+        "memio-heading-mobile": "var(--memio-heading-mobile-font-family)",
+        "memio-hero-desktop": "var(--memio-hero-desktop-font-family)",
+        "memio-hero-mobile": "var(--memio-hero-mobile-font-family)",
+        "memio-label-button": "var(--memio-label-button-font-family)",
+        "memio-label-small": "var(--memio-label-small-font-family)",
+      },
+      boxShadow: { "memio-shadow-soft": "var(--memio-shadow-soft)" },
+    },
+  },
+  plugins: [],
+};
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  button,
+  input,
+  select,
+  textarea {
+    @apply appearance-none bg-transparent border-0 outline-none;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .all-unset {
+    all: unset;
+  }
+}
+
+:root {
+  --memio-body-default-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-body-default-font-size: 16px;
+  --memio-body-default-font-style: normal;
+  --memio-body-default-font-weight: 400;
+  --memio-body-default-letter-spacing: 0px;
+  --memio-body-default-line-height: 26px;
+  --memio-body-large-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-body-large-font-size: 18px;
+  --memio-body-large-font-style: normal;
+  --memio-body-large-font-weight: 400;
+  --memio-body-large-letter-spacing: 0px;
+  --memio-body-large-line-height: 30px;
+  --memio-card-title-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-card-title-font-size: 22px;
+  --memio-card-title-font-style: normal;
+  --memio-card-title-font-weight: 700;
+  --memio-card-title-letter-spacing: 0px;
+  --memio-card-title-line-height: 32px;
+  --memio-heading-desktop-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-heading-desktop-font-size: 36px;
+  --memio-heading-desktop-font-style: normal;
+  --memio-heading-desktop-font-weight: 700;
+  --memio-heading-desktop-letter-spacing: 0px;
+  --memio-heading-desktop-line-height: 48px;
+  --memio-heading-mobile-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-heading-mobile-font-size: 28px;
+  --memio-heading-mobile-font-style: normal;
+  --memio-heading-mobile-font-weight: 700;
+  --memio-heading-mobile-letter-spacing: 0px;
+  --memio-heading-mobile-line-height: 40px;
+  --memio-hero-desktop-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-hero-desktop-font-size: 52px;
+  --memio-hero-desktop-font-style: normal;
+  --memio-hero-desktop-font-weight: 800;
+  --memio-hero-desktop-letter-spacing: 0px;
+  --memio-hero-desktop-line-height: 66px;
+  --memio-hero-mobile-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-hero-mobile-font-size: 34px;
+  --memio-hero-mobile-font-style: normal;
+  --memio-hero-mobile-font-weight: 800;
+  --memio-hero-mobile-letter-spacing: 0px;
+  --memio-hero-mobile-line-height: 46px;
+  --memio-label-button-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-label-button-font-size: 16px;
+  --memio-label-button-font-style: normal;
+  --memio-label-button-font-weight: 600;
+  --memio-label-button-letter-spacing: 0px;
+  --memio-label-button-line-height: 24px;
+  --memio-label-small-font-family: "Be Vietnam Pro", Helvetica;
+  --memio-label-small-font-size: 13px;
+  --memio-label-small-font-style: normal;
+  --memio-label-small-font-weight: 600;
+  --memio-label-small-letter-spacing: 0px;
+  --memio-label-small-line-height: 20px;
+  --memio-primitives-blue: rgba(56, 169, 219, 1);
+  --memio-primitives-border: rgba(227, 235, 230, 1);
+  --memio-primitives-green: rgba(46, 125, 50, 1);
+  --memio-primitives-hover: rgba(35, 101, 39, 1);
+  --memio-primitives-ink: rgba(31, 41, 55, 1);
+  --memio-primitives-mint: rgba(234, 248, 239, 1);
+  --memio-primitives-muted: rgba(95, 107, 122, 1);
+  --memio-primitives-page: rgba(248, 251, 248, 1);
+  --memio-primitives-paleblue: rgba(234, 246, 252, 1);
+  --memio-primitives-paleyellow: rgba(255, 247, 223, 1);
+  --memio-primitives-teal: rgba(0, 155, 120, 1);
+  --memio-primitives-white: rgba(255, 255, 255, 1);
+  --memio-primitives-yellow: rgba(245, 185, 63, 1);
+  --memio-semantic-color-blue: var(--memio-primitives-blue);
+  --memio-semantic-color-border: var(--memio-primitives-border);
+  --memio-semantic-color-green: var(--memio-primitives-green);
+  --memio-semantic-color-hover: var(--memio-primitives-hover);
+  --memio-semantic-color-ink: var(--memio-primitives-ink);
+  --memio-semantic-color-mint: var(--memio-primitives-mint);
+  --memio-semantic-color-muted: var(--memio-primitives-muted);
+  --memio-semantic-color-page: var(--memio-primitives-page);
+  --memio-semantic-color-paleblue: var(--memio-primitives-paleblue);
+  --memio-semantic-color-paleyellow: var(--memio-primitives-paleyellow);
+  --memio-semantic-color-teal: var(--memio-primitives-teal);
+  --memio-semantic-color-white: var(--memio-primitives-white);
+  --memio-semantic-color-yellow: var(--memio-primitives-yellow);
+  --memio-semantic-radius-12: 12px;
+  --memio-semantic-radius-16: 16px;
+  --memio-semantic-radius-24: 24px;
+  --memio-semantic-radius-32: 32px;
+  --memio-semantic-radius-999: 999px;
+  --memio-semantic-space-0: 0px;
+  --memio-semantic-space-12: 12px;
+  --memio-semantic-space-120: 120px;
+  --memio-semantic-space-16: 16px;
+  --memio-semantic-space-20: 20px;
+  --memio-semantic-space-24: 24px;
+  --memio-semantic-space-28: 28px;
+  --memio-semantic-space-32: 32px;
+  --memio-semantic-space-4: 4px;
+  --memio-semantic-space-40: 40px;
+  --memio-semantic-space-48: 48px;
+  --memio-semantic-space-56: 56px;
+  --memio-semantic-space-64: 64px;
+  --memio-semantic-space-8: 8px;
+  --memio-semantic-space-80: 80px;
+  --memio-semantic-space-96: 96px;
+  --memio-shadow-soft: 0px 8px 24px 0px rgba(31, 77, 51, 0.08);
+}
+
+:root {
+  --animate-spin: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+
+.animate-spin {
+  animation: var(--animate-spin);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  }
+
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}

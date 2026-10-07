@@ -1,12 +1,12 @@
-import { CardsGame } from "@/features/cards-game/components/CardsGame";
-import { Header } from "@/components/layout/Header";
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from '@/app/providers/AuthProvider';
+import { router } from '@/app/router';
 
 function App() {
     return (
-        <div className="flex min-h-screen flex-col bg-[#f5faf7]">
-            <Header />
-            <CardsGame />
-        </div>
+        <AuthProvider>
+            <RouterProvider router={router} />
+        </AuthProvider>
     );
 }
 
