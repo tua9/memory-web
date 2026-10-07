@@ -1,6 +1,7 @@
-import { useAuth } from '@/app/providers/AuthProvider';
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useAuthStore } from '@/store/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -8,8 +9,9 @@ import { loginSchema, type LoginFormData } from '../schemas/auth.schema';
 import { authApi } from '../api/auth.api';
 import type { ApiErrorResponse } from '@/types/auth.types';
 
-export const LoginForm = (): JSX.Element => {
-    const { saveSession } = useAuth();
+export const LoginForm = (): ReactElement => {
+    const navigate = useNavigate();
+    const { saveSession } = useAuthStore();
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -34,8 +36,8 @@ export const LoginForm = (): JSX.Element => {
                 password: data.password,
             });
 
-            // Lưu phiên đăng nhập vào AuthContext & LocalStorage (React Router sẽ tự chuyển sang trang Home /)
             saveSession(response.user, response.token, response.refresh_token);
+            navigate('/', { replace: true });
         } catch (err) {
             const error = err as ApiErrorResponse;
             if (error.code === 'INVALID_CREDENTIALS') {
@@ -168,7 +170,7 @@ export const LoginForm = (): JSX.Element => {
             {/* Register Link */}
             <div className="mt-6 text-center text-[13px]">
                 <span className="text-[#667085]">Chưa có tài khoản? </span>
-                <a href="#register" className="font-semibold text-[#2e7d32] hover:underline">
+                <a href="/register" className="font-semibold text-[#2e7d32] hover:underline">
                     Đăng ký
                 </a>
             </div>

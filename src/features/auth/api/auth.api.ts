@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/api-client';
 import type {
+    RegisterRequest,
     LoginRequest,
     AuthSuccessResponse,
     RefreshTokenRequest,
@@ -8,6 +9,16 @@ import type {
 } from '@/types/auth.types';
 
 export const authApi = {
+    // AUTH-01: Đăng ký
+    register: (
+        data: RegisterRequest
+    ): Promise<MessageResponse> => {
+        return apiClient.post(
+            '/auth/register',
+            data
+        ) as unknown as Promise<MessageResponse>;
+    },
+
     // AUTH-02: Đăng nhập
     login: (
         data: LoginRequest

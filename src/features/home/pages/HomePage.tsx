@@ -1,8 +1,8 @@
-import { useAuth } from '@/app/providers/AuthProvider';
 import { Header } from '@/components/layout/Header';
+import { useAuthStore } from '@/store/authStore';
 
 export const HomePage = () => {
-    const { user, logout } = useAuth();
+    const { user, logout } = useAuthStore();
 
     return (
         <div className="min-h-screen bg-[#f8fbf8]">

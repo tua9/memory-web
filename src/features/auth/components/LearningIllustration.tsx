@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 type CardVariant = "book" | "numbers" | "space" | "game";
 
 type IllustrationCard = {
@@ -73,7 +75,7 @@ const IllustrationCard = ({
     image,
     imageAlt = "",
     label,
-}: IllustrationCard): JSX.Element => {
+}: IllustrationCard): ReactElement => {
     if (variant === "book") {
         return (
             <div className={`${top} ${left} ${getCardClassName(variant)}`}>
@@ -166,7 +168,7 @@ const IllustrationCard = ({
     );
 };
 
-export const LearningIllustrationSection = (): JSX.Element => {
+export const LearningIllustrationSection = (): ReactElement => {
     return (
         <div className="relative w-[720px] h-[728px] shrink-0 hidden lg:block scale-90 xl:scale-100 origin-top-left">
             <div className="absolute top-[55px] left-[50px] w-[600px] h-[600px] bg-[#eaf8eff5] rounded-[300px] shadow-[inset_0px_4px_4px_#00000040]" />

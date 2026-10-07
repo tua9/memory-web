@@ -7,6 +7,13 @@ export interface User {
     current_level: number;
 }
 
+// Payload gửi lên API AUTH-01 Đăng ký
+export interface RegisterRequest {
+    username: string;
+    email: string;
+    password: string;
+}
+
 // Payload gửi lên API AUTH-02 Đăng nhập
 export interface LoginRequest {
     email: string;

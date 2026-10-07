@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 
 const NAV_LINKS = [
     { label: "Phương pháp", href: "#" },
-    { label: "Trò chơi", href: "#" },
-    { label: "Đăng nhập", href: "/login" },
+    { label: "Trò chơi", href: "/games" },
 ];
 
 export const Header = () => {
     const navigate = useNavigate();
+    const { user, isAuthenticated } = useAuthStore();
 
     return (
         <header className="sticky top-0 z-50 border-b border-[#e0eee6] bg-white/90 backdrop-blur-sm">
@@ -25,24 +26,33 @@ export const Header = () => {
                 {/* Nav */}
                 <nav className="hidden items-center gap-8 md:flex">
                     {NAV_LINKS.map((link) => (
-                        <a
+                        <Link
                             key={link.label}
-                            href={link.href}
+                            to={link.href}
                             className="text-sm font-medium text-[#202b39] no-underline transition hover:text-[#1a7a4a]"
                         >
                             {link.label}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 
                 {/* CTA */}
-                <button
-                    type="button"
-                    onClick={() => navigate('/login')}
-                    className="rounded-xl bg-[#1a7a4a] px-5 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-[#15633c] active:scale-95"
-                >
-                    Đăng nhập
-                </button>
+                {!isAuthenticated ? (
+                    <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        className="rounded-xl bg-[#1a7a4a] px-5 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-[#15633c] active:scale-95"
+                    >
+                        Đăng nhập
+                    </button>
+                ) : (
+                    <div className="flex items-center gap-2 rounded-xl border border-[#dfeae3] bg-[#f5faf6] px-3 py-2 text-sm font-semibold text-[#1a7a4a]">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#dff5e3] text-xs font-bold text-[#1a7a4a]">
+                            {user?.username?.charAt(0)?.toUpperCase() || 'U'}
+                        </span>
+                        <span>{user?.username || 'User'}</span>
+                    </div>
+                )}
             </div>
         </header>
     );
