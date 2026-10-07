@@ -1,10 +1,14 @@
+import { useNavigate } from 'react-router-dom';
+
 const NAV_LINKS = [
     { label: "Phương pháp", href: "#" },
     { label: "Trò chơi", href: "#" },
-    { label: "Đăng nhập", href: "#" },
+    { label: "Đăng nhập", href: "/login" },
 ];
 
 export const Header = () => {
+    const navigate = useNavigate();
+
     return (
         <header className="sticky top-0 z-50 border-b border-[#e0eee6] bg-white/90 backdrop-blur-sm">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -34,9 +38,10 @@ export const Header = () => {
                 {/* CTA */}
                 <button
                     type="button"
+                    onClick={() => navigate('/login')}
                     className="rounded-xl bg-[#1a7a4a] px-5 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-[#15633c] active:scale-95"
                 >
-                    Đăng ký
+                    Đăng nhập
                 </button>
             </div>
         </header>
