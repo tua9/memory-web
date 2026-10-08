@@ -1,42 +1,62 @@
 import { Header } from '@/components/layout/Header';
-import { useAuthStore } from '@/store/authStore';
+import { HeroSection } from '../components/HeroSection';
+import { MethodsSection } from '../components/MethodsSection';
+import { GameIntroSection } from '../components/GameIntroSection';
 
 export const HomePage = () => {
-    const { user, logout } = useAuthStore();
-
     return (
-        <div className="min-h-screen bg-[#f8fbf8]">
+        <div className="min-h-screen bg-[#F8FBF8] font-sans">
             <Header />
-
-            <div className="flex min-h-[calc(100vh-72px)] flex-col items-center justify-center p-6">
-                <div className="w-full max-w-[500px] bg-white rounded-[24px] p-8 shadow-sm border border-[#e3ebe6] text-center">
-                    <div className="w-16 h-16 bg-[#eaf8ef] text-[#2e7d32] rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                        ✓
-                    </div>
-                    <h1 className="text-[26px] font-bold text-[#1f2937] mb-2">
-                        Chào mừng bạn đã trở lại!
-                    </h1>
-                    <p className="text-[14px] text-[#667085] mb-6">
-                        Bạn đã đăng nhập thành công vào hệ thống Memio.
-                    </p>
-
-                    {user && (
-                        <div className="bg-[#f8faf9] p-4 rounded-xl border border-[#e3ebe6] text-left mb-6 text-xs space-y-1 text-[#1f2937]">
-                            <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Username:</strong> {user.username}</p>
-                            <p><strong>XP:</strong> {user.total_xp}</p>
-                            <p><strong>Level:</strong> {user.current_level}</p>
+            
+            <main>
+                <HeroSection />
+                <MethodsSection />
+                <GameIntroSection />
+                
+                {/* Parents Section Placeholder */}
+                <section className="w-full bg-white py-20 md:py-32">
+                    <div className="mx-auto max-w-[1440px] px-5 md:px-[120px] text-center">
+                        <h2 className="text-[30px] md:text-[36px] font-bold text-[#1F2937] mb-8">
+                            Con sẽ thực hành điều gì cùng Memio?
+                        </h2>
+                        <div className="h-[300px] bg-[#F8FBF8] rounded-[24px] border border-[#E3EBE6] flex flex-col items-center justify-center">
+                            <span className="text-[#5F6B7A] italic mb-2">[Nội dung 3 giá trị thực hành - Đang chờ Asset]</span>
+                            <span className="text-[#5F6B7A] italic">[Khối gợi ý trò chuyện cùng con & Mascot - Đang chờ Asset]</span>
                         </div>
-                    )}
+                    </div>
+                </section>
 
-                    <button
-                        onClick={logout}
-                        className="h-11 px-6 bg-[#2e7d32] hover:bg-[#236527] text-white font-semibold text-[14px] rounded-[12px] transition-colors"
-                    >
-                        Đăng xuất
-                    </button>
+                {/* FAQ Section Placeholder */}
+                <section className="w-full bg-[#F8FBF8] py-20 md:py-32">
+                    <div className="mx-auto max-w-[800px] px-5 md:px-0 text-center">
+                        <h2 className="text-[30px] md:text-[36px] font-bold text-[#1F2937] mb-8">
+                            Câu hỏi thường gặp
+                        </h2>
+                        <div className="h-[300px] bg-white rounded-[24px] border border-[#E3EBE6] flex items-center justify-center shadow-sm">
+                            <span className="text-[#5F6B7A] italic">[Nội dung FAQ & Accordion - Đang chờ Asset]</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Final CTA Placeholder */}
+                <section className="w-full bg-white py-20 md:py-32">
+                    <div className="mx-auto max-w-[800px] px-5 md:px-0 text-center">
+                        <div className="h-[200px] bg-[#EAF8EF] rounded-[24px] flex flex-col items-center justify-center">
+                            <span className="text-[#2E7D32] italic mb-4">[Mascot, tiêu đề, mô tả CTA - Đang chờ Asset]</span>
+                            <button className="rounded-full bg-[#2E7D32] px-8 py-4 text-[16px] font-bold text-white">
+                                Bắt đầu với Memio
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            {/* Footer Placeholder */}
+            <footer className="w-full bg-[#1F2937] py-12 text-white">
+                <div className="mx-auto max-w-[1440px] px-5 md:px-[120px] text-center">
+                    <span className="text-gray-400 italic">[Nội dung Footer - Đang chờ Asset]</span>
                 </div>
-            </div>
+            </footer>
         </div>
     );
 };
