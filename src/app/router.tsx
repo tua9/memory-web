@@ -5,6 +5,8 @@ import RegisterPage from '@/features/auth/pages/RegisterPage';
 import HomePage from '@/features/home/pages/HomePage';
 import GameSelectionPage from '@/features/cards-game/pages/GameSelectionPage';
 import { CardsGame } from '@/features/cards-game/components/CardsGame';
+import { ImagesGame } from '@/features/images-game/components/ImagesGame';
+
 
 // Route Công khai: Nếu đã login -> Đẩy thẳng về trang Home (/)
 const PublicOnlyRoute = () => {
@@ -29,6 +31,10 @@ export const router = createBrowserRouter([
     {
         path: '/games/cards',
         element: <CardsGame />,
+    },
+    {
+        path: '/games/images',
+        element: <ImagesGame />,
     },
     // Route chỉ dành cho khách chưa login
     {
