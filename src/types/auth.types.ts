@@ -22,9 +22,11 @@ export interface LoginRequest {
 
 // Response nhận về khi AUTH-02 Đăng nhập thành công
 export interface AuthSuccessResponse {
-    user: User;
-    token: string;          // Access Token
-    refresh_token: string;  // Refresh Token
+    data: {
+        userInfo: User;
+        accessToken: string;          // Access Token
+        refreshToken: string;  // Refresh Token
+    };
 }
 
 // Payload và Response cho AUTH-03 Refresh Token

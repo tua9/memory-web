@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 const NAV_LINKS = [
     { label: "Phương pháp", href: "#" },

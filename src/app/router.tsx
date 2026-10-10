@@ -1,12 +1,13 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import RegisterPage from '@/features/auth/pages/RegisterPage';
 import HomePage from '@/features/home/pages/HomePage';
 import GameSelectionPage from '@/features/cards-game/pages/GameSelectionPage';
 import { CardsGame } from '@/features/cards-game/components/CardsGame';
+import { ImagesGame } from '@/features/images-game/components/ImagesGame';
 
-// Route Công khai: Nếu đã login -> Đẩy thẳng về trang Home (/)
+
 const PublicOnlyRoute = () => {
     const { isAuthenticated, isLoading } = useAuthStore();
 
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
         path: '/games/cards',
         element: <CardsGame />,
     },
+    {
+        path: '/games/images',
+        element: <ImagesGame />,
+    },
     // Route chỉ dành cho khách chưa login
     {
         element: <PublicOnlyRoute />,
@@ -44,7 +49,6 @@ export const router = createBrowserRouter([
             },
         ],
     },
-    // Mọi route không tồn tại tự về trang Home
     {
         path: '*',
         element: <Navigate to="/" replace />,

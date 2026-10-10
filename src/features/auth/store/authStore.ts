@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { storage } from '@/lib/storage';
+import { isAccessTokenExpired, storage } from '@/lib/storage';
 import type { User } from '@/types/auth.types';
 
 interface AuthState {
@@ -17,23 +17,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     token: null,
     isAuthenticated: false,
     isLoading: true,
+
     hydrate: () => {
+        console.log('Hydrating auth store...');
+
         const savedToken = storage.getAccessToken();
-        const savedUser = localStorage.getItem('memio_user');
+        const savedUser = storage.getUser();
 
-        if (savedToken) {
-            let user: User | null = null;
-
-            if (savedUser) {
-                try {
-                    user = JSON.parse(savedUser) as User;
-                } catch {
-                    user = null;
-                }
-            }
-
+        if (savedToken && savedUser && !isAccessTokenExpired(savedToken)) {
             set({
-                user,
+                user: savedUser as User,
                 token: savedToken,
                 isAuthenticated: true,
                 isLoading: false,
@@ -41,6 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             return;
         }
 
+        storage.clearSession();
         set({
             user: null,
             token: null,
@@ -48,20 +42,28 @@ export const useAuthStore = create<AuthState>((set) => ({
             isLoading: false,
         });
     },
-    saveSession: (user, token, refreshToken) => {
-        storage.setTokens(token, refreshToken);
-        localStorage.setItem('memio_user', JSON.stringify(user));
 
+    saveSession: (userInfo, accessToken, refreshToken) => {
+        storage.setTokens(accessToken, refreshToken);
+        storage.setUser(userInfo);
+
+        console.log('Session saved:', {
+            user: userInfo,
+            accessToken,
+            refreshToken,
+        });
+
+        console.log(storage.getAccessToken(), storage.getRefreshToken(), storage.getUser());
         set({
-            user,
-            token,
-            isAuthenticated: true,
+            user: userInfo,
+            token: accessToken,
+            isAuthenticated: !isAccessTokenExpired(accessToken),
             isLoading: false,
         });
     },
+
     logout: () => {
-        storage.clearTokens();
-        localStorage.removeItem('memio_user');
+        storage.clearSession();
 
         set({
             user: null,

@@ -1,7 +1,7 @@
 import { useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export const LoginForm = (): ReactElement => {
         defaultValues: {
             email: '',
             password: '',
-            rememberMe: false,
+            rememberMe: true,
         },
     });
 
@@ -36,7 +36,8 @@ export const LoginForm = (): ReactElement => {
                 password: data.password,
             });
 
-            saveSession(response.user, response.token, response.refresh_token);
+
+            saveSession(response.data.userInfo, response.data.accessToken, response.data.refreshToken);
             navigate('/', { replace: true });
         } catch (err) {
             const error = err as ApiErrorResponse;
