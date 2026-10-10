@@ -50,5 +50,4 @@ export const LoginPage = (): ReactElement => {
     );
 };
 
-export const LoginDesktop = LoginPage;
 export default LoginPage;

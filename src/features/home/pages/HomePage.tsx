@@ -1,5 +1,5 @@
 import { Header } from '@/components/layout/Header';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 export const HomePage = () => {
     const { user, logout } = useAuthStore();
