@@ -19,7 +19,6 @@ const getLevelLabel = (lvl: number) => {
 export const SettingsPhase = () => {
     const { level, memorizeTime, setLevel, setMemorizeTime, startGame } = useGameStore();
     const cardCount = getCardCountForLevel(level);
-    const timeLabel = MEMORIZE_TIME_OPTIONS.find((o) => o.value === memorizeTime)?.label ?? `${memorizeTime}s`;
 
     return (
         <main className="min-h-screen bg-[#f5faf7] px-4 pb-16 pt-12 font-sans text-[#202b39]">

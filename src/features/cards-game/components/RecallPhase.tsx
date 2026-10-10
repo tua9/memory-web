@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useGameStore } from "../store/gameStore";
-import { PlayingCard } from "./PlayingCard";
 import { usePhaseTimer } from "../hooks/usePhaseTimer";
 import type { Card, Suit } from "../types/types";
 
