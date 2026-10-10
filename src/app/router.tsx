@@ -5,6 +5,8 @@ import RegisterPage from '@/features/auth/pages/RegisterPage';
 import HomePage from '@/features/home/pages/HomePage';
 import GameSelectionPage from '@/features/cards-game/pages/GameSelectionPage';
 import { CardsGame } from '@/features/cards-game/components/CardsGame';
+import { ImagesGame } from '@/features/images-game/components/ImagesGame';
+
 
 const PublicOnlyRoute = () => {
     const { isAuthenticated, isLoading } = useAuthStore();
@@ -29,6 +31,11 @@ export const router = createBrowserRouter([
         path: '/games/cards',
         element: <CardsGame />,
     },
+    {
+        path: '/games/images',
+        element: <ImagesGame />,
+    },
+    // Route chỉ dành cho khách chưa login
     {
         element: <PublicOnlyRoute />,
         children: [
