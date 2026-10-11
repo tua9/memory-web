@@ -1,6 +1,6 @@
 import { useImagesGameStore } from "../store/imagesGameStore";
 import { getImageCountForLevel } from "../utils/imageUtils";
-import { GameSettingsLayout } from "@/features/shared-game/components/GameSettingsLayout";
+import { GameSettingsLayout } from "@/components/layout/GameSettingsLayout";
 
 export const ImagesSettingsPhase = () => {
     const { level, memorizeTime, setMemorizeTime, startGame } = useImagesGameStore();

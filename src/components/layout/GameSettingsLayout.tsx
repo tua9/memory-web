@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LevelExplanationModal } from "@/features/cards-game/components/LevelExplanationModal";
 import { GameGuideModal } from "@/features/cards-game/components/GameGuideModal";
+import { Header } from "./Header";
 
 const MAX_LEVEL = 10;
 
@@ -41,6 +42,8 @@ export const GameSettingsLayout = ({
     const [showGuide, setShowGuide] = useState(false);
 
     return (
+        <>
+        <Header />
         <main className="min-h-screen bg-[#f6fcf8] px-4 py-8 font-sans text-[#121c2a]">
             <div className="mx-auto flex max-w-4xl flex-col items-start gap-6">
                 <header className="flex w-full items-center justify-between">
@@ -161,5 +164,6 @@ export const GameSettingsLayout = ({
                 </section>
             </div>
         </main>
+        </>
     );
 };

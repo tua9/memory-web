@@ -1,4 +1,3 @@
-import { Header } from '@/components/layout/Header';
 import { useGameStore } from "../store/gameStore";
 import { SettingsPhase } from "./SettingsPhase";
 import { MemorizePhase } from "./MemorizePhase";
@@ -16,7 +15,6 @@ export const CardsGame = () => {
 
     return (
         <div className="min-h-screen bg-[#f5faf7]">
-            <Header />
             {content}
         </div>
     );

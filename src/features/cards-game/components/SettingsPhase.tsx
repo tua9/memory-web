@@ -1,6 +1,6 @@
 import { useGameStore } from "../store/gameStore";
 import { getCardCountForLevel } from "../utils/cardUtils";
-import { GameSettingsLayout } from "@/features/shared-game/components/GameSettingsLayout";
+import { GameSettingsLayout } from "@/components/layout/GameSettingsLayout";
 
 export const SettingsPhase = () => {
     const { level, memorizeTime, setMemorizeTime, startGame } = useGameStore();
