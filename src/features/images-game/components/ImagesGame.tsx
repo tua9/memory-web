@@ -3,7 +3,6 @@ import { ImagesSettingsPhase } from "./ImagesSettingsPhase";
 import { ImagesMemorizePhase } from "./ImagesMemorizePhase";
 import { ImagesRecallPhase } from "./ImagesRecallPhase";
 import { ImagesResultPhase } from "./ImagesResultPhase";
-import { Header } from "@/components/layout/Header";
 
 export const ImagesGame = () => {
     const { phase } = useImagesGameStore();
@@ -16,7 +15,6 @@ export const ImagesGame = () => {
 
     return (
         <div className="min-h-screen bg-[#f5faf7]">
-            <Header />
             {content}
         </div>
     );

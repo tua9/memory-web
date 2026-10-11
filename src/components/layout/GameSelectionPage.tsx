@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const GameSelectionPage = () => {
     const navigate = useNavigate();
-    const [selectedGame, setSelectedGame] = useState<string | null>('cards');
+    const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
     return (
         <main className="min-h-screen bg-[#f8fbf8] font-sans text-[#1f2937]">

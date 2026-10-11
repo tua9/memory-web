@@ -53,17 +53,22 @@ const ThumbStrip = ({ cards, activeIndex, onSelect }: { cards: Card[]; activeInd
     const baseTranslate = -activeIndex * THUMB_STEP + centerOffset;
     const dragRef = useRef<{ startX: number; startIndex: number } | null>(null);
     const [dragDelta, setDragDelta] = useState(0);
-    const isDragging = useRef(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const isDraggingRef = useRef(false);
 
     const onPointerDown = (e: React.PointerEvent) => {
-        isDragging.current = false;
+        isDraggingRef.current = false;
+        setIsDragging(false);
         dragRef.current = { startX: e.clientX, startIndex: activeIndex };
         setDragDelta(0);
     };
     const onPointerMove = (e: React.PointerEvent) => {
         if (!dragRef.current) return;
         const delta = e.clientX - dragRef.current.startX;
-        if (Math.abs(delta) > 4) isDragging.current = true;
+        if (Math.abs(delta) > 4) {
+            isDraggingRef.current = true;
+            setIsDragging(true);
+        }
         setDragDelta(delta);
     };
     const onPointerUp = (e: React.PointerEvent) => {
@@ -75,6 +80,7 @@ const ThumbStrip = ({ cards, activeIndex, onSelect }: { cards: Card[]; activeInd
             onSelect(next);
         }
         dragRef.current = null;
+        setIsDragging(false);
         setDragDelta(0);
     };
 
@@ -86,8 +92,8 @@ const ThumbStrip = ({ cards, activeIndex, onSelect }: { cards: Card[]; activeInd
                 className="flex items-center py-1"
                 style={{
                     gap: THUMB_GAP,
-                    transform: `translateX(${baseTranslate + (dragRef.current ? dragDelta : 0)}px)`,
-                    transition: dragRef.current ? "none" : "transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                    transform: `translateX(${baseTranslate + (isDragging ? dragDelta : 0)}px)`,
+                    transition: isDragging ? "none" : "transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                     willChange: "transform",
                 }}
                 onPointerDown={onPointerDown}
@@ -101,7 +107,7 @@ const ThumbStrip = ({ cards, activeIndex, onSelect }: { cards: Card[]; activeInd
                         <button
                             key={`thumb-${idx}`}
                             type="button"
-                            onClick={() => { if (!isDragging.current) onSelect(idx); }}
+                            onClick={() => { if (!isDraggingRef.current) onSelect(idx); }}
                             style={{ width: THUMB_W, flexShrink: 0 }}
                             className={`flex h-14 flex-col items-center justify-center gap-0.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer ${active ? "border-[#1a7a4a] bg-[#e6f7ed] shadow-sm" : "border-[#e0eee6] bg-white hover:border-[#1a7a4a]"
                                 }`}
