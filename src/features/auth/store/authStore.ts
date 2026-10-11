@@ -19,8 +19,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     isLoading: true,
 
     hydrate: () => {
-        console.log('Hydrating auth store...');
-
         const savedToken = storage.getAccessToken();
         const savedUser = storage.getUser();
 
@@ -47,13 +45,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         storage.setTokens(accessToken, refreshToken);
         storage.setUser(userInfo);
 
-        console.log('Session saved:', {
-            user: userInfo,
-            accessToken,
-            refreshToken,
-        });
-
-        console.log(storage.getAccessToken(), storage.getRefreshToken(), storage.getUser());
         set({
             user: userInfo,
             token: accessToken,

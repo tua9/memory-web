@@ -6,6 +6,8 @@ import GameSelectionPage from '@/components/layout/GameSelectionPage';
 import { CardsGame } from '@/features/cards-game/components/CardsGame';
 import { ImagesGame } from '@/features/images-game/components/ImagesGame';
 import { PublicOnlyRoute } from './PublicOnlyRoute';
+import ProfilePage from '@/features/profile/pages/ProfilePage';
+import UpdateProfilePage from '@/features/profile/pages/UpdateProfilePage';
 
 
 
@@ -26,7 +28,14 @@ export const router = createBrowserRouter([
         path: '/games/images',
         element: <ImagesGame />,
     },
-    // Route chỉ dành cho khách chưa login
+    {
+        path: '/profile',
+        element: <ProfilePage />,
+    },
+    {
+        path: '/profile/update',
+        element: <UpdateProfilePage />,
+    },
     {
         element: <PublicOnlyRoute />,
         children: [
