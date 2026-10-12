@@ -18,6 +18,7 @@ export interface RegisterRequest {
 export interface LoginRequest {
     email: string;
     password: string;
+    rememberMe: boolean;    // false: đăng xuất khi đóng trình duyệt
 }
 
 // Khung response thành công chung của backend

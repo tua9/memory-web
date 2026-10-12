@@ -37,6 +37,7 @@ export const LoginForm = (): ReactElement => {
             const response = await authApi.login({
                 email: data.email,
                 password: data.password,
+                rememberMe: data.rememberMe ?? false,
             });
 
             // Token đã được backend set vào cookie httpOnly, chỉ cần lưu userInfo
