@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 
 function App() {
     useEffect(() => {
-        useAuthStore.getState().hydrate();
+        void useAuthStore.getState().hydrate();
     }, []);
 
     return <RouterProvider router={router} />;

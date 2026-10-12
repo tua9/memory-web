@@ -52,7 +52,7 @@ export const ProfilePage = () => {
             setError(null);
 
             try {
-                const response = await apiClient.get('/profile/', { withCredentials: true }) as unknown as ProfileResponse;
+                const response = await apiClient.get('/profile/') as unknown as ProfileResponse;
                 if (isCurrent) {
                     setProfile(response.data.profile);
                     setUnavailableFields(response.data.unavailableFields ?? []);

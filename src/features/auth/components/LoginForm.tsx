@@ -1,5 +1,5 @@
 import { useState, type ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +11,9 @@ import type { ApiErrorResponse } from '@/types/auth.types';
 
 export const LoginForm = (): ReactElement => {
     const navigate = useNavigate();
+    const location = useLocation();
+    // Quay lại trang được bảo vệ đã chặn trước đó (ProtectedRoute), mặc định về trang chủ
+    const redirectTo = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? '/';
     const { saveSession } = useAuthStore();
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
@@ -36,14 +39,15 @@ export const LoginForm = (): ReactElement => {
                 password: data.password,
             });
 
-
-            saveSession(response.data.userInfo, response.data.accessToken, response.data.refreshToken);
-            navigate('/', { replace: true });
+            // Token đã được backend set vào cookie httpOnly, chỉ cần lưu userInfo
+            saveSession(response.data.userInfo);
+            navigate(redirectTo, { replace: true });
         } catch (err) {
             const error = err as ApiErrorResponse;
-            if (error.code === 'INVALID_CREDENTIALS') {
+            // Backend không gửi mã lỗi riêng cho login: 401 = sai thông tin, 403 = tài khoản không hoạt động
+            if (error.status === 401) {
                 setServerError('Email hoặc mật khẩu không chính xác.');
-            } else if (error.code === 'ACCOUNT_LOCKED') {
+            } else if (error.status === 403) {
                 setServerError('Tài khoản của bạn đã bị khóa.');
             } else {
                 setServerError(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');

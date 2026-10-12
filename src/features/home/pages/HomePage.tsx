@@ -24,8 +24,8 @@ export const HomePage = () => {
                         <div className="bg-[#f8faf9] p-4 rounded-xl border border-[#e3ebe6] text-left mb-6 text-xs space-y-1 text-[#1f2937]">
                             <p><strong>Email:</strong> {user.email}</p>
                             <p><strong>Username:</strong> {user.username}</p>
-                            <p><strong>XP:</strong> {user.total_xp}</p>
-                            <p><strong>Level:</strong> {user.current_level}</p>
+                            <p><strong>Role:</strong> {user.role}</p>
+                            <p><strong>Status:</strong> {user.status}</p>
                         </div>
                     )}
 
