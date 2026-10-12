@@ -41,10 +41,9 @@ export const RegisterForm = (): ReactElement => {
             setIsSuccess(true);
         } catch (err) {
             const error = err as ApiErrorResponse;
-            if (error.code === 'EMAIL_ALREADY_EXISTS') {
+            // Backend trả 409 khi email đã tồn tại (username không bắt buộc duy nhất)
+            if (error.status === 409) {
                 setServerError('Email này đã được sử dụng. Vui lòng thử email khác.');
-            } else if (error.code === 'USERNAME_ALREADY_EXISTS') {
-                setServerError('Tên người dùng này đã tồn tại. Vui lòng chọn tên khác.');
             } else {
                 setServerError(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
             }

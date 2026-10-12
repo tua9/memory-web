@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { Header } from '@/components/layout/Header';
 import { apiClient } from '@/lib/api-client';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface UserProfile {
     username: string | null;
@@ -40,6 +41,7 @@ const formatExperience = (experience: number | null): string =>
     experience === null ? 'Chưa có dữ liệu' : new Intl.NumberFormat('vi-VN').format(experience);
 
 export const UpdateProfilePage = () => {
+    const updateUser = useAuthStore((state) => state.updateUser);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [unavailableFields, setUnavailableFields] = useState<string[]>([]);
     const [loadError, setLoadError] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export const UpdateProfilePage = () => {
             setLoadError(null);
 
             try {
-                const response = await apiClient.get('/profile/', { withCredentials: true }) as unknown as ProfileResponse;
+                const response = await apiClient.get('/profile/') as unknown as ProfileResponse;
                 if (!isCurrent) return;
 
                 setProfile(response.data.profile);
@@ -95,11 +97,11 @@ export const UpdateProfilePage = () => {
             const response = await apiClient.patch(
                 '/profile/',
                 { username: values.username },
-                { withCredentials: true },
             ) as unknown as ProfileResponse;
             const updatedProfile = response.data.profile;
 
             setProfile(updatedProfile);
+            if (updatedProfile.username) updateUser({ username: updatedProfile.username });
             reset({ username: updatedProfile.username ?? values.username });
             setSuccessMessage('Đã lưu thay đổi.');
         } catch (requestError) {

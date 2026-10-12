@@ -1,10 +1,10 @@
-// Model thông tin người dùng
+// Model thông tin người dùng - khớp với `buildUserInfo` ở backend (services/user.service.ts)
 export interface User {
-    id: string;
+    _id: string;
     email: string;
     username: string;
-    total_xp: number;
-    current_level: number;
+    status: string;
+    role: string;
 }
 
 // Payload gửi lên API AUTH-01 Đăng ký
@@ -18,35 +18,37 @@ export interface RegisterRequest {
 export interface LoginRequest {
     email: string;
     password: string;
+    rememberMe: boolean;    // false: đăng xuất khi đóng trình duyệt
 }
 
-// Response nhận về khi AUTH-02 Đăng nhập thành công
-export interface AuthSuccessResponse {
-    data: {
-        userInfo: User;
-        accessToken: string;          // Access Token
-        refreshToken: string;  // Refresh Token
-    };
+// Khung response thành công chung của backend
+export interface ApiSuccessResponse<T = undefined> {
+    status: 'success';
+    message?: string;
+    data: T;
 }
 
-// Payload và Response cho AUTH-03 Refresh Token
-export interface RefreshTokenRequest {
-    refresh_token: string;
-}
+// AUTH-01 Đăng ký: trả về thông tin user vừa tạo
+export type RegisterResponse = ApiSuccessResponse<{ userInfo: User }>;
 
-export interface RefreshTokenResponse {
-    token: string;
-    refresh_token: string;
-}
+// AUTH-02 Đăng nhập và AUTH-03 Refresh: token nằm trong cookie httpOnly, body chỉ dùng userInfo
+export type AuthSuccessResponse = ApiSuccessResponse<{ userInfo: User }>;
 
-// Generic Response cho các endpoint trả về message (AUTH-04, AUTH-05, AUTH-06)
+// AUTH-04 Logout
 export interface MessageResponse {
+    status: 'success';
     message: string;
 }
 
-// Định dạng Lỗi chung từ Backend
+// Mã lỗi backend gửi kèm (middlewares/authMiddleware.ts - AUTH_ERROR_CODES)
+export const AUTH_ERROR_CODES = {
+    TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+} as const;
+
+// Định dạng lỗi đã chuẩn hóa ở api-client từ response `{ statusCode, code?, message, errors }` của backend
 export interface ApiErrorResponse {
-    code: string;           // Ví dụ: 'INVALID_CREDENTIALS', 'ACCOUNT_LOCKED'
-    message: string;        // Thông báo lỗi tiếng Việt từ backend
-    status?: number;        // HTTP Status Code (401, 403, 400, 500,...)
+    code: string;           // Mã lỗi từ backend, hoặc 'UNKNOWN_ERROR' / 'ERR_NETWORK'
+    message: string;        // Thông báo lỗi từ backend
+    status: number;         // HTTP Status Code (0 khi lỗi mạng)
+    errors?: unknown[];
 }
