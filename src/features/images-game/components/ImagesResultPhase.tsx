@@ -15,7 +15,11 @@ const ImageChip = ({ image, isCorrect, showMark = false }: { image: ImageCard | 
     return (
         <div className="flex flex-col items-center gap-1">
             <div className="flex h-16 w-14 flex-col items-center justify-center gap-0.5 rounded-xl border-2 text-[11px] font-bold shadow-xs transition" style={{ borderColor, backgroundColor: bgColor }}>
-                <span className="text-2xl leading-none">{image.emoji}</span>
+                <img
+                    src={image.imageUrl}
+                    alt="Hình ảnh"
+                    className="h-12 w-12 rounded-lg object-cover"
+                />
                 <span className="max-w-full truncate px-1 text-[9px] font-bold text-[#202b39]">{image.name}</span>
             </div>
             {showMark && (
@@ -40,7 +44,6 @@ export const ImagesResultPhase = () => {
 
     return (
         <div className="flex min-h-screen flex-col bg-[#f5faf7] font-sans text-[#202b39]">
-            {/* Header dùng chung */}
             <GameHeader
                 gameName="Hình ảnh"
                 level={level}
@@ -49,7 +52,6 @@ export const ImagesResultPhase = () => {
             />
 
             <main className="flex flex-1 flex-col items-center gap-8 overflow-auto px-4 py-8">
-                {/* Thẻ Điểm số dùng chung */}
                 <GameResultCard
                     correctCount={correctCount}
                     totalCount={imagesToMemorize.length}
@@ -78,7 +80,11 @@ export const ImagesResultPhase = () => {
                             <div key={`correct-${index}`} className="flex flex-col items-center gap-1">
                                 <span className="text-[10px] font-bold text-[#77839a]">{index + 1}</span>
                                 <div className="flex h-16 w-14 flex-col items-center justify-center gap-0.5 rounded-xl border border-[#1a7a4a] bg-[#e6f7ed] text-[11px] font-bold">
-                                    <span className="text-2xl leading-none">{img.emoji}</span>
+                                    <img
+                                        src={img.imageUrl}
+                                        alt="Hình ảnh"
+                                        className="h-12 w-12 rounded-lg object-cover"
+                                    />
                                     <span className="max-w-full truncate px-1 text-[9px] font-bold text-[#1f2937]">{img.name}</span>
                                 </div>
                             </div>

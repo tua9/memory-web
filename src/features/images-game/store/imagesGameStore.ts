@@ -3,17 +3,19 @@ import type { ImageCard, GamePhase } from "../types/imageTypes";
 import { generateImageDeck, getImageCountForLevel, shuffle } from "../utils/imageUtils";
 
 interface ImagesGameState {
+    preferences: ImagesPreferences;
     phase: GamePhase;
     level: number;
     memorizeTime: number;
     recallTime: number;
     imagesToMemorize: ImageCard[];
     userRecall: (ImageCard | null)[];
-    shuffledDeck: ImageCard[]; // CHỈ CHỨA N HÌNH ẢNH ĐÃ XÁO TRỘN
+    shuffledDeck: ImageCard[];
     currentMemorizeIndex: number;
     selectedSlotIndex: number | null;
     phaseDeadline: number | null;
 
+    setPreferences: (preferences: ImagesPreferences) => void;
     setLevel: (level: number) => void;
     setMemorizeTime: (time: number) => void;
     startGame: () => void;
@@ -27,7 +29,18 @@ interface ImagesGameState {
     resetGame: () => void;
 }
 
+export interface ImagesPreferences {
+    groups: number;
+    hideTimer: boolean;
+    prepTime: number;
+}
+
 export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
+    preferences: {
+        groups: 1,
+        hideTimer: false,
+        prepTime: 20,
+    },
     phase: "idle",
     level: 1,
     memorizeTime: 60,
@@ -39,6 +52,7 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     selectedSlotIndex: null,
     phaseDeadline: null,
 
+    setPreferences: (preferences) => set({ preferences }),
     setLevel: (level) => set({ level: Math.max(1, level) }),
     setMemorizeTime: (time) => set({ memorizeTime: time }),
 
@@ -51,7 +65,6 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
             phase: "memorize",
             imagesToMemorize: selectedImages,
             userRecall: Array(count).fill(null),
-            // Tối ưu: Dải chọn bên dưới CHỈ chứa N hình ảnh đã xáo trộn!
             shuffledDeck: shuffle([...selectedImages]),
             currentMemorizeIndex: 0,
             selectedSlotIndex: null,
@@ -60,16 +73,20 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     },
 
     nextMemorizeCard: () => {
-        const { currentMemorizeIndex, imagesToMemorize } = get();
-        if (currentMemorizeIndex < imagesToMemorize.length - 1) {
-            set({ currentMemorizeIndex: currentMemorizeIndex + 1 });
+        const { currentMemorizeIndex, imagesToMemorize, preferences } = get();
+        const step = preferences.groups || 1;
+        if (currentMemorizeIndex + step < imagesToMemorize.length) {
+            set({ currentMemorizeIndex: currentMemorizeIndex + step });
         }
     },
 
     prevMemorizeCard: () => {
-        const { currentMemorizeIndex } = get();
-        if (currentMemorizeIndex > 0) {
-            set({ currentMemorizeIndex: currentMemorizeIndex - 1 });
+        const { currentMemorizeIndex, preferences } = get();
+        const step = preferences.groups || 1;
+        if (currentMemorizeIndex - step >= 0) {
+            set({ currentMemorizeIndex: currentMemorizeIndex - step });
+        } else {
+            set({ currentMemorizeIndex: 0 });
         }
     },
 
