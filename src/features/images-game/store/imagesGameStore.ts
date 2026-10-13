@@ -18,6 +18,7 @@ interface ImagesGameState {
     setPreferences: (preferences: ImagesPreferences) => void;
     setLevel: (level: number) => void;
     setMemorizeTime: (time: number) => void;
+    setRecallTime: (time: number) => void;
     startGame: () => void;
     nextMemorizeCard: () => void;
     prevMemorizeCard: () => void;
@@ -55,6 +56,7 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     setPreferences: (preferences) => set({ preferences }),
     setLevel: (level) => set({ level: Math.max(1, level) }),
     setMemorizeTime: (time) => set({ memorizeTime: time }),
+    setRecallTime: (time) => set({ recallTime: time }),
 
     startGame: () => {
         const { level, memorizeTime } = get();
