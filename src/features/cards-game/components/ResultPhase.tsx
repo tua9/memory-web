@@ -1,3 +1,4 @@
+import { useRecordGameSession } from "@/features/shared-game/hooks/useRecordGameSession";
 import { useGameStore } from "../store/gameStore";
 import { calculateScore } from "../utils/cardUtils";
 import { GameHeader } from "@/features/shared-game/components/GameHeader";
@@ -46,10 +47,17 @@ const CardChip = ({ card, isCorrect, showMark = false }: { card: Card | null; is
 };
 
 export const ResultPhase = () => {
-    const { cardsToMemorize, userRecall, resetGame, level, setLevel } = useGameStore();
+    const { cardsToMemorize, userRecall, resetGame, level, setLevel, lastPlayTime } = useGameStore();
 
     const score = calculateScore(cardsToMemorize, userRecall as Card[]);
     const isPerfect = score === cardsToMemorize.length;
+
+    // Gửi kết quả ngầm qua hook dùng chung
+    useRecordGameSession({
+        gameName: "card",
+        score,
+        time: lastPlayTime,
+    });
 
     const handlePlayAgain = () => {
         if (isPerfect && level < MAX_LEVEL) setLevel(level + 1);

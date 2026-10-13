@@ -13,6 +13,7 @@ interface GameState {
     deckCards: Card[];
     currentMemorizeIndex: number;
     selectedSlotIndex: number | null;
+    lastPlayTime: number;
     phaseDeadline: number | null;
 
     // Actions
@@ -42,6 +43,7 @@ export const useGameStore = create<GameState>()(
             deckCards: [],
             currentMemorizeIndex: 0,
             selectedSlotIndex: null,
+            lastPlayTime: 0,
             phaseDeadline: null,
 
             setLevel: (level) => set({ level: Math.max(1, level) }),
@@ -126,7 +128,18 @@ export const useGameStore = create<GameState>()(
                 set({ selectedSlotIndex: index === selectedSlotIndex ? null : index });
             },
 
-            finishGame: () => set({ phase: "result", phaseDeadline: null }),
+            finishGame: () => {
+                const { phaseDeadline, recallTime } = get();
+                const remainingSeconds = phaseDeadline
+                    ? Math.max(0, Math.round((phaseDeadline - Date.now()) / 1000))
+                    : 0;
+                const timeSpent = Math.max(1, recallTime - remainingSeconds);
+                set({
+                    phase: "result",
+                    phaseDeadline: null,
+                    lastPlayTime: timeSpent,
+                });
+            },
 
             resetGame: () =>
                 set({

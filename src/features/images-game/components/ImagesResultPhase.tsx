@@ -1,3 +1,4 @@
+import { useRecordGameSession } from "@/features/shared-game/hooks/useRecordGameSession";
 import { useImagesGameStore } from "../store/imagesGameStore";
 import { GameHeader } from "@/features/shared-game/components/GameHeader";
 import { GameResultCard } from "@/features/shared-game/components/GameResultCard";
@@ -32,10 +33,17 @@ const ImageChip = ({ image, isCorrect, showMark = false }: { image: ImageCard | 
 };
 
 export const ImagesResultPhase = () => {
-    const { imagesToMemorize, userRecall, resetGame, level, setLevel } = useImagesGameStore();
+    const { imagesToMemorize, userRecall, resetGame, level, setLevel, lastPlayTime } = useImagesGameStore();
 
     const correctCount = imagesToMemorize.reduce((acc, target, idx) => acc + (userRecall[idx]?.id === target.id ? 1 : 0), 0);
     const isPerfect = correctCount === imagesToMemorize.length;
+
+    // Gửi kết quả ngầm qua hook dùng chung
+    useRecordGameSession({
+        gameName: "image",
+        score: correctCount,
+        time: lastPlayTime,
+    });
 
     const handlePlayAgain = () => {
         if (isPerfect && level < MAX_LEVEL) setLevel(level + 1);

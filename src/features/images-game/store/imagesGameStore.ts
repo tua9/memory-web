@@ -13,6 +13,7 @@ interface ImagesGameState {
     shuffledDeck: ImageCard[];
     currentMemorizeIndex: number;
     selectedSlotIndex: number | null;
+    lastPlayTime: number;
     phaseDeadline: number | null;
 
     setPreferences: (preferences: ImagesPreferences) => void;
@@ -51,6 +52,7 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     shuffledDeck: [],
     currentMemorizeIndex: 0,
     selectedSlotIndex: null,
+    lastPlayTime: 0,
     phaseDeadline: null,
 
     setPreferences: (preferences) => set({ preferences }),
@@ -126,6 +128,19 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     },
 
     selectSlot: (index) => set({ selectedSlotIndex: index }),
-    finishGame: () => set({ phase: "result", phaseDeadline: null }),
+    finishGame: () => {
+        const { phaseDeadline, recallTime } = get();
+        // Tính thời gian thực tế người chơi đã xếp bài (giây)
+        const remainingSeconds = phaseDeadline
+            ? Math.max(0, Math.round((phaseDeadline - Date.now()) / 1000))
+            : 0;
+        const timeSpent = Math.max(1, recallTime - remainingSeconds);
+        set({
+            phase: "result",
+            phaseDeadline: null,
+            lastPlayTime: timeSpent, // ➔ Lưu lại số giây đã chơi
+        });
+    },
+
     resetGame: () => set({ phase: "idle", phaseDeadline: null }),
 }));
