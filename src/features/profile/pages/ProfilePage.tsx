@@ -46,34 +46,38 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         let isCurrent = true;
+        let latestRequest = 0;
 
         const loadProfile = async () => {
+            const requestId = ++latestRequest;
             setIsLoading(true);
             setError(null);
 
             try {
                 const response = await apiClient.get('/profile/') as unknown as ProfileResponse;
-                if (isCurrent) {
+                if (isCurrent && requestId === latestRequest) {
                     setProfile(response.data.profile);
                     setUnavailableFields(response.data.unavailableFields ?? []);
                 }
             } catch (requestError) {
-                if (isCurrent) {
+                if (isCurrent && requestId === latestRequest) {
                     setError((requestError as ApiError).message ?? 'Không thể tải hồ sơ. Vui lòng thử lại.');
                 }
             } finally {
-                if (isCurrent) setIsLoading(false);
+                if (isCurrent && requestId === latestRequest) setIsLoading(false);
             }
         };
 
+        window.addEventListener('memio:game-session-recorded', loadProfile);
         void loadProfile();
         return () => {
             isCurrent = false;
+            window.removeEventListener('memio:game-session-recorded', loadProfile);
         };
     }, [reloadKey]);
 
     const hasUnavailableStats = unavailableFields.includes('exp') || unavailableFields.includes('streaks');
-    const loginStreak = profile?.streaks ?? null;
+    const playStreak = profile?.streaks ?? null;
     const experience = profile?.exp ?? null;
     const experienceProgress = getExperienceProgress(experience);
 
@@ -183,18 +187,22 @@ export const ProfilePage = () => {
                                         <Flame size={19} aria-hidden="true" />
                                     </span>
                                     <div className="min-w-0">
-                                        <h2 id="streak-title" className="text-[10px] font-semibold tracking-[0.04em] text-[#748277]">LOGIN STREAK</h2>
+                                        <h2 id="streak-title" className="text-[10px] font-semibold tracking-[0.04em] text-[#748277]">CHUỖI NGÀY CHƠI</h2>
                                         <p className="mt-0.5 text-[19px] font-bold leading-tight sm:text-[21px]">
-                                            {isLoading ? 'Đang tải...' : loginStreak === null ? 'Chưa có dữ liệu' : `${loginStreak} ngày liên tiếp`}
+                                            {isLoading ? 'Đang tải...' : playStreak === null ? 'Chưa có dữ liệu' : `${playStreak} ngày liên tiếp`}
                                         </p>
                                     </div>
                                 </div>
                                 <p className="mt-4 text-xs text-[#748277]">
-                                    {isLoading ? ' ' : loginStreak === null ? 'Chuỗi đăng nhập hiện chưa khả dụng.' : `Bạn đã học liên tục ${loginStreak} ngày.`}
+                                    {isLoading ? ' ' : playStreak === null
+                                        ? 'Chưa có dữ liệu về chuỗi ngày chơi.'
+                                        : playStreak === 0
+                                            ? 'Hoàn thành một ván để bắt đầu chuỗi ngày chơi.'
+                                            : `Bạn đã hoàn thành game liên tục ${playStreak} ngày.`}
                                 </p>
-                                {!isLoading && loginStreak !== null && (
-                                    <div className="mt-3 flex gap-1.5" aria-label={`${loginStreak} ngày liên tiếp`}>
-                                        {Array.from({ length: Math.min(loginStreak, 7) }, (_, day) => (
+                                {!isLoading && playStreak !== null && (
+                                    <div className="mt-3 flex gap-1.5" aria-label={`${playStreak} ngày chơi liên tiếp`}>
+                                        {Array.from({ length: Math.min(playStreak, 7) }, (_, day) => (
                                             <span key={day} className="flex h-[15px] w-[15px] items-center justify-center rounded-full bg-[#2e7d32] text-white">
                                                 <Check size={10} strokeWidth={3} aria-hidden="true" />
                                             </span>
