@@ -1,8 +1,6 @@
 export type ImageCard = {
     id: string;
-    emoji: string;
-    name: string;
-    bgColor: string;
+    imageUrl: string;
 };
 
 export type GamePhase = "idle" | "memorize" | "recall" | "result";

@@ -49,16 +49,21 @@ export const ImagesRecallPhase = () => {
                                     key={`slot-${index}`}
                                     type="button"
                                     onClick={() => item ? removeImage(index) : selectSlot(index)}
-                                    className={`relative flex h-16 w-14 items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${item ? "border-[#1a7a4a] bg-[#e6f7ed] shadow-sm" : isSelected ? "border-[#1a7a4a] bg-[#e6f7ed] ring-2 ring-[#1a7a4a]" : "border-dashed border-[#c8d8d0] bg-[#f8faf9] hover:border-[#1a7a4a]"
+                                    className={`relative flex h-20 w-20 items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${item ? "border-[#1a7a4a] bg-[#e6f7ed] shadow-sm" : isSelected ? "border-[#1a7a4a] bg-[#e6f7ed] ring-2 ring-[#1a7a4a]" : "border-dashed border-[#c8d8d0] bg-[#f8faf9] hover:border-[#1a7a4a]"
                                         }`}
                                 >
-                                    <span className="absolute left-1.5 top-1 text-[10px] font-bold text-[#77839a]">{index + 1}</span>
+                                    <span className="absolute left-1.5 top-1 text-[11px] font-bold text-[#77839a]">{index + 1}</span>
                                     {item ? (
-                                        <span className="text-3xl leading-none">{item.emoji}</span>
+                                        <img
+                                            src={item.imageUrl}
+                                            alt="Ảnh đã chọn"
+                                            className="h-16 w-16 rounded-lg object-cover"
+                                        />
                                     ) : (
-                                        <span className="text-xs font-bold text-[#c8d8d0]">{isSelected ? "✎" : "+"}</span>
+                                        <span className="text-sm font-bold text-[#c8d8d0]">{isSelected ? "✎" : "+"}</span>
                                     )}
                                 </button>
+
                             );
                         })}
                     </div>
@@ -75,11 +80,16 @@ export const ImagesRecallPhase = () => {
                                     type="button"
                                     disabled={isUsed}
                                     onClick={() => placeImage(img)}
-                                    className={`flex h-16 w-14 items-center justify-center rounded-xl border text-3xl transition cursor-pointer ${isUsed ? "border-[#e2e8f0] bg-[#f1f5f9] opacity-25 cursor-not-allowed" : "border-[#e0eee6] hover:scale-105 hover:border-[#1a7a4a] shadow-xs " + img.bgColor
+                                    className={`flex h-20 w-20 items-center justify-center rounded-xl border transition cursor-pointer ${isUsed ? "border-[#e2e8f0] bg-[#f1f5f9] opacity-25 cursor-not-allowed" : "border-[#e0eee6] hover:scale-105 hover:border-[#1a7a4a] shadow-xs bg-white"
                                         }`}
                                 >
-                                    <span>{img.emoji}</span>
+                                    <img
+                                        src={img.imageUrl}
+                                        alt="Ảnh"
+                                        className="h-16 w-16 rounded-lg object-cover"
+                                    />
                                 </button>
+
                             );
                         })}
                     </div>

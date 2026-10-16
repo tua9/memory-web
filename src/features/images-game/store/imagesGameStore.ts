@@ -3,19 +3,23 @@ import type { ImageCard, GamePhase } from "../types/imageTypes";
 import { generateImageDeck, getImageCountForLevel, shuffle } from "../utils/imageUtils";
 
 interface ImagesGameState {
+    preferences: ImagesPreferences;
     phase: GamePhase;
     level: number;
     memorizeTime: number;
     recallTime: number;
     imagesToMemorize: ImageCard[];
     userRecall: (ImageCard | null)[];
-    shuffledDeck: ImageCard[]; // CHỈ CHỨA N HÌNH ẢNH ĐÃ XÁO TRỘN
+    shuffledDeck: ImageCard[];
     currentMemorizeIndex: number;
     selectedSlotIndex: number | null;
+    lastPlayTime: number;
     phaseDeadline: number | null;
 
+    setPreferences: (preferences: ImagesPreferences) => void;
     setLevel: (level: number) => void;
     setMemorizeTime: (time: number) => void;
+    setRecallTime: (time: number) => void;
     startGame: () => void;
     nextMemorizeCard: () => void;
     prevMemorizeCard: () => void;
@@ -27,7 +31,18 @@ interface ImagesGameState {
     resetGame: () => void;
 }
 
+export interface ImagesPreferences {
+    groups: number;
+    hideTimer: boolean;
+    prepTime: number;
+}
+
 export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
+    preferences: {
+        groups: 1,
+        hideTimer: false,
+        prepTime: 20,
+    },
     phase: "idle",
     level: 1,
     memorizeTime: 60,
@@ -37,10 +52,13 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     shuffledDeck: [],
     currentMemorizeIndex: 0,
     selectedSlotIndex: null,
+    lastPlayTime: 0,
     phaseDeadline: null,
 
+    setPreferences: (preferences) => set({ preferences }),
     setLevel: (level) => set({ level: Math.max(1, level) }),
     setMemorizeTime: (time) => set({ memorizeTime: time }),
+    setRecallTime: (time) => set({ recallTime: time }),
 
     startGame: () => {
         const { level, memorizeTime } = get();
@@ -51,7 +69,6 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
             phase: "memorize",
             imagesToMemorize: selectedImages,
             userRecall: Array(count).fill(null),
-            // Tối ưu: Dải chọn bên dưới CHỈ chứa N hình ảnh đã xáo trộn!
             shuffledDeck: shuffle([...selectedImages]),
             currentMemorizeIndex: 0,
             selectedSlotIndex: null,
@@ -60,16 +77,20 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     },
 
     nextMemorizeCard: () => {
-        const { currentMemorizeIndex, imagesToMemorize } = get();
-        if (currentMemorizeIndex < imagesToMemorize.length - 1) {
-            set({ currentMemorizeIndex: currentMemorizeIndex + 1 });
+        const { currentMemorizeIndex, imagesToMemorize, preferences } = get();
+        const step = preferences.groups || 1;
+        if (currentMemorizeIndex + step < imagesToMemorize.length) {
+            set({ currentMemorizeIndex: currentMemorizeIndex + step });
         }
     },
 
     prevMemorizeCard: () => {
-        const { currentMemorizeIndex } = get();
-        if (currentMemorizeIndex > 0) {
-            set({ currentMemorizeIndex: currentMemorizeIndex - 1 });
+        const { currentMemorizeIndex, preferences } = get();
+        const step = preferences.groups || 1;
+        if (currentMemorizeIndex - step >= 0) {
+            set({ currentMemorizeIndex: currentMemorizeIndex - step });
+        } else {
+            set({ currentMemorizeIndex: 0 });
         }
     },
 
@@ -107,6 +128,19 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     },
 
     selectSlot: (index) => set({ selectedSlotIndex: index }),
-    finishGame: () => set({ phase: "result", phaseDeadline: null }),
+    finishGame: () => {
+        const { phaseDeadline, recallTime } = get();
+        // Tính thời gian thực tế người chơi đã xếp bài (giây)
+        const remainingSeconds = phaseDeadline
+            ? Math.max(0, Math.round((phaseDeadline - Date.now()) / 1000))
+            : 0;
+        const timeSpent = Math.max(1, recallTime - remainingSeconds);
+        set({
+            phase: "result",
+            phaseDeadline: null,
+            lastPlayTime: timeSpent, // ➔ Lưu lại số giây đã chơi
+        });
+    },
+
     resetGame: () => set({ phase: "idle", phaseDeadline: null }),
 }));
