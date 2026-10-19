@@ -9,6 +9,7 @@ interface UserProfile {
     fullname: string | null;
     exp: number | null;
     streaks: number | null;
+    streakExpired: boolean;
 }
 
 interface ProfileResponse {
@@ -189,13 +190,21 @@ export const ProfilePage = () => {
                                     <div className="min-w-0">
                                         <h2 id="streak-title" className="text-[10px] font-semibold tracking-[0.04em] text-[#748277]">CHUỖI NGÀY CHƠI</h2>
                                         <p className="mt-0.5 text-[19px] font-bold leading-tight sm:text-[21px]">
-                                            {isLoading ? 'Đang tải...' : playStreak === null ? 'Chưa có dữ liệu' : `${playStreak} ngày liên tiếp`}
+                                            {isLoading
+                                                ? 'Đang tải...'
+                                                : playStreak === null
+                                                    ? 'Chưa có dữ liệu'
+                                                    : profile?.streakExpired
+                                                        ? 'CHUỖI'
+                                                        : `${playStreak} NGÀY CHƠI ĐÃ BỊ GIÁN ĐOẠN`}
                                         </p>
                                     </div>
                                 </div>
                                 <p className="mt-4 text-xs text-[#748277]">
                                     {isLoading ? ' ' : playStreak === null
                                         ? 'Chưa có dữ liệu về chuỗi ngày chơi.'
+                                        : profile?.streakExpired
+                                            ? 'Ôi, chuỗi ngày chơi của bạn đã bị ngắt mất rồi! Hôm nay mình cùng chơi lại nhé!'
                                         : playStreak === 0
                                             ? 'Hoàn thành một ván để bắt đầu chuỗi ngày chơi.'
                                             : `Bạn đã hoàn thành game liên tục ${playStreak} ngày.`}

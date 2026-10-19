@@ -13,6 +13,7 @@ interface UserProfile {
     fullname: string | null;
     exp: number | null;
     streaks: number | null;
+    streakExpired: boolean;
 }
 
 interface ProfileResponse {
@@ -118,9 +119,11 @@ export const UpdateProfilePage = () => {
     const experienceValue = isLoading ? 'Đang tải...' : formatExperience(profile?.exp ?? null);
     const streakValue = isLoading
         ? 'Đang tải...'
-        : profile?.streaks === null || profile?.streaks === undefined
+        : profile?.streakExpired
+            ? 'Chuỗi'
+            : profile?.streaks === null || profile?.streaks === undefined
             ? 'Chưa có dữ liệu'
-            : `${profile.streaks} ngày`;
+            : `${profile.streaks} ngày chơi đã bị gián đoạn`;
 
     return (
         <div className="min-h-screen bg-[#f8fbf8] text-[#1f2937]">
@@ -292,6 +295,11 @@ export const UpdateProfilePage = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {profile?.streakExpired && (
+                                    <p className="mt-3 text-[10px] leading-4 text-[#748277]">
+                                        Ôi, chuỗi ngày chơi của bạn đã bị ngắt mất rồi! Hôm nay mình cùng chơi lại nhé!
+                                    </p>
+                                )}
                                 {unavailableFields.length > 0 && (
                                     <p className="mt-4 text-[10px] leading-4 text-[#748277]">
                                         Một số thông tin xem trước chưa được máy chủ cung cấp.
