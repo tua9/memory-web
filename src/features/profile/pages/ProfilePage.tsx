@@ -195,8 +195,8 @@ export const ProfilePage = () => {
                                                 : playStreak === null
                                                     ? 'Chưa có dữ liệu'
                                                     : profile?.streakExpired
-                                                        ? 'CHUỖI'
-                                                        : `${playStreak} NGÀY CHƠI ĐÃ BỊ GIÁN ĐOẠN`}
+                                                        ? 'ĐÃ BỊ GIÁN ĐOẠN CHUỖI'
+                                                        : `${playStreak} NGÀY LIÊN TIẾP`}
                                         </p>
                                     </div>
                                 </div>

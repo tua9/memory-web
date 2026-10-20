@@ -120,10 +120,10 @@ export const UpdateProfilePage = () => {
     const streakValue = isLoading
         ? 'Đang tải...'
         : profile?.streakExpired
-            ? 'Chuỗi'
+            ? 'Đã bị gián đoạn chuỗi'
             : profile?.streaks === null || profile?.streaks === undefined
             ? 'Chưa có dữ liệu'
-            : `${profile.streaks} ngày chơi đã bị gián đoạn`;
+            : `${profile.streaks} ngày liên tiếp`;
 
     return (
         <div className="min-h-screen bg-[#f8fbf8] text-[#1f2937]">
