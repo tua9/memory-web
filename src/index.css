@@ -12,11 +12,69 @@
     --memio-primitives-border: #e3ebe6;
     --memio-primitives-page: #f8fbf8;
     --memio-shadow-soft: 0px 8px 24px 0px rgba(31, 77, 51, 0.08);
-  }
 
-  body {
-    font-family: var(--memio-body-default-font-family);
-    background-color: var(--memio-primitives-page);
-    color: var(--memio-primitives-ink);
+    /* Motion system tokens */
+    --memio-duration-fast: 150ms;
+    --memio-duration-base: 250ms;
+    --memio-duration-slow: 350ms;
+    --memio-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+/* Hero Carousel Layout */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "text"
+    "media"
+    "nav";
+  row-gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "text  media"
+      "nav   media";
+    column-gap: 2.5rem;
+    row-gap: 1.5rem;
+    align-items: center;
+  }
+}
+
+.hero-area-text {
+  grid-area: text;
+}
+
+.hero-area-media {
+  grid-area: media;
+}
+
+.hero-area-nav {
+  grid-area: nav;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--memio-body-default-font-family);
+  background-color: var(--memio-primitives-page);
+  color: var(--memio-primitives-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
