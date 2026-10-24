@@ -1,31 +1,43 @@
 import { useState } from "react";
+import { RoundSettings, RoundSettingsStatus } from "@/features/shared-game/components/RoundSettings";
+import { useGameCatalog } from "@/features/shared-game/store/gameCatalogStore";
 import { useImagesGameStore } from "../store/imagesGameStore";
-import { getImageCountForLevel } from "../utils/imageUtils";
-import { GameSettingsLayout } from "@/components/layout/GameSettingsLayout";
 import { ImagesPreferencesModal } from "./ImagesPreferencesModal";
 
 export const ImagesSettingsPhase = () => {
-    const { level, memorizeTime, setMemorizeTime, startGame } = useImagesGameStore();
+    const { game, status, error: catalogError, reload } = useGameCatalog("image");
+    const { memorizeTime, setMemorizeTime, startGame, pending, error } = useImagesGameStore();
     const [showPreferences, setShowPreferences] = useState(false);
-    const imageCount = getImageCountForLevel(level);
+
+    if (!game) {
+        return <RoundSettingsStatus title="Hình ảnh" status={status} error={catalogError} onRetry={() => void reload()} />;
+    }
+
+    // Giá trị đang chọn có thể không còn hợp lệ khi luật ở backend thay đổi
+    const memorizeSec = game.memorizeSecOptions.includes(memorizeTime) ? memorizeTime : game.defaultMemorizeSec;
 
     return (
         <>
-            <GameSettingsLayout
+            <RoundSettings
                 title="Hình ảnh"
-                level={level}
-                itemCount={imageCount}
                 itemUnit="hình ảnh"
-                memorizeTime={memorizeTime}
-                setMemorizeTime={setMemorizeTime}
-                onStart={startGame}
+                game={game}
+                customItemCount={null}
+                memorizeSec={memorizeSec}
+                onMemorizeSecChange={setMemorizeTime}
+                onStart={() => void startGame(memorizeSec)}
+                isStarting={pending === "start"}
+                error={error}
                 onOpenPreferences={() => setShowPreferences(true)}
             />
 
-            <ImagesPreferencesModal
-                isOpen={showPreferences}
-                onClose={() => setShowPreferences(false)}
-            />
+            {showPreferences && (
+                <ImagesPreferencesModal
+                    isOpen={showPreferences}
+                    onClose={() => setShowPreferences(false)}
+                    game={game}
+                />
+            )}
         </>
     );
 };
