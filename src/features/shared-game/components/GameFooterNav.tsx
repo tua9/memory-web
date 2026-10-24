@@ -26,7 +26,6 @@ export const GameFooterNav = ({
                     type="button"
                     onClick={onFirst}
                     disabled={isFirst}
-                    title="Về đầu (Space)"
                     className="rounded-xl border border-[#e0eee6] bg-white px-4 py-2 text-xs font-bold text-[#202b39] shadow-xs transition hover:border-[#1a7a4a] hover:text-[#1a7a4a] disabled:opacity-30 cursor-pointer"
                 >
                     {firstLabel}
@@ -35,7 +34,6 @@ export const GameFooterNav = ({
                     type="button"
                     onClick={onPrev}
                     disabled={isFirst}
-                    title="Trước (←)"
                     className="rounded-xl border border-[#e0eee6] bg-white px-5 py-2 text-xs font-bold text-[#202b39] shadow-xs transition hover:border-[#1a7a4a] hover:text-[#1a7a4a] disabled:opacity-30 cursor-pointer"
                 >
                     {prevLabel}
@@ -44,7 +42,6 @@ export const GameFooterNav = ({
                     type="button"
                     onClick={onNext}
                     disabled={isLast}
-                    title="Tiếp (→)"
                     className="rounded-xl border border-[#e0eee6] bg-white px-5 py-2 text-xs font-bold text-[#202b39] shadow-xs transition hover:border-[#1a7a4a] hover:text-[#1a7a4a] disabled:opacity-30 cursor-pointer"
                 >
                     {nextLabel}
