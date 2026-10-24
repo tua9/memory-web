@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
-import { formatPercent, formatTotalDuration } from '../utils/aggregate';
+import { formatPercent, formatTotalDuration } from '../utils/format';
 import type { DashboardSummary } from '../types';
 
 interface DeltaProps {

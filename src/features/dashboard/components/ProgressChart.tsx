@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { CHART_COLORS, GAME_META } from '../constants';
-import { formatPercent } from '../utils/aggregate';
+import { formatPercent } from '../utils/format';
 import type { ChartMetric, GameId, PeriodBucket } from '../types';
 import { SegmentedControl } from './SegmentedControl';
 

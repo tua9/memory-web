@@ -1,12 +1,12 @@
 import type { GameId } from './types';
 
 // Thứ tự cố định: màu luôn đi theo game, không đổi khi lọc
-export const GAME_IDS: readonly GameId[] = ['cards', 'images'];
+export const GAME_IDS: readonly GameId[] = ['card', 'image'];
 
 // Cặp màu đã kiểm tra khả năng phân biệt cho người mù màu (validate_palette, light)
 export const GAME_META: Record<GameId, { label: string; color: string }> = {
-    cards: { label: 'Thẻ bài', color: '#2e7d32' },
-    images: { label: 'Hình ảnh', color: '#2a78d6' },
+    card: { label: 'Thẻ bài', color: '#2e7d32' },
+    image: { label: 'Hình ảnh', color: '#2a78d6' },
 };
 
 export const CHART_COLORS = {
