@@ -9,6 +9,7 @@ import { PublicOnlyRoute } from './PublicOnlyRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 import ProfilePage from '@/features/profile/pages/ProfilePage';
 import UpdateProfilePage from '@/features/profile/pages/UpdateProfilePage';
+import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 
 
 
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
             {
                 path: '/profile/update',
                 element: <UpdateProfilePage />,
+            },
+            {
+                path: '/dashboard',
+                element: <DashboardPage />,
             },
         ],
     },

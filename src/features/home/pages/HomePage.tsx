@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
@@ -29,12 +30,20 @@ export const HomePage = () => {
                         </div>
                     )}
 
-                    <button
-                        onClick={logout}
-                        className="h-11 px-6 bg-[#2e7d32] hover:bg-[#236527] text-white font-semibold text-[14px] rounded-[12px] transition-colors"
-                    >
-                        Đăng xuất
-                    </button>
+                    <div className="flex flex-wrap justify-center gap-3">
+                        <Link
+                            to="/dashboard"
+                            className="inline-flex h-11 items-center px-6 bg-[#2e7d32] hover:bg-[#236527] text-white font-semibold text-[14px] rounded-[12px] transition-colors"
+                        >
+                            Xem tiến độ
+                        </Link>
+                        <button
+                            onClick={logout}
+                            className="h-11 px-6 border border-[#e3ebe6] bg-white hover:bg-[#f3f8f4] text-[#1f2937] font-semibold text-[14px] rounded-[12px] transition-colors"
+                        >
+                            Đăng xuất
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

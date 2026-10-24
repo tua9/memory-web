@@ -4,6 +4,7 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 const NAV_LINKS = [
   { label: "Phương pháp", href: "#" },
   { label: "Trò chơi", href: "/games" },
+  { label: "Tiến độ", href: "/dashboard" },
 ];
 
 export const Header = () => {
