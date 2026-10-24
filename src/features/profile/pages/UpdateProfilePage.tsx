@@ -13,6 +13,7 @@ interface UserProfile {
     fullname: string | null;
     exp: number | null;
     streaks: number | null;
+    streakExpired: boolean;
 }
 
 interface ProfileResponse {
@@ -62,30 +63,35 @@ export const UpdateProfilePage = () => {
 
     useEffect(() => {
         let isCurrent = true;
+        let latestRequest = 0;
 
-        const loadProfile = async () => {
+        const loadProfile = async (resetUsername = true) => {
+            const requestId = ++latestRequest;
             setIsLoading(true);
             setLoadError(null);
 
             try {
                 const response = await apiClient.get('/profile/') as unknown as ProfileResponse;
-                if (!isCurrent) return;
+                if (!isCurrent || requestId !== latestRequest) return;
 
                 setProfile(response.data.profile);
                 setUnavailableFields(response.data.unavailableFields ?? []);
-                reset({ username: response.data.profile.username ?? '' });
+                if (resetUsername) reset({ username: response.data.profile.username ?? '' });
             } catch (requestError) {
-                if (isCurrent) {
+                if (isCurrent && requestId === latestRequest) {
                     setLoadError((requestError as ApiError).message ?? 'Không thể tải hồ sơ. Vui lòng thử lại.');
                 }
             } finally {
-                if (isCurrent) setIsLoading(false);
+                if (isCurrent && requestId === latestRequest) setIsLoading(false);
             }
         };
 
+        const refreshStatsAfterGame = () => { void loadProfile(false); };
+        window.addEventListener('memio:game-session-recorded', refreshStatsAfterGame);
         void loadProfile();
         return () => {
             isCurrent = false;
+            window.removeEventListener('memio:game-session-recorded', refreshStatsAfterGame);
         };
     }, [reloadKey, reset]);
 
@@ -110,10 +116,14 @@ export const UpdateProfilePage = () => {
     };
 
     const usernameField = register('username');
-    const experienceValue = formatExperience(profile?.exp ?? null);
-    const streakValue = profile?.streaks === null || profile?.streaks === undefined
-        ? 'Chưa có dữ liệu'
-        : `${profile.streaks} ngày`;
+    const experienceValue = isLoading ? 'Đang tải...' : formatExperience(profile?.exp ?? null);
+    const streakValue = isLoading
+        ? 'Đang tải...'
+        : profile?.streakExpired
+            ? 'Đã bị gián đoạn chuỗi'
+            : profile?.streaks === null || profile?.streaks === undefined
+            ? 'Chưa có dữ liệu'
+            : `${profile.streaks} ngày liên tiếp`;
 
     return (
         <div className="min-h-screen bg-[#f8fbf8] text-[#1f2937]">
@@ -217,7 +227,7 @@ export const UpdateProfilePage = () => {
                                 </div>
 
                                 <p className="pt-1 text-[10px] leading-5 text-[#87958b]">
-                                    Bạn có thể cập nhật username bất cứ lúc nào. EXP và login streak được lưu tự động.
+                                    Bạn có thể cập nhật username bất cứ lúc nào. EXP và chuỗi ngày chơi được cập nhật sau mỗi ván hoàn tất.
                                 </p>
 
                                 {submitError && (
@@ -280,11 +290,16 @@ export const UpdateProfilePage = () => {
                                             <Flame size={17} aria-hidden="true" />
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="text-[9px] text-[#748277]">Streak</p>
+                                            <p className="text-[9px] text-[#748277]">Ngày chơi</p>
                                             <p className="truncate text-[13px] font-bold">{streakValue}</p>
                                         </div>
                                     </div>
                                 </div>
+                                {profile?.streakExpired && (
+                                    <p className="mt-3 text-[10px] leading-4 text-[#748277]">
+                                        Ôi, chuỗi ngày chơi của bạn đã bị ngắt mất rồi! Hôm nay mình cùng chơi lại nhé!
+                                    </p>
+                                )}
                                 {unavailableFields.length > 0 && (
                                     <p className="mt-4 text-[10px] leading-4 text-[#748277]">
                                         Một số thông tin xem trước chưa được máy chủ cung cấp.
@@ -300,7 +315,7 @@ export const UpdateProfilePage = () => {
                                     <h2 className="text-[12px] font-bold">Tiến trình được lưu tự động</h2>
                                 </div>
                                 <p className="mt-3 text-[10px] leading-[1.55] text-[#87907f]">
-                                    EXP và login streak phản ánh hoạt động học tập của bạn, nên không thể chỉnh sửa trực tiếp tại đây.
+                                    EXP và chuỗi ngày chơi phản ánh kết quả các ván đã hoàn tất, nên không thể chỉnh sửa trực tiếp tại đây.
                                 </p>
                             </section>
                         </aside>

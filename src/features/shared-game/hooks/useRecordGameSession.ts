@@ -23,10 +23,9 @@ export const useRecordGameSession = ({
 
     useEffect(() => {
         // Tránh bị React StrictMode gọi 2 lần liên tiếp
-        if (hasRecordedRef.current) return;
+        const userId = user?._id;
+        if (hasRecordedRef.current || !userId) return;
         hasRecordedRef.current = true;
-
-        const userId = user?.id || "guest_player";
 
         apiClient
             .post("/game-sessions", {
@@ -36,6 +35,7 @@ export const useRecordGameSession = ({
                 score,
             })
             .then(() => {
+                window.dispatchEvent(new Event('memio:game-session-recorded'));
                 console.info(`✅ [${gameName}] Đã ghi nhận lịch sử ván đấu thành công!`);
             })
             .catch((err) => {
