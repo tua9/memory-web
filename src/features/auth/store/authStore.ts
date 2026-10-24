@@ -42,15 +42,17 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user: null, isAuthenticated: false, isLoading: false });
     },
 
-    // Gọi backend để thu hồi session và xóa cookie; dù lỗi vẫn đăng xuất phía client.
+    // Gọi backend để thu hồi session và xóa cookie; chỉ xóa phiên ở client khi backend thành công.
     logout: async () => {
+        await authApi.logout();
         try {
-            await authApi.logout();
+            localStorage.removeItem('memio_user');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
         } catch {
-            // Bỏ qua: cookie có thể đã hết hạn hoặc mất kết nối
-        } finally {
-            useAuthStore.getState().clearSession();
+            // Bỏ qua nếu môi trường không cho phép truy cập localStorage
         }
+        useAuthStore.getState().clearSession();
     },
 }));
 
