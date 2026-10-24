@@ -1,8 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="755 2030 80 85" width="80" height="85">
-  <path d="M772 2089.99L762.4 2101.51M820 2089.99L829.6 2101.51M784.48 2102.47L781.6 2112.07M807.52 2102.47L810.4 2112.07" stroke="#399A7C" stroke-width="5.76" stroke-linecap="round"/>
-  <path d="M803.68 2036.23H788.32C777.716 2036.23 769.12 2044.83 769.12 2055.43V2084.23C769.12 2094.84 777.716 2103.43 788.32 2103.43H803.68C814.284 2103.43 822.88 2094.84 822.88 2084.23V2055.43C822.88 2044.83 814.284 2036.23 803.68 2036.23Z" fill="#A7E4C7" stroke="#399A7C" stroke-width="2.88"/>
-  <path d="M785.44 2068.87C787.031 2068.87 788.32 2067.58 788.32 2065.99C788.32 2064.4 787.031 2063.11 785.44 2063.11C783.849 2063.11 782.56 2064.4 782.56 2065.99C782.56 2067.58 783.849 2068.87 785.44 2068.87Z" fill="#264A3D"/>
-  <path d="M806.56 2068.87C808.151 2068.87 809.44 2067.58 809.44 2065.99C809.44 2064.4 808.151 2063.11 806.56 2063.11C804.969 2063.11 803.68 2064.4 803.68 2065.99C803.68 2067.58 804.969 2068.87 806.56 2068.87Z" fill="#264A3D"/>
-  <path d="M788.32 2078.47C793.44 2083.59 798.56 2083.59 803.68 2078.47" stroke="#264A3D" stroke-width="2.88" stroke-linecap="round"/>
-  <path d="M781.6 2048.71H802.72" stroke="#D8F5E5" stroke-width="4.8" stroke-linecap="round"/>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sprout Stem -->
+  <path d="M256 125V65" stroke="#009B7A" stroke-width="16" stroke-linecap="round"/>
+
+  <!-- Left Leaf -->
+  <path d="M256 75C234 51 201 45.5 175 58C181 80 203 97 225 97C240 97 250 84.5 256 75Z" fill="#39D69F" stroke="#00865D" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M190 62.5C208 65.5 230 73 245 78.5" stroke="#A4F9D1" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="203" cy="58" r="4.4" fill="#F0EA5F"/>
+
+  <!-- Right Leaf -->
+  <path d="M256 75C278 51 311 45.5 337 58C331 80 309 97 287 97C272 97 262 84.5 256 75Z" fill="#60E4AE" stroke="#00865D" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M322 62.5C304 65.5 282 73 267 78.5" stroke="#D8F8DF" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="309" cy="58" r="4.4" fill="#F0EA5F"/>
+
+  <!-- Arms -->
+  <path d="M150 375L92.5 444" stroke="#009B7A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M362 375L419.5 444" stroke="#009B7A" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- Legs -->
+  <path d="M199 420L184.5 497" stroke="#009B7A" stroke-width="24" stroke-linecap="round"/>
+  <path d="M313 420L327.5 497" stroke="#009B7A" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Body -->
+  <rect x="124" y="111" width="264" height="330" rx="96" fill="#96E5C3" stroke="#009B7A" stroke-width="15"/>
+
+  <!-- Forehead Highlight -->
+  <rect x="173" y="161" width="128" height="23" rx="11.5" fill="#D2F5E4"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="175.5" cy="287" rx="15" ry="8" fill="#E8B7A9" fill-opacity="0.8"/>
+  <ellipse cx="336.5" cy="287" rx="15" ry="8" fill="#E8B7A9" fill-opacity="0.8"/>
+
+  <!-- Eyes -->
+  <circle cx="203.5" cy="258" r="14" fill="#1D4A3D"/>
+  <circle cx="208.5" cy="251.5" r="4" fill="white"/>
+
+  <circle cx="307.5" cy="258" r="14" fill="#1D4A3D"/>
+  <circle cx="312.5" cy="251.5" r="4" fill="white"/>
+
+  <!-- Mouth -->
+  <path d="M217 318C224 342 287 342 294 318" stroke="#0C4C3C" stroke-width="13" stroke-linecap="round"/>
 </svg>
