@@ -1,6 +1,7 @@
 // Model thông tin người dùng - khớp với `buildUserInfo` ở backend (services/user.service.ts)
 export interface User {
     _id: string;
+    id?: string;
     email: string;
     username: string;
     status: string;

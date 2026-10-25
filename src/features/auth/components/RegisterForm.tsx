@@ -150,6 +150,7 @@ export const RegisterForm = (): ReactElement => {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
+                            aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                             className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#2e7d32] cursor-pointer"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -178,6 +179,7 @@ export const RegisterForm = (): ReactElement => {
                         <button
                             type="button"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            aria-label={showConfirmPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                             className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#2e7d32] cursor-pointer"
                         >
                             {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}

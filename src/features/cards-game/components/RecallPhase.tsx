@@ -20,7 +20,7 @@ const AnswerSlot = ({ card, index, isSelected, onClickEmpty, onClickFilled }: { 
             <button
                 type="button"
                 onClick={onClickFilled}
-                title="Click để trả bài về deck"
+                aria-label={`Lá bài ${card.rank} ${card.suit}, nhấp để trả bài về bộ bài`}
                 className="flex h-16 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-[#1a7a4a] bg-[#e6f7ed] shadow-sm transition hover:border-red-400 hover:bg-red-50 cursor-pointer"
             >
                 <span className="text-base leading-none" style={{ color: red ? "#e45454" : "#202b39" }}>{SUIT_SYMBOLS[card.suit]}</span>
@@ -32,7 +32,7 @@ const AnswerSlot = ({ card, index, isSelected, onClickEmpty, onClickFilled }: { 
         <button
             type="button"
             onClick={onClickEmpty}
-            title="Chọn ô này"
+            aria-label={`Chọn ô vị trí ${index + 1}`}
             className={`flex h-16 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-dashed text-sm font-bold transition-all cursor-pointer ${isSelected ? "border-[#1a7a4a] bg-[#e6f7ed] text-[#1a7a4a]" : "border-[#c8d8d0] bg-transparent text-[#77839a] hover:border-[#1a7a4a]"
                 }`}
         >
