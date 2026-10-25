@@ -5,7 +5,7 @@ import { GameSettingsLayout } from "@/components/layout/GameSettingsLayout";
 import { ImagesPreferencesModal } from "./ImagesPreferencesModal";
 
 export const ImagesSettingsPhase = () => {
-    const { level, memorizeTime, setMemorizeTime, startGame } = useImagesGameStore();
+    const { level, memorizeTime, setMemorizeTime, startGame, isLoading } = useImagesGameStore();
     const [showPreferences, setShowPreferences] = useState(false);
     const imageCount = getImageCountForLevel(level);
 
@@ -20,6 +20,7 @@ export const ImagesSettingsPhase = () => {
                 setMemorizeTime={setMemorizeTime}
                 onStart={startGame}
                 onOpenPreferences={() => setShowPreferences(true)}
+                isLoading={isLoading}
             />
 
             <ImagesPreferencesModal

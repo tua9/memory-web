@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { ImageCard, GamePhase } from "../types/imageTypes";
-import { generateImageDeck, getImageCountForLevel, shuffle } from "../utils/imageUtils";
+import { getImageCountForLevel, preloadImages, shuffle } from "../utils/imageUtils";
+import { fetchRandomImages } from "../api/imageGameApi";
 
 interface ImagesGameState {
     preferences: ImagesPreferences;
@@ -15,12 +16,13 @@ interface ImagesGameState {
     selectedSlotIndex: number | null;
     lastPlayTime: number;
     phaseDeadline: number | null;
+    isLoading: boolean;
 
     setPreferences: (preferences: ImagesPreferences) => void;
     setLevel: (level: number) => void;
     setMemorizeTime: (time: number) => void;
     setRecallTime: (time: number) => void;
-    startGame: () => void;
+    startGame: () => Promise<void>;
     nextMemorizeCard: () => void;
     prevMemorizeCard: () => void;
     finishMemorize: () => void;
@@ -54,26 +56,41 @@ export const useImagesGameStore = create<ImagesGameState>((set, get) => ({
     selectedSlotIndex: null,
     lastPlayTime: 0,
     phaseDeadline: null,
+    isLoading: false,
 
     setPreferences: (preferences) => set({ preferences }),
     setLevel: (level) => set({ level: Math.max(1, level) }),
     setMemorizeTime: (time) => set({ memorizeTime: time }),
     setRecallTime: (time) => set({ recallTime: time }),
 
-    startGame: () => {
-        const { level, memorizeTime } = get();
-        const count = getImageCountForLevel(level);
-        const selectedImages = generateImageDeck(count);
+    startGame: async () => {
+        const { level, memorizeTime, isLoading } = get();
+        if (isLoading) return;
 
-        set({
-            phase: "memorize",
-            imagesToMemorize: selectedImages,
-            userRecall: Array(count).fill(null),
-            shuffledDeck: shuffle([...selectedImages]),
-            currentMemorizeIndex: 0,
-            selectedSlotIndex: null,
-            phaseDeadline: Date.now() + memorizeTime * 1000,
-        });
+        set({ isLoading: true });
+
+        try {
+            const count = getImageCountForLevel(level);
+            // 1. Lấy danh sách ảnh đa dạng theo từng level từ MongoDB / Backend API
+            const selectedImages = await fetchRandomImages(count, level);
+
+            // 2. Preload toàn bộ ảnh vào bộ nhớ đệm trình duyệt để hiển thị mượt mà tức thì 60fps
+            await preloadImages(selectedImages.map((img) => img.imageUrl));
+
+            set({
+                phase: "memorize",
+                imagesToMemorize: selectedImages,
+                userRecall: Array(count).fill(null),
+                shuffledDeck: shuffle([...selectedImages]),
+                currentMemorizeIndex: 0,
+                selectedSlotIndex: null,
+                phaseDeadline: Date.now() + memorizeTime * 1000,
+                isLoading: false,
+            });
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu ảnh cho trò chơi:", error);
+            set({ isLoading: false });
+        }
     },
 
     nextMemorizeCard: () => {

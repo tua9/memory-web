@@ -28,6 +28,7 @@ interface GameSettingsLayoutProps {
     setMemorizeTime: (time: number) => void;
     onStart: () => void;
     onOpenPreferences?: () => void;
+    isLoading?: boolean;
 }
 
 export const GameSettingsLayout = ({
@@ -39,6 +40,7 @@ export const GameSettingsLayout = ({
     setMemorizeTime,
     onStart,
     onOpenPreferences,
+    isLoading = false,
 }: GameSettingsLayoutProps) => {
     const [activeTab, setActiveTab] = useState("Tiêu chuẩn");
     const [showExplanation, setShowExplanation] = useState(false);
@@ -159,9 +161,21 @@ export const GameSettingsLayout = ({
                                 <button
                                     type="button"
                                     onClick={onStart}
-                                    className="flex items-center justify-center gap-2 rounded-full bg-[#2e7d32] px-8 py-4 text-[18px] font-bold text-white shadow-[0px_8px_20px_rgba(46,125,50,0.3),0px_4px_0px_#1b5e20] transition hover:bg-[#236527] active:translate-y-1 active:shadow-none cursor-pointer"
+                                    disabled={isLoading}
+                                    className={`flex items-center justify-center gap-2 rounded-full px-8 py-4 text-[18px] font-bold text-white transition cursor-pointer ${
+                                        isLoading
+                                            ? "bg-[#649e6b] opacity-80 cursor-wait"
+                                            : "bg-[#2e7d32] shadow-[0px_8px_20px_rgba(46,125,50,0.3),0px_4px_0px_#1b5e20] hover:bg-[#236527] active:translate-y-1 active:shadow-none"
+                                    }`}
                                 >
-                                    <span>Bắt đầu</span>
+                                    {isLoading ? (
+                                        <>
+                                            <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                            <span>Đang chuẩn bị ảnh...</span>
+                                        </>
+                                    ) : (
+                                        <span>Bắt đầu</span>
+                                    )}
                                 </button>
                             </div>
                         </div>

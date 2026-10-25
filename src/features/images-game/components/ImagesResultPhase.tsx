@@ -8,20 +8,19 @@ const MAX_LEVEL = 10;
 
 const ImageChip = ({ image, isCorrect, showMark = false }: { image: ImageCard | null; isCorrect?: boolean; showMark?: boolean }) => {
     if (!image) {
-        return <div className="flex h-16 w-14 items-center justify-center rounded-xl border-2 border-dashed border-[#c8d8d0] text-sm font-bold text-[#c8d8d0]">—</div>;
+        return <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-dashed border-[#c8d8d0] text-sm font-bold text-[#c8d8d0]">—</div>;
     }
     const borderColor = showMark ? (isCorrect ? "#1a7a4a" : "#e45454") : "#e0eee6";
     const bgColor = showMark ? (isCorrect ? "#e6f7ed" : "#fef2f2") : "#ffffff";
 
     return (
-        <div className="flex flex-col items-center gap-1">
-            <div className="flex h-16 w-14 flex-col items-center justify-center gap-0.5 rounded-xl border-2 text-[11px] font-bold shadow-xs transition" style={{ borderColor, backgroundColor: bgColor }}>
+        <div className="flex flex-col items-center gap-1.5">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 p-1 shadow-xs transition" style={{ borderColor, backgroundColor: bgColor }}>
                 <img
                     src={image.imageUrl}
                     alt="Hình ảnh"
-                    className="h-12 w-12 rounded-lg object-cover"
+                    className="h-full w-full rounded-xl object-cover"
                 />
-                <span className="max-w-full truncate px-1 text-[9px] font-bold text-[#202b39]">{image.name}</span>
             </div>
             {showMark && (
                 <span className="text-xs font-bold" style={{ color: isCorrect ? "#1a7a4a" : "#e45454" }}>
@@ -85,15 +84,14 @@ export const ImagesResultPhase = () => {
                     <h2 className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#77839a]">Thứ tự đúng</h2>
                     <div className="flex flex-wrap justify-center gap-3">
                         {imagesToMemorize.map((img, index) => (
-                            <div key={`correct-${index}`} className="flex flex-col items-center gap-1">
+                            <div key={`correct-${index}`} className="flex flex-col items-center gap-1.5">
                                 <span className="text-[10px] font-bold text-[#77839a]">{index + 1}</span>
-                                <div className="flex h-16 w-14 flex-col items-center justify-center gap-0.5 rounded-xl border border-[#1a7a4a] bg-[#e6f7ed] text-[11px] font-bold">
+                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[#1a7a4a] bg-[#e6f7ed] p-1 shadow-xs">
                                     <img
                                         src={img.imageUrl}
                                         alt="Hình ảnh"
-                                        className="h-12 w-12 rounded-lg object-cover"
+                                        className="h-full w-full rounded-xl object-cover"
                                     />
-                                    <span className="max-w-full truncate px-1 text-[9px] font-bold text-[#1f2937]">{img.name}</span>
                                 </div>
                             </div>
                         ))}

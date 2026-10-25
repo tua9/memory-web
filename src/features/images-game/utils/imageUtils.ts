@@ -14,31 +14,28 @@ export const getImageCountForLevel = (level: number): number => {
   return 6 + (safeLevel - 1) * 2;
 };
 
-export const generateImageDeck = (count: number): ImageCard[] => {
-  const gameSession = Math.random().toString(36).substring(2, 9);
+/**
+ * Tải trước hình ảnh vào bộ nhớ đệm (cache) của trình duyệt.
+ * Đảm bảo khi người chơi bắt đầu game, toàn bộ hình ảnh sẽ hiển thị tức thì 60fps,
+ * hoàn toàn không bị trắng hình hay giật lag.
+ * Có cơ chế timeout 3.5s để đảm bảo trải nghiệm chơi không bị chặn quá lâu nếu mạng chậm.
+ */
+export const preloadImages = (urls: string[]): Promise<void> => {
+  if (!urls || urls.length === 0) return Promise.resolve();
 
-  fetch("https://picsum.photos/seed/1/400/400")
-    .then((response) => {
-      console.log("ABC Fetching image for seed 1, response:", response);
-      if (!response.ok) {
-        throw new Error("Failed to fetch image");
-      }
-      console.log("URL response:", response.url);
-      return response.blob();
-    })
-    .then((blob) => {
-      const imageUrl = URL.createObjectURL(blob);
-      console.log("ABC Fetched image URL:", imageUrl);
-    })
-    .catch((error) => {
-      console.error("Error fetching image:", error);
-    });
+  const loadPromises = urls.map(
+    (url) =>
+      new Promise<void>((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => resolve();
+        img.onerror = () => resolve(); // Tiếp tục dù 1 ảnh lỗi để không làm treo giao diện
+      })
+  );
 
-  return Array.from({ length: count }, (_, index) => {
-    const seed = `memio_${gameSession}_${index}`;
-    return {
-      id: `img-${seed}`,
-      imageUrl: `https://picsum.photos/seed/${seed}/400/400`,
-    };
+  const timeoutPromise = new Promise<void>((resolve) => {
+    setTimeout(resolve, 3500);
   });
+
+  return Promise.race([Promise.all(loadPromises).then(() => {}), timeoutPromise]);
 };
