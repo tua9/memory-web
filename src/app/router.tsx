@@ -15,6 +15,7 @@ import LociPracticePage from "@/features/practice/pages/LociPracticePage";
 import StoryGuidePage from "@/features/methods/pages/StoryGuidePage";
 import NumberShapeGuidePage from "@/features/methods/pages/NumberShapeGuidePage";
 import MemoryPalaceGuidePage from "@/features/methods/pages/MemoryPalaceGuidePage";
+import DashboardPage from "@/features/dashboard/pages/DashboardPage";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/update",
         element: <UpdateProfilePage />,
+      },
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
       },
     ],
   },

@@ -63,7 +63,7 @@ export const ProfilePage = () => {
     const levelProgress = profile ? getLevelProgress(profile.level) : null;
 
     return (
-        <div className="min-h-screen bg-[#f8fbf8] text-[#1f2937]">
+        <div className="min-h-screen bg-[#f8fbf8] font-sans text-[#1f2937]">
             <Header />
 
             <main className="mx-auto w-full max-w-[1200px] px-5 pb-14 pt-7 sm:px-8 sm:pt-8 lg:px-0">
