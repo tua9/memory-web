@@ -10,10 +10,11 @@ const morphIntoAuthCard = (event: React.MouseEvent<HTMLElement>) => {
   event.currentTarget.style.setProperty("view-transition-name", "auth-card");
 };
 
+// requiresAuth: chỉ hiện khi đã đăng nhập (trang Tiến độ cần tài khoản để có dữ liệu)
 const NAV_LINKS = [
-  { label: "Phương pháp", href: "/#methods" },
-  { label: "Trò chơi", href: "/games" },
-  { label: "Tiến độ", href: "/dashboard" },
+  { label: "Phương pháp", href: "/#methods", requiresAuth: false },
+  { label: "Trò chơi", href: "/games", requiresAuth: false },
+  { label: "Tiến độ", href: "/dashboard", requiresAuth: true },
 ];
 
 export const Header = () => {
@@ -28,6 +29,7 @@ export const Header = () => {
   const logoutItemRef = useRef<HTMLButtonElement>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
+  const navLinks = NAV_LINKS.filter((link) => isAuthenticated || !link.requiresAuth);
 
   // Trang có các vùng data-tint / data-nav (hiện chỉ trang chủ): header lấy màu chương đang nằm ngay dưới nó
   // và gạch chân link của vùng đó. Trang không có các vùng này thì header giữ nguyên.
@@ -170,7 +172,7 @@ export const Header = () => {
         {/* Desktop Nav & Actions */}
         <div className="hidden items-center gap-10 md:flex">
           <nav className="flex items-center gap-10">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}
@@ -347,7 +349,7 @@ export const Header = () => {
           )}
         >
           <nav className="flex flex-col gap-6 text-left">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}

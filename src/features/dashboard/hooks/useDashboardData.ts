@@ -8,6 +8,7 @@ export interface DashboardData {
     summary: DashboardSummary;
     previousSummary: DashboardSummary;
     range: DateRange;
+    timeZone: string;   // Múi giờ backend dùng để chia kỳ và tính chuỗi ngày
 }
 
 export type DashboardState =
@@ -36,6 +37,7 @@ export const useDashboardData = (period: Period, game: GameFilter) => {
                         summary: timeline.summary,
                         previousSummary: timeline.previousSummary,
                         range: { start: new Date(timeline.range.start), end: new Date(timeline.range.end) },
+                        timeZone: timeline.timeZone,
                     },
                 });
             } catch (error) {
