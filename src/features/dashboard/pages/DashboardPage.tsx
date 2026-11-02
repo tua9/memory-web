@@ -16,7 +16,7 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { useCatalog, useProfile, useRecentSessions } from '../hooks/useOverview';
 import { PROGRESS_TIME_ZONE, dayKey, describePeriod } from '../utils/format';
 import type { GameId, GameSession, Period } from '../types';
-import '../dashboard.css';
+import '@/styles/app-screen.css';
 
 const PERIOD_OPTIONS = [
     { value: 'week', label: 'Theo tuần' },

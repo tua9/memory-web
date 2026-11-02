@@ -1,5 +1,5 @@
-/* Dashboard tiến độ: lưới 12 cột trong khung chung của trang (page-col), khối nền nhạt một bậc,
-   biểu đồ là thẻ trắng duy nhất. Hàng 9/3, rồi 12 (4 ô 3/3/3/3), rồi 6/6: mọi mép trong đều trùng cột. */
+/* Màn hình ứng dụng (dashboard, hồ sơ): lưới 12 cột trong khung chung của trang (page-col), khối nền nhạt một bậc,
+   biểu đồ là thẻ trắng duy nhất. Dashboard: hàng 9/3, rồi 12 (4 ô 3/3/3/3), rồi 6/6: mọi mép trong đều trùng cột. */
 
 .dash {
   --panel: #edf3ef;
