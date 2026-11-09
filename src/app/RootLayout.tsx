@@ -1,5 +1,6 @@
 import { useLayoutEffect } from "react";
-import { Outlet, useLocation, useNavigationType } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigationType } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 // Router không tự cuộn khi chuyển trang: trang mới hiện ở đúng vị trí cuộn của trang cũ.
 // Không dùng <ScrollRestoration /> vì nó cuộn theo scroll-behavior: smooth của trang (trượt từ cuối lên đầu).
@@ -18,9 +19,12 @@ const ScrollToTop = () => {
 };
 
 // Khung chung bọc mọi trang
-export const RootLayout = () => (
-  <>
-    <ScrollToTop />
-    <Outlet />
-  </>
-);
+export const RootLayout = () => {
+  const { pathname } = useLocation();
+  const { user, isLoading } = useAuthStore();
+  const parentPath = pathname.startsWith('/parent') || pathname.startsWith('/family-room') || pathname === '/forgot-password';
+  if (!isLoading && user?.role === 'parent' && !parentPath) {
+    return <Navigate to={user.isEmailVerified ? '/parent' : '/parent/pending'} replace />;
+  }
+  return <><ScrollToTop /><Outlet /></>;
+};

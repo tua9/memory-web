@@ -10,6 +10,7 @@ import { Achievements } from '../components/Achievements';
 import { ProfileHeader } from '../components/ProfileHeader';
 import { Records } from '../components/Records';
 import { buildBadges, isEarned } from '../utils/badges';
+import { ParentLinkCard } from '@/features/parent/components/ParentLinkCard';
 import '@/styles/app-screen.css';
 import '../profile.css';
 
@@ -99,6 +100,7 @@ export const ProfilePage = ({ startEditing = false }: { startEditing?: boolean }
                             {(data) => <AccountSettings profile={data} startEditing={startEditing} onSaved={onSaved} />}
                         </BlockState>
                     </section>
+                    {profileState.status === 'ready' && <ParentLinkCard childName={profileState.data.username} />}
                 </div>
             </main>
         </div>
