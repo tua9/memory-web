@@ -51,7 +51,9 @@ export const LoginForm = (): ReactElement => {
 
             // Token đã được backend set vào cookie httpOnly, chỉ cần lưu userInfo
             saveSession(response.data.userInfo);
-            navigate(redirectTo, { replace: true });
+            navigate(response.data.userInfo.role === 'parent'
+                ? (response.data.userInfo.isEmailVerified ? '/parent' : '/parent/pending')
+                : redirectTo, { replace: true });
         } catch (err) {
             const error = err as ApiErrorResponse;
             // Backend không gửi mã lỗi riêng cho login: 401 = sai thông tin, 403 = tài khoản không hoạt động

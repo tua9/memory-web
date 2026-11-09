@@ -62,14 +62,16 @@ export const authApi = {
         ) as unknown as Promise<MessageResponse>;
     },
 
-    // Quên mật khẩu: gửi link email (Flow B)
-    forgotPassword: (
+    // Quên mật khẩu: gửi link email (Flow B). Gửi cho cả tài khoản bé và phụ huynh:
+    // hai endpoint đều trả cùng một câu chung, backend tự biết email thuộc loại tài khoản nào
+    forgotPassword: async (
         email: string
     ): Promise<MessageResponse> => {
-        return apiClient.post(
-            '/password-reset/forgot',
-            { email }
-        ) as unknown as Promise<MessageResponse>;
+        const [response] = await Promise.all([
+            apiClient.post('/password-reset/forgot', { email }),
+            apiClient.post('/parent/password-reset/forgot', { email }),
+        ]);
+        return response as unknown as MessageResponse;
     },
 
     // Chỉ kiểm tra link, không làm link mất hiệu lực. Token đi trong body (không đặt trên URL) để khỏi vào log
