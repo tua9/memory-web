@@ -26,7 +26,8 @@ const NAV_LINKS = [
   { label: "Phương pháp", href: "/methods" },
   { label: "Trò chơi", href: "/games" },
   { label: "Thử thách", href: "/daily" },
-  { label: "Chơi cùng ba mẹ", href: "/family-room" },
+  // Phòng chơi cùng ba mẹ cần tài khoản đã liên kết, khách chưa đăng nhập không thấy mục này
+  { label: "Chơi cùng ba mẹ", href: "/family-room", authOnly: true },
 ];
 
 export const Header = () => {
@@ -35,6 +36,7 @@ export const Header = () => {
   const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
+  const navLinks = NAV_LINKS.filter((link) => !link.authOnly || isAuthenticated);
 
   // Mục đang mở: trang hiện tại hoặc trang con của nó (/methods/story-linking thuộc "Phương pháp")
   const { pathname } = useLocation();
@@ -256,7 +258,7 @@ export const Header = () => {
         {/* Từ 1024px mới đủ chỗ cho 4 mục cùng nút tài khoản trên một hàng; nhỏ hơn dùng menu thu gọn */}
         <div className="hidden items-center gap-10 lg:flex">
           <nav className="flex items-center gap-10">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}
@@ -324,7 +326,7 @@ export const Header = () => {
           )}
         >
           <nav className="flex flex-col gap-6 text-left">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}
