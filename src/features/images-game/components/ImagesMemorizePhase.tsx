@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useImagesGameStore } from "../store/imagesGameStore";
-import { usePhaseTimer } from "@/features/cards-game/hooks/usePhaseTimer";
+import { usePhaseTimer } from "@/features/shared-game/hooks/usePhaseTimer";
 import { GameHeader } from "@/features/shared-game/components/GameHeader";
 import { MemorizeStage } from "@/features/shared-game/components/MemorizeStage";
 import { PlayHints } from "@/features/shared-game/components/PlayHints";
@@ -53,6 +53,7 @@ export const ImagesMemorizePhase = () => {
             <GameHeader
                 gameName="Hình ảnh"
                 level={level}
+                daily={rules?.mode === "daily"}
                 status={`Ghi nhớ thứ tự · đang xem hình ${shownTo} trên ${total}`}
                 progress={shownTo / total}
                 timeLeft={preferences.hideTimer ? undefined : timeLeft}

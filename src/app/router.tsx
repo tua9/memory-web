@@ -1,10 +1,12 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
-import HomePage from "@/features/home/pages/HomePage";
 import GameSelectionPage from "@/components/layout/GameSelectionPage";
 import { CardsGame } from "@/features/cards-game/components/CardsGame";
 import { ImagesGame } from "@/features/images-game/components/ImagesGame";
+import { NumbersGame } from "@/features/numbers-game/components/NumbersGame";
+import { FaceNameGame } from "@/features/facename-game/components/FaceNameGame";
+import { WordsGame } from "@/features/words-game/components/WordsGame";
 import { PublicOnlyRoute } from "./PublicOnlyRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ProfilePage from "@/features/profile/pages/ProfilePage";
@@ -18,6 +20,8 @@ import MemoryPalaceGuidePage from "@/features/methods/pages/MemoryPalaceGuidePag
 import DashboardPage from "@/features/dashboard/pages/DashboardPage";
 import MethodsPage from "@/features/methods/pages/MethodsPage";
 import { RootLayout } from "./RootLayout";
+import { HomeRoute } from "./HomeRoute";
+import DailyPage from "@/features/daily/pages/DailyPage";
 
 // Mọi trang nằm dưới RootLayout (đưa về đầu trang khi chuyển trang)
 export const router = createBrowserRouter([
@@ -26,11 +30,15 @@ export const router = createBrowserRouter([
     children: [
   {
     path: "/",
-    element: <HomePage />,
+    element: <HomeRoute />,
   },
   {
     path: "/games",
     element: <GameSelectionPage />,
+  },
+  {
+    path: "/daily",
+    element: <DailyPage />,
   },
   {
     path: "/games/cards",
@@ -39,6 +47,18 @@ export const router = createBrowserRouter([
   {
     path: "/games/images",
     element: <ImagesGame />,
+  },
+  {
+    path: "/games/facename",
+    element: <FaceNameGame />,
+  },
+  {
+    path: "/games/words",
+    element: <WordsGame />,
+  },
+  {
+    path: "/games/numbers",
+    element: <NumbersGame />,
   },
   {
     element: <ProtectedRoute />,

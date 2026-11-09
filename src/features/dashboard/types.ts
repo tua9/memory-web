@@ -1,5 +1,6 @@
 // Trùng tên game ở backend
-export type GameId = 'card' | 'image';
+export type { GameName as GameId } from '@/features/shared-game/registry';
+import type { GameName as GameId } from '@/features/shared-game/registry';
 
 export type Period = 'week' | 'month';
 export type GameFilter = 'all' | GameId;
@@ -11,7 +12,8 @@ export interface GameSession {
     id: string;
     game: GameId;
     playedAt: Date;
-    level: number | null;   // null với ván tự chọn số lượng
+    level: number | null;   // null với ván tự chọn số lượng và ván thử thách ngày
+    daily: boolean;         // Ván thử thách ngày
     totalItems: number;     // Số thẻ/hình phải ghi nhớ
     correctItems: number;   // Số thẻ/hình nhớ đúng
     accuracy: number;       // 0..1

@@ -3,21 +3,25 @@ import type { ApiSuccessResponse } from "@/types/auth.types";
 
 // Kiểu dữ liệu khớp với backend: GET /api/games và luồng /api/game-sessions.
 // Ngày giờ trong JSON là chuỗi ISO.
-export type GameName = "card" | "image";
-export type RoundMode = "level" | "custom";
+import type { GameName } from "../registry";
+export type { GameName } from "../registry";
+// daily: ván thử thách ngày, chỉ tạo qua /api/daily-challenge/start
+export type RoundMode = "level" | "custom" | "daily";
 export type RoundResult = "perfect" | "pass" | "fail";
 export type RecordKey = "bestLevel" | "fastestMemorize";
 
 export interface GameCatalogItem {
   gameName: GameName;
   maxLevel: number;
-  levels: { level: number; itemCount: number }[];
+  levels: { level: number; itemCount: number; recallSec?: number; requiredScore?: number }[];
   customItems: { min: number; max: number } | null; // null: game không có chế độ tự chọn
   memorizeSecOptions: number[];
   defaultMemorizeSec: number;
   recallSec: number;
   passAccuracy: number;
   unlockOn: "pass" | "perfect";
+  wrongAnswerPenalty?: number;
+  customTimeRange?: { min: number; max: number };
   // null với khách chưa chơi ván nào; khách đã chơi chỉ có level đã mở (giữ tạm), bestLevel luôn null
   player: {
     unlockedLevel: number;
@@ -30,6 +34,7 @@ export interface GameCatalogItem {
 export interface ItemView {
   code: string;
   imageUrl?: string;
+  label?: string;
 }
 
 export interface RoundRules {
@@ -39,6 +44,9 @@ export interface RoundRules {
   memorizeLimitSec: number;
   recallLimitSec: number;
   passAccuracy: number;
+  requiredScore?: number;
+  wrongAnswerPenalty?: number;
+  language?: string;
 }
 
 interface RoundBase {
@@ -46,6 +54,7 @@ interface RoundBase {
   gameName: GameName;
   status: "memorizing" | "recalling" | "completed" | "expired";
   rules: RoundRules;
+  serverNow?: string;
 }
 
 export interface StartedRound extends RoundBase {
@@ -78,6 +87,8 @@ export interface CompletedRound extends RoundBase {
   startedAt: string;
   completedAt: string;
   result: {
+    score?: number;
+    maxScore?: number;
     correctItems: number;
     totalItems: number;
     accuracy: number;
@@ -101,11 +112,23 @@ export interface StartRoundRequest {
   gameLevel?: number;
   itemCount?: number; // Chỉ dùng khi mode = "custom"
   memorizeSec?: number;
+  recallSec?: number;
+  language?: string;
 }
 
 type SessionResponse<T> = ApiSuccessResponse<{ session: T }>;
 
 export const gamesApi = {
+  getCompletedRound: async (sessionId: string): Promise<CompletedRound> => {
+    const response = await apiClient.get(`/game-sessions/${encodeURIComponent(sessionId)}`, {
+      headers: { "Cache-Control": "no-cache" },
+    }) as unknown as SessionResponse<CompletedRound>;
+    const round = response.data.session;
+    if (round.status !== "completed" || round.sessionId !== sessionId) {
+      throw new Error("The completed result is not available yet");
+    }
+    return round;
+  },
   // Luật chơi của từng game, kèm level đã mở nếu đã đăng nhập
   getGames: (): Promise<ApiSuccessResponse<{ games: GameCatalogItem[] }>> => {
     return apiClient.get("/games") as unknown as Promise<

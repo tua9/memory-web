@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useGameStore } from "../store/gameStore";
-import { usePhaseTimer } from "../hooks/usePhaseTimer";
+import { usePhaseTimer } from "@/features/shared-game/hooks/usePhaseTimer";
 import { GameHeader } from "@/features/shared-game/components/GameHeader";
 import { PlayHints } from "@/features/shared-game/components/PlayHints";
 import { RecallBoard } from "@/features/shared-game/components/RecallBoard";
@@ -57,6 +57,7 @@ export const RecallPhase = () => {
             <GameHeader
                 gameName="Thẻ bài"
                 level={level}
+                daily={rules?.mode === "daily"}
                 status={`Nhớ lại · đã xếp ${filled} trên ${total} lá`}
                 progress={filled / total}
                 timeLeft={timeLeft}

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useImagesGameStore } from "../store/imagesGameStore";
-import { usePhaseTimer } from "@/features/cards-game/hooks/usePhaseTimer";
+import { usePhaseTimer } from "@/features/shared-game/hooks/usePhaseTimer";
 import { GameHeader } from "@/features/shared-game/components/GameHeader";
 import { PlayHints } from "@/features/shared-game/components/PlayHints";
 import { RecallBoard } from "@/features/shared-game/components/RecallBoard";
@@ -50,6 +50,7 @@ export const ImagesRecallPhase = () => {
             <GameHeader
                 gameName="Hình ảnh"
                 level={level}
+                daily={rules?.mode === "daily"}
                 status={`Nhớ lại · đã xếp ${filled} trên ${total} hình`}
                 progress={filled / total}
                 timeLeft={timeLeft}
