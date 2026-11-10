@@ -6,6 +6,8 @@ export type RoomScore = { wins: number; losses: number; draws: number; points: n
 export type RoomPlayer = {
     _id: string; username: string; avatarUrl: string | null; ready: boolean; isHost: boolean; isMe: boolean;
     inRecall: boolean; submitted: boolean; score: RoomScore;
+    // Giới thiệu ngắn: tổng số trận đã đấu và số cúp
+    stats: { matches: number; cups: number };
 };
 export type RoomPlayerResult = { _id: string; correct: number; total: number; usedMs: number; answers: (RoomItem | null)[]; marks: boolean[] };
 export type RoomState = 'waiting' | 'memorizing' | 'recalling' | 'round_result' | 'completed' | 'cancelled';
@@ -27,7 +29,8 @@ export type RoomView = {
     // Người thắng các trận đã xong trong phòng: userId hoặc 'draw'
     history: { winner: string }[];
 };
-export type MatchStatus = { status: 'idle' } | { status: 'searching'; gameName: string; since: string } | { status: 'matched'; code: string };
+// gameName 'any' là tìm bất kỳ trò nào; roomCode có khi chủ phòng đang tìm người chơi cho phòng của mình
+export type MatchStatus = { status: 'idle' } | { status: 'searching'; gameName: string; since: string; roomCode?: string | null } | { status: 'matched'; code: string };
 export type RoomStats = { matches: number; wins: number; losses: number; draws: number; cups: number };
 export type Leaderboard = {
     entries: { _id: string; username: string; avatarUrl: string | null; cups: number; wins: number; matches: number; rank: number; isMe: boolean }[];
@@ -46,6 +49,8 @@ export const roomsApi = {
     findMatch: (gameName: string) => data<MatchStatus>(apiClient.post('/rooms/matchmaking', { gameName })),
     pollMatch: () => data<MatchStatus>(apiClient.get('/rooms/matchmaking')),
     cancelMatch: () => data<MatchStatus>(apiClient.delete('/rooms/matchmaking')),
+    // Chủ phòng tìm một người chơi ngẫu nhiên vào phòng của mình
+    findRoomPlayer: (code: string) => data<MatchStatus>(apiClient.post(at(code, 'find-player'))),
     get: (code: string) => data<RoomView>(apiClient.get(at(code))),
     join: (code: string) => post(code, 'join'),
     leave: (code: string) => post(code, 'leave'),

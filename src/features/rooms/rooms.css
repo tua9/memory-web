@@ -85,59 +85,13 @@
 
 /* ---------- Sảnh ---------- */
 
-.lobby__title h1 {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--color-ink);
-}
 
-.lobby__title p {
-  margin-top: 4px;
-  font-size: 15px;
-  color: var(--color-ink-soft);
-}
 
-/* Bốn chỉ số trong một khối, chia bằng đường 1px */
-.lobby__stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 24px 0 16px;
-  border-radius: 12px;
-  background: var(--panel);
-}
 
-.lobby__stats > div {
-  padding: 14px 20px;
-}
 
-.lobby__stats > div + div {
-  border-left: 1px solid var(--border);
-}
 
-.lobby__stats dt {
-  font-size: 13px;
-  color: var(--muted);
-}
 
-.lobby__stats dd {
-  min-height: 34px;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--color-ink);
-}
 
-.lobby__stats dd[data-loading='true']::before {
-  content: '';
-  display: block;
-  width: 48px;
-  height: 28px;
-  margin-top: 3px;
-  border-radius: 6px;
-  background: var(--well);
-}
 
 .lobby__dash {
   color: var(--muted);
@@ -243,31 +197,7 @@
   flex: 1;
 }
 
-/* Vòng sáng lan ra trong lúc chờ ghép */
-.quick__pulse {
-  position: relative;
-  flex: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: var(--color-brand);
-}
 
-.quick__pulse::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--color-brand);
-  animation: quick-ping 1.4s var(--ease-out) infinite;
-}
-
-@keyframes quick-ping {
-  to {
-    opacity: 0;
-    transform: scale(2.6);
-  }
-}
 
 .quick__error {
   font-size: 14px;
@@ -1444,18 +1374,6 @@
 }
 
 @media (max-width: 720px) {
-  .lobby__stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .lobby__stats > div:nth-child(3) {
-    border-left: 0;
-  }
-
-  .lobby__stats > div:nth-child(n + 3) {
-    border-top: 1px solid var(--border);
-  }
-
   .rooms__pair,
   .room-wait {
     grid-template-columns: minmax(0, 1fr);
@@ -1466,19 +1384,21 @@
     padding: 8px 0;
   }
 
+  /* Nút chính một hàng riêng ở trên, các nút phụ chia đều hàng dưới: không nút nào bị che */
   .duel__actions {
     width: 100%;
     margin-left: 0;
-    flex-wrap: nowrap;
-    overflow-x: auto;
   }
 
   .duel__actions .duel-btn {
+    flex: 1 1 0;
     height: 44px;
+    padding: 0 10px;
   }
 
   .duel__actions .duel-btn--primary {
-    flex: 1;
+    flex-basis: 100%;
+    order: -1;
   }
 
   .duel__board {
@@ -1524,12 +1444,580 @@
   .room-dialog[open],
   .room-dialog[open]::backdrop,
   .result__cup[data-mine='true'],
-  .quick__pulse::after,
   .duel__pips li[data-state='now'] {
     animation: none;
   }
 
   .duel-timer__fill {
     transition: none;
+  }
+}
+
+/* =====================================================================
+   Sống động: nền màu của Memio (mint, nắng, trời), linh vật, hình móc
+   và chuyển động phản hồi. Mọi chuyển động đều tắt khi người dùng yêu cầu giảm chuyển động.
+   ===================================================================== */
+
+/* Dải mở đầu của sảnh trên nền mint */
+.lobby-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: center;
+  gap: 16px 24px;
+  margin-bottom: 16px;
+  padding: 28px 32px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--color-mint);
+}
+
+.lobby-hero h1 {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.lobby-hero p {
+  max-width: 560px;
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--color-ink);
+}
+
+.lobby-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 640px;
+  margin-top: 20px;
+}
+
+.lobby-hero__stats > div {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.72);
+}
+
+.lobby-hero__stats dt {
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+
+.lobby-hero__stats dd {
+  min-height: 36px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.lobby-hero__stats dd[data-loading='true']::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 28px;
+  margin-top: 4px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.8);
+}
+
+.lobby-hero__art {
+  position: relative;
+  height: 190px;
+}
+
+.lobby-hero__mascot {
+  position: absolute;
+  right: 36px;
+  bottom: -6px;
+  width: 150px;
+}
+
+.lobby-hero__balloon {
+  position: absolute;
+  top: -4px;
+  left: 24px;
+  width: 60px;
+}
+
+.lobby-hero__butterfly {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 54px;
+}
+
+.lobby-hero__cat {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 78px;
+}
+
+/* Tìm trận nhanh trên nền nắng: việc mời gọi nhất của sảnh */
+.lobby__quick .panel.quick {
+  background: var(--color-sun-field);
+}
+
+.lobby__quick .rooms__chip[aria-pressed='false'] {
+  border-color: transparent;
+}
+
+.quick__radar {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+}
+
+.quick__radar::before,
+.quick__radar::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  outline: 2px solid var(--color-brand);
+  opacity: 0;
+}
+
+.quick__mascot {
+  position: relative;
+  width: 44px;
+}
+
+/* Vào phòng bằng mã trên nền xanh thương hiệu, nút màu nắng */
+.lobby__join.panel {
+  background: var(--color-brand);
+}
+
+.lobby__join h2 {
+  color: #fff;
+}
+
+.lobby__join .duel-btn--primary {
+  border-color: var(--color-sun);
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lobby__join .duel-btn--primary:hover:not(:disabled) {
+    border-color: #edb73a;
+    background: #edb73a;
+  }
+}
+
+.lobby__join .duel-btn--primary:disabled {
+  border-color: rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+  opacity: 1;
+}
+
+/* Nút chọn trò của Tìm trận nhanh: chấm màu nằm cạnh tên trò */
+.quick__games .quick__game {
+  flex-direction: row;
+  gap: 6px;
+}
+
+.lobby__code:focus-visible {
+  outline-color: var(--color-sun);
+}
+
+/* Bục ba hạng đầu: hạng 1 ở giữa và cao nhất */
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.podium__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.podium__step[data-place='1'] { order: 1; --medal: #e0b23c; --step: var(--color-sun-field); --tall: 86px; }
+.podium__step[data-place='2'] { order: 0; --medal: #a7b2ad; --step: #e4ebe7; --tall: 64px; }
+.podium__step[data-place='3'] { order: 2; --medal: #c98a55; --step: #f3dcc8; --tall: 50px; }
+
+.podium__step .cups__avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  outline: 3px solid var(--medal);
+  outline-offset: -1px;
+}
+
+.podium__name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium__step[data-me='true'] .podium__name {
+  color: var(--color-brand-deep);
+}
+
+.podium__block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  height: var(--tall);
+  padding-top: 8px;
+  border-radius: 10px 10px 0 0;
+  background: var(--step);
+  transform-origin: bottom;
+}
+
+.podium__rank {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.podium__cups {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.podium__cups svg {
+  color: var(--gold);
+}
+
+.cups__loading {
+  height: 150px;
+  border-radius: 10px;
+  background: var(--well);
+}
+
+/* Trận đấu: đối thủ mang màu trời của thương hiệu, huy hiệu VS màu nắng */
+.duel-lane[data-side='opp'] {
+  background: var(--color-sky);
+}
+
+.duel__vs {
+  display: grid;
+  place-items: center;
+  min-width: 52px;
+  height: 52px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--color-sun);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.room-wait__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.room-wait__mascot {
+  width: 64px;
+}
+
+/* Hộp thoại kết quả: dải màu theo kết quả phía sau linh vật */
+.result::before {
+  content: '';
+  position: absolute;
+  inset: -28px -24px auto;
+  z-index: -1;
+  height: 112px;
+  background: var(--color-sun-field);
+}
+
+.result[data-outcome='win']::before { background: var(--color-mint); }
+.result[data-outcome='lose']::before { background: var(--color-sky); }
+
+.result__mascot {
+  display: block;
+  width: 84px;
+  margin-top: -6px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lobby-hero__stats > div {
+    animation: lively-rise 520ms var(--ease-expo) both;
+  }
+
+  .lobby-hero__stats > div:nth-child(2) { animation-delay: 70ms; }
+  .lobby-hero__stats > div:nth-child(3) { animation-delay: 140ms; }
+  .lobby-hero__stats > div:nth-child(4) { animation-delay: 210ms; }
+
+  .lobby-hero__mascot {
+    animation: lively-peek 700ms var(--ease-expo) 200ms both;
+  }
+
+  .quick__radar::before,
+  .quick__radar::after {
+    animation: radar-ping 1.8s var(--ease-out) infinite;
+  }
+
+  .quick__radar::after {
+    animation-delay: 0.9s;
+  }
+
+  .quick__mascot {
+    animation: lively-bob 1.2s var(--ease-in-out) infinite;
+  }
+
+  .podium__step {
+    animation: lively-rise 560ms var(--ease-expo) calc(var(--i) * 120ms) both;
+  }
+
+  .podium__block {
+    animation: podium-grow 700ms var(--ease-expo) calc(var(--i) * 120ms + 120ms) both;
+  }
+
+  /* Người chơi vừa vào phòng trượt vào làn của mình */
+  .duel-lane {
+    animation: lane-in-left 460ms var(--ease-expo) both;
+  }
+
+  .duel-lane[data-side='opp'] {
+    animation-name: lane-in-right;
+  }
+
+  .duel-timer[data-low='true'] {
+    animation: timer-shake 520ms var(--ease-in-out) infinite;
+  }
+
+  /* Các mục ghi nhớ được chia ra lần lượt như chia bài */
+  .room-play__items li {
+    animation: deal-in 460ms var(--ease-expo) calc(var(--i) * 60ms) both;
+  }
+
+  .room-wait__mascot,
+  .result[data-outcome='draw'] .result__mascot {
+    animation: lively-bob 1.6s var(--ease-in-out) infinite;
+  }
+
+  .result[data-outcome='win'] .result__mascot {
+    animation: lively-hop 900ms var(--ease-out) 200ms 2 both;
+  }
+
+  .result[data-outcome='lose'] .result__mascot {
+    animation: lively-tilt 1.1s var(--ease-in-out) 200ms both;
+  }
+
+  .room-compare tbody tr {
+    animation: lively-rise 380ms var(--ease-out) both;
+  }
+}
+
+@keyframes lively-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes lively-peek {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+@keyframes lively-bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes lively-hop {
+  30% { transform: translateY(-14px) rotate(-4deg); }
+  55% { transform: translateY(0) rotate(0); }
+  70% { transform: translateY(-5px); }
+}
+
+@keyframes lively-tilt {
+  30% { transform: rotate(-8deg); }
+  60% { transform: rotate(5deg); }
+}
+
+@keyframes radar-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes podium-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes lane-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+@keyframes lane-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+@keyframes timer-shake {
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+
+@keyframes deal-in {
+  from {
+    opacity: 0;
+    transform: translateY(-22px) rotate(-5deg) scale(0.92);
+  }
+}
+
+@media (max-width: 860px) {
+  .lobby-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px 20px 0;
+  }
+
+  .lobby-hero__art {
+    height: 120px;
+    margin-top: -8px;
+  }
+
+  .lobby-hero__mascot {
+    right: 12px;
+    width: 104px;
+  }
+
+  .lobby-hero__balloon { left: auto; right: 140px; width: 44px; }
+  .lobby-hero__butterfly { width: 40px; }
+  .lobby-hero__cat { width: 60px; }
+}
+
+@media (max-width: 640px) {
+  /* Tìm trận trên điện thoại: nút trải hết chiều ngang dưới danh sách trò */
+  .quick__go {
+    flex: 1 1 100%;
+    height: 44px;
+  }
+
+  .lobby-hero h1 {
+    font-size: 26px;
+  }
+
+  .lobby-hero__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lobby-hero__stats dd {
+    font-size: 26px;
+  }
+}
+
+/* Giới thiệu ngắn về người chơi trong làn: số trận và số cúp */
+.duel-lane__stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+.duel-lane[data-side='opp'] .duel-lane__stats {
+  justify-content: flex-end;
+}
+
+.duel-lane__stats svg {
+  color: var(--gold);
+}
+
+/* Làn trống khi chủ phòng đang tìm người ngẫu nhiên: avatar kính lúp có vòng sóng */
+.duel-lane--empty[data-searching='true'] {
+  outline-style: dashed;
+}
+
+.duel-lane--empty[data-searching='true'] .duel-avatar {
+  color: var(--color-brand-deep);
+}
+
+/* Khối tìm người chơi ngẫu nhiên của chủ phòng, dưới mã phòng */
+.room-wait__random {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--color-sun-field);
+  font-size: 14px;
+}
+
+.room-wait__random p {
+  flex: 1 1 220px;
+}
+
+.room-wait__random[data-searching='true'] {
+  background: var(--color-mint);
+}
+
+/* "Bất kỳ trò nào" dùng biểu tượng xáo trộn thay cho chấm màu của trò */
+.quick__games .quick__game--any::before {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .duel-lane--empty[data-searching='true'] .duel-avatar {
+    animation: search-pulse 1.4s var(--ease-in-out) infinite;
+  }
+
+  .room-wait__random {
+    animation: lively-rise 420ms var(--ease-out) both;
+  }
+}
+
+@keyframes search-pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@media (max-width: 720px) {
+  /* Trên điện thoại làn chỉ còn tên, nhưng vẫn giữ số trận và số cúp */
+  .duel-lane__who > .duel-lane__stats {
+    display: inline-flex;
+    font-size: 11px;
+  }
+
+  .duel-lane[data-side='opp'] .duel-lane__who {
+    align-items: flex-end;
   }
 }

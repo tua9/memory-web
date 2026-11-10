@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X } from 'lucide-react';
+import { Search, Shuffle, X } from 'lucide-react';
 import { GAME_IDS, GAME_META, type GameName } from '@/features/shared-game/registry';
 import { roomsApi, type MatchStatus } from '../api/rooms.api';
+import { Mascot } from '@/components/ui/Mascot';
+
+// 'any': ghép với bất kỳ ai đang tìm trận, trò chơi lấy theo người kia (hai bên cùng 'any' thì chọn ngẫu nhiên)
+const ANY = 'any';
+type Choice = GameName | typeof ANY;
+const choiceLabel = (choice: Choice) => (choice === ANY ? 'bất kỳ trò nào' : GAME_META[choice].label);
 
 const messageOf = (cause: unknown, fallback: string) => (cause as { message?: string })?.message ?? fallback;
 
@@ -10,7 +16,8 @@ const messageOf = (cause: unknown, fallback: string) => (cause as { message?: st
 // trận tự bắt đầu sau 30 giây. Rời trang khi đang tìm thì huỷ vé để không ai bị ghép với người đã đi.
 export const QuickMatch = () => {
     const navigate = useNavigate();
-    const [gameName, setGameName] = useState<GameName>('card');
+    // Mặc định tìm bất kỳ trò nào: nhiều người để ghép nhất, chờ ít nhất
+    const [gameName, setGameName] = useState<Choice>(ANY);
     const [status, setStatus] = useState<MatchStatus>({ status: 'idle' });
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,12 +31,13 @@ export const QuickMatch = () => {
             return;
         }
         setStatus(next);
-        if (next.status === 'searching') setGameName(next.gameName as GameName);
+        if (next.status === 'searching' && !next.roomCode) setGameName(next.gameName as Choice);
     };
 
-    // Mở lại trang khi đang tìm dở (tải lại trang): tiếp tục chờ với vé cũ
+    // Mở lại trang khi đang tìm dở (tải lại trang): tiếp tục chờ với vé cũ.
+    // Vé tìm người cho một phòng có sẵn thì thuộc về trang phòng đó, không tiếp tục ở đây.
     useEffect(() => {
-        roomsApi.pollMatch().then(apply).catch(() => undefined);
+        roomsApi.pollMatch().then((next) => { if (!(next.status === 'searching' && next.roomCode)) apply(next); }).catch(() => undefined);
         return () => {
             if (searching.current) void roomsApi.cancelMatch().catch(() => undefined);
         };
@@ -73,14 +81,17 @@ export const QuickMatch = () => {
         <section className="panel quick" aria-labelledby="quick-title" data-searching={status.status === 'searching'}>
             <div className="quick__head">
                 <h2 id="quick-title">Tìm trận nhanh</h2>
-                <p>Ghép với người đang tìm cùng trò. Ghép xong, trận tự bắt đầu sau 30 giây.</p>
+                <p>Ghép với người đang tìm cùng trò, hoặc chọn bất kỳ trò nào để ghép nhanh nhất. Ghép xong, trận tự bắt đầu sau 30 giây.</p>
             </div>
 
             {status.status === 'searching' ? (
                 <div className="quick__wait" aria-live="polite">
-                    <span className="quick__pulse" aria-hidden="true" />
+                    {/* Linh vật nhún nhảy giữa các vòng sóng lan ra trong lúc chờ ghép */}
+                    <span className="quick__radar" aria-hidden="true">
+                        <Mascot className="quick__mascot" />
+                    </span>
                     <p>
-                        Đang tìm người chơi <strong>{GAME_META[gameName].label}</strong>
+                        Đang tìm người chơi <strong>{choiceLabel(gameName)}</strong>
                         <span className="num"> · {Math.floor(waited / 60)}:{String(waited % 60).padStart(2, '0')}</span>
                     </p>
                     <button type="button" className="duel-btn" disabled={busy} onClick={() => void cancel()}>
@@ -90,6 +101,9 @@ export const QuickMatch = () => {
             ) : (
                 <div className="quick__pick">
                     <div className="quick__games" role="group" aria-label="Chọn trò để tìm trận">
+                        <button type="button" className="rooms__chip quick__game quick__game--any" aria-pressed={gameName === ANY} onClick={() => setGameName(ANY)}>
+                            <Shuffle size={14} aria-hidden="true" /> Bất kỳ trò nào
+                        </button>
                         {GAME_IDS.map((id) => (
                             <button key={id} type="button" className="rooms__chip quick__game" aria-pressed={id === gameName}
                                 style={{ '--game': GAME_META[id].color } as React.CSSProperties} onClick={() => setGameName(id)}>

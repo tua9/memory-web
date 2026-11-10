@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { roomsApi, type Leaderboard } from '../api/rooms.api';
 import { RoomSetupForm, type RoomSetup } from '../components/RoomSetupForm';
 import { CupLeaderboard } from '../components/CupLeaderboard';
+import { Mascot } from '@/components/ui/Mascot';
+import { RollingNumber } from '@/components/ui/RollingNumber';
+import cat from '@/assets/memio/game/card-cat.svg';
+import butterfly from '@/assets/memio/guides/num-3-butterfly.svg';
+import balloon from '@/assets/memio/guides/num-9-balloon.svg';
 import { QuickMatch } from '../components/QuickMatch';
 import '@/styles/app-screen.css';
 import '../rooms.css';
@@ -15,6 +20,8 @@ const messageOf = (cause: unknown, fallback: string) => (cause as { message?: st
 // rồi tạo phòng 9 + bảng xếp hạng 3. Trên điện thoại: tìm trận, vào phòng, tạo phòng, bảng xếp hạng.
 export const RoomsLobbyPage = () => {
     const navigate = useNavigate();
+    // Mở từ trang tiến độ của con ("Mời con đấu 1 trận"): chọn sẵn trò được gợi ý
+    const [params] = useSearchParams();
     const [board, setBoard] = useState<Leaderboard | null>(null);
     const [boardFailed, setBoardFailed] = useState(false);
     const [code, setCode] = useState('');
@@ -60,21 +67,31 @@ export const RoomsLobbyPage = () => {
         <div className="min-h-svh">
             <Header />
             <main className="dash page-col rooms lobby">
-                <header className="lobby__title">
-                    <h1>Đấu trí nhớ</h1>
-                    <p>Hai người ghi nhớ cùng một đề. Thắng nhiều vòng hơn thì thắng trận và nhận 1 cúp.</p>
+                {/* Dải mở đầu trên nền mint: tên trang, thành tích của bạn lăn số, linh vật và vài hình quen thuộc của Memio */}
+                <header className="lobby-hero">
+                    <div className="lobby-hero__text">
+                        <h1>Đấu trí nhớ</h1>
+                        <p>Hai người ghi nhớ cùng một đề. Thắng nhiều vòng hơn thì thắng trận và nhận 1 cúp.</p>
+                        <dl className="lobby-hero__stats" aria-label="Thành tích đấu của bạn">
+                            {stats.map((stat) => (
+                                <div key={stat.label}>
+                                    <dt>{stat.label}</dt>
+                                    <dd className="num" data-loading={stat.value === undefined}>
+                                        {stat.value === undefined ? '' : stat.value === null
+                                            ? <span className="lobby__dash" aria-label="chưa có">–</span>
+                                            : <RollingNumber value={stat.value} />}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </div>
+                    <div className="lobby-hero__art" aria-hidden="true">
+                        <img src={balloon} alt="" className="shape is-live lobby-hero__balloon" data-motion="bob" />
+                        <img src={butterfly} alt="" className="shape is-live lobby-hero__butterfly" data-motion="flap" />
+                        <img src={cat} alt="" className="shape is-live lobby-hero__cat" data-motion="hop" />
+                        <Mascot className="lobby-hero__mascot" />
+                    </div>
                 </header>
-
-                <dl className="lobby__stats" aria-label="Thành tích đấu của bạn">
-                    {stats.map((stat) => (
-                        <div key={stat.label}>
-                            <dt>{stat.label}</dt>
-                            <dd className="num" data-loading={stat.value === undefined}>
-                                {stat.value === undefined ? '' : stat.value === null ? <span className="lobby__dash" aria-label="chưa có">–</span> : stat.value}
-                            </dd>
-                        </div>
-                    ))}
-                </dl>
 
                 {error && <p role="alert" className="rooms__alert">{error}</p>}
 
@@ -95,7 +112,7 @@ export const RoomsLobbyPage = () => {
                     </form>
 
                     <div className="panel lobby__create">
-                        <RoomSetupForm title="Tạo phòng mới" busy={busy !== null}
+                        <RoomSetupForm title="Tạo phòng mới" busy={busy !== null} initialGame={params.get('game') ?? undefined}
                             submitLabel={busy === 'create' ? 'Đang tạo phòng...' : 'Tạo phòng và lấy mã'}
                             onSubmit={(setup) => void create(setup)} onError={setError} />
                     </div>

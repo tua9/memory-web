@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Check, Copy, Link2, LogOut, RotateCcw, Shuffle, Square, Trophy, Undo2, UserMinus, X } from 'lucide-react';
+import { ArrowLeft, Check, Copy, Link2, LogOut, RotateCcw, Search, Shuffle, Square, Trophy, Undo2, UserMinus, X } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { roomsApi, type RoomItem, type RoomPlayer, type RoomView } from '../api/rooms.api';
 import { PlayingCard } from '@/features/cards-game/components/PlayingCard';
@@ -15,6 +15,7 @@ import { Confetti } from '@/features/shared-game/components/Confetti';
 import { GAME_META, type GameName } from '@/features/shared-game/registry';
 import { RoomSetupForm } from '../components/RoomSetupForm';
 import { RoomDialog } from '../components/RoomDialog';
+import { Mascot } from '@/components/ui/Mascot';
 import '@/features/shared-game/game.css';
 import '@/styles/app-screen.css';
 import '../rooms.css';
@@ -90,20 +91,32 @@ const playerStatus = (room: RoomView, player: RoomPlayer) => {
     return `${player.score.wins} vòng thắng`;
 };
 
-const Lane = ({ room, player, side }: { room: RoomView; player?: RoomPlayer; side: Side }) => player ? (
+const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+
+// Giới thiệu ngắn về người chơi: tổng số trận đã đấu và số cúp
+const PlayerStats = ({ player }: { player: RoomPlayer }) => (
+    <span className="duel-lane__stats num" aria-label={`${player.stats.matches} trận đã đấu, ${player.stats.cups} cúp`}>
+        {player.stats.matches} trận · {player.stats.cups} <Trophy size={12} aria-hidden="true" />
+    </span>
+);
+
+const Lane = ({ room, player, side, searchingFor }: { room: RoomView; player?: RoomPlayer; side: Side; searchingFor: number | null }) => player ? (
     <div className="duel-lane" data-side={side} data-done={player.submitted || (room.state === 'waiting' && player.ready)}>
         <Avatar player={player} side={side} />
         <span className="duel-lane__who">
             <strong>{player.isMe ? 'Bạn' : player.username}{player.isHost && <small> · chủ phòng</small>}</strong>
             <span>{playerStatus(room, player)}</span>
+            <PlayerStats player={player} />
         </span>
     </div>
 ) : (
-    <div className="duel-lane duel-lane--empty" data-side={side}>
-        <span className="duel-avatar" data-side={side} aria-hidden="true">?</span>
+    <div className="duel-lane duel-lane--empty" data-side={side} data-searching={searchingFor !== null}>
+        <span className="duel-avatar" data-side={side} aria-hidden="true">
+            {searchingFor !== null ? <Search size={18} /> : '?'}
+        </span>
         <span className="duel-lane__who">
-            <strong>Đang chờ người chơi</strong>
-            <span>Gửi mã phòng để người kia vào</span>
+            <strong>{searchingFor !== null ? 'Đang tìm người chơi ngẫu nhiên' : 'Đang chờ người chơi'}</strong>
+            <span>{searchingFor !== null ? <span className="num">Đã chờ {clock(searchingFor)}</span> : 'Gửi mã phòng để người kia vào'}</span>
         </span>
     </div>
 );
@@ -137,6 +150,9 @@ export const RoomPage = () => {
     const [connected, setConnected] = useState(true);
     const [tick, setTick] = useState(Date.now());
     const [copied, setCopied] = useState<'code' | 'link' | null>(null);
+    // Chủ phòng đang tìm một người chơi ngẫu nhiên cho phòng này (thời điểm bắt đầu tìm)
+    const [hostSearch, setHostSearch] = useState<string | null>(null);
+    const searchingRef = useRef(false);
     // Hộp thoại kết quả đã đóng cho vòng/trận nào: hỏi phòng định kỳ không bật lại hộp đã đóng
     const [dismissed, setDismissed] = useState('');
 
@@ -390,6 +406,50 @@ export const RoomPage = () => {
     const roundDialogOpen = Boolean(room?.state === 'round_result' && round?.result && dismissed !== resultKey);
     const matchDialogOpen = Boolean(room?.state === 'completed' && dismissed !== resultKey && !changing);
 
+    // Mở lại trang khi đang tìm người cho phòng này: tiếp tục chờ; rời trang thì thôi tìm
+    useEffect(() => {
+        roomsApi.pollMatch()
+            .then((value) => { if (value.status === 'searching' && value.roomCode === code) setHostSearch(value.since); })
+            .catch(() => undefined);
+        return () => {
+            if (searchingRef.current) void roomsApi.cancelMatch().catch(() => undefined);
+        };
+    }, [code]);
+
+    // Đang tìm: hỏi mỗi 2 giây để giữ vé còn hạn; có người vào phòng thì thôi
+    useEffect(() => {
+        searchingRef.current = hostSearch !== null;
+        if (hostSearch === null) return;
+        const timer = setInterval(() => {
+            roomsApi.pollMatch()
+                .then((value) => { if (value.status !== 'searching') setHostSearch(null); })
+                .catch(() => undefined);
+        }, 2000);
+        return () => clearInterval(timer);
+    }, [hostSearch]);
+
+    const roomFull = Boolean(room && room.players.length >= room.capacity);
+    const searchingFor = hostSearch && !roomFull ? Math.max(0, Math.floor((tick - new Date(hostSearch).getTime()) / 1000)) : null;
+
+    const findPlayer = async () => {
+        setBusy(true);
+        setError(null);
+        try {
+            const value = await roomsApi.findRoomPlayer(code);
+            setHostSearch(value.status === 'searching' ? value.since : null);
+            if (value.status === 'matched') apply(await roomsApi.get(code));
+        } catch (cause) {
+            setError(messageOf(cause, 'Chưa tìm người chơi được.'));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const stopFinding = async () => {
+        setHostSearch(null);
+        await roomsApi.cancelMatch().catch(() => undefined);
+    };
+
     const leave = async () => {
         setBusy(true);
         try {
@@ -531,7 +591,7 @@ export const RoomPage = () => {
 
                     {room && (
                         <div className="duel__board">
-                            <Lane room={room} player={seats[0]} side="me" />
+                            <Lane room={room} player={seats[0]} side="me" searchingFor={null} />
                             <div className="duel__mid">
                                 {startsIn !== null
                                     ? <TimerRing remaining={startsIn} total={30} />
@@ -546,7 +606,7 @@ export const RoomPage = () => {
                                     ))}
                                 </ol>
                             </div>
-                            <Lane room={room} player={seats[1]} side="opp" />
+                            <Lane room={room} player={seats[1]} side="opp" searchingFor={searchingFor} />
                         </div>
                     )}
                     {room && <p className="duel__hint" aria-live="polite">{hint}</p>}
@@ -559,7 +619,10 @@ export const RoomPage = () => {
                     <section className="panel room-wait" aria-labelledby={room.players.length < room.capacity ? 'wait-title' : undefined}
                         aria-label={room.players.length < room.capacity ? undefined : 'Luật trận'} data-full={room.players.length >= room.capacity}>
                         {room.players.length < room.capacity && <div className="room-wait__code">
-                            <h2 id="wait-title">Mã phòng</h2>
+                            <div className="room-wait__title">
+                                <h2 id="wait-title">Mã phòng</h2>
+                                <Mascot className="room-wait__mascot" />
+                            </div>
                             <p className="room-tiles num" aria-label={`Mã ${code.split('').join(' ')}`}>
                                 {code.split('').map((char, index) => <span key={index}>{char}</span>)}
                             </p>
@@ -573,6 +636,23 @@ export const RoomPage = () => {
                                     {copied === 'link' ? 'Đã sao chép' : 'Sao chép link'}
                                 </button>
                             </div>
+                            {room.isHost && (
+                                <div className="room-wait__random" data-searching={searchingFor !== null}>
+                                    {searchingFor !== null ? (
+                                        <>
+                                            <p aria-live="polite">Đang tìm một người chơi {meta?.label} ngẫu nhiên vào phòng · <span className="num">{clock(searchingFor)}</span></p>
+                                            <button type="button" className="duel-btn" onClick={() => void stopFinding()}><X size={16} aria-hidden="true" /> Thôi tìm</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p>Chưa có ai để mời? Để Memio tìm một người đang muốn chơi {meta?.label}.</p>
+                                            <button type="button" className="duel-btn duel-btn--primary" disabled={busy} onClick={() => void findPlayer()}>
+                                                <Search size={16} aria-hidden="true" /> Tìm người chơi ngẫu nhiên
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>}
                         <div className="room-wait__rules">
                             <h2>Luật trận</h2>
@@ -589,7 +669,7 @@ export const RoomPage = () => {
                     <section className="play__table room-play" aria-label={`Ghi nhớ thứ tự ${totalItems} ${meta?.unit ?? ''}`}>
                         <ol className="room-play__items">
                             {round.items.map((item, index) => (
-                                <li key={index}>
+                                <li key={`${room.roundIndex}-${index}`} style={{ '--i': Math.min(index, 20) } as React.CSSProperties}>
                                     <span className="num">{index + 1}</span>
                                     <RenderGameItem gameName={room.gameName} item={item} size={totalItems <= 6 ? 'lg' : 'md'} />
                                 </li>
@@ -927,6 +1007,7 @@ export const RoomPage = () => {
                 {room && round?.result && (
                     <RoomDialog open={roundDialogOpen} labelledBy="round-result-title" onClose={() => setDismissed(resultKey)}>
                         <div className="result" data-outcome={outcomeFor(round.result.outcome)}>
+                            <Mascot className="result__mascot" />
                             <p className="result__over">Vòng {room.roundIndex + 1}/{room.roundCount}</p>
                             <h2 id="round-result-title">
                                 {round.result.outcome === 'draw' ? 'Vòng này hoà' : `${nameOf(round.result.outcome)} thắng vòng này`}
@@ -964,6 +1045,7 @@ export const RoomPage = () => {
                     <RoomDialog open={matchDialogOpen} labelledBy="match-result-title" onClose={() => setDismissed(resultKey)}>
                         <div className="result result--match" data-outcome={finalOutcome}>
                             {finalOutcome === 'win' && <Confetti />}
+                            <Mascot className="result__mascot" />
                             <p className="result__over">Trận thứ {room.history.length}</p>
                             <h2 id="match-result-title">
                                 {finalOutcome === 'win' ? 'Bạn thắng trận!' : finalOutcome === 'lose' ? `${opponent?.username ?? 'Đối thủ'} thắng trận` : 'Trận đấu hoà'}

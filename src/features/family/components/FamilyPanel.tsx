@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from
 import { Link } from 'react-router-dom';
 import { Check, Copy, Mail, X } from 'lucide-react';
 import { familyApi, type Family, type FamilyLink, type Person } from '../api/family.api';
+import { Mascot } from '@/components/ui/Mascot';
 import '../family.css';
 
 const messageOf = (cause: unknown, fallback: string) => (cause as { message?: string })?.message ?? fallback;
@@ -216,7 +217,10 @@ export const FamilyPanel = () => {
                                 ))}
                             </ul>
                         ) : (
-                            <p className="family__empty">Chưa theo dõi tài khoản nào.</p>
+                            <div className="family__empty">
+                                <Mascot className="family__mascot" />
+                                <p>Chưa theo dõi tài khoản nào. Nhờ con tạo mã liên kết trong hồ sơ của con rồi nhập ở trên.</p>
+                            </div>
                         )}
                     </div>
                 </div>

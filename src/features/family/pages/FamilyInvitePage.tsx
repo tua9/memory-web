@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { familyApi, type Person } from '../api/family.api';
+import { Mascot } from '@/components/ui/Mascot';
 import '@/styles/app-screen.css';
 import '@/features/profile/profile.css';
 import '../family.css';
@@ -62,6 +63,7 @@ export const FamilyInvitePage = () => {
             <Header />
             <main className="dash page-col">
                 <section className="panel family family-invite" aria-labelledby="invite-title">
+                    <Mascot className="family-invite__mascot" />
                     <h1 id="invite-title">Lời mời đồng hành</h1>
 
                     {state === 'checking' && <p className="dash-note">Đang kiểm tra lời mời...</p>}

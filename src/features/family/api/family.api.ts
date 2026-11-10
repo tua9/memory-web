@@ -19,6 +19,8 @@ export type ChildOverview = {
 };
 export type ChildReport = {
     period: 'day' | 'week'; date: string; incomplete: boolean; timeZone: string;
+    // Đầu kỳ (nửa đêm giờ Việt Nam) và đầu kỳ kế tiếp, dạng ISO
+    start: string; end: string;
     summary: ActivitySummary; previousSummary: ActivitySummary;
     activities: { gameName: string; completedAt: string; correctItems: number; totalItems: number; durationSec: number }[];
     comment: { observation: string; evidence: string; trend: string; suggestion: string };

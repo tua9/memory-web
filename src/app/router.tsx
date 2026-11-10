@@ -25,7 +25,6 @@ import { RootLayout } from "./RootLayout";
 import { HomeRoute } from "./HomeRoute";
 import DailyPage from "@/features/daily/pages/DailyPage";
 import { ChildDashboardPage } from '@/features/family/pages/ChildDashboardPage';
-import { ChildProfilePage } from '@/features/family/pages/ChildProfilePage';
 import { FamilyInvitePage } from '@/features/family/pages/FamilyInvitePage';
 import { RoomsLobbyPage } from '@/features/rooms/pages/RoomsLobbyPage';
 import { RoomPage } from '@/features/rooms/pages/RoomPage';
@@ -85,7 +84,6 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       { path: '/family/:childId', element: <ChildDashboardPage /> },
-      { path: '/family/:childId/profile', element: <ChildProfilePage /> },
       { path: '/rooms', element: <RoomsLobbyPage /> },
       { path: '/rooms/:code', element: <RoomPage /> },
     ],

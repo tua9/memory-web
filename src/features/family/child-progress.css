@@ -1,0 +1,753 @@
+/* Trang ba mẹ xem tiến độ của con. Dùng token của .dash (app-screen.css) và .rooms (rooms.css).
+   Màu chỉ đặt trên dữ liệu: cột ngày đậm theo tỉ lệ đúng, chênh lệch xanh/đỏ, một dấu "Cần ôn". */
+
+.kid {
+  --high: #2e7d32;
+  --mid: #7db884;
+  --low: #c5e1c8;
+}
+
+.kid__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 16px;
+}
+
+.kid__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-brand-deep);
+}
+
+.kid__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kid__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px 0 4px;
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 150ms var(--ease-out);
+}
+
+.kid__tab[aria-current='page'] {
+  background: var(--me);
+}
+
+.kid__avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--me-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.kid__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tiêu đề, câu tóm tắt trả lời ngay câu hỏi, và chọn tuần */
+.kid__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 20px;
+}
+
+.kid__title {
+  max-width: 760px;
+}
+
+.kid__title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.kid__summary {
+  margin-top: 6px;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+
+.kid__meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.kid__week-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.kid__step {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--control);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.kid__step:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.kid__step:focus-visible,
+.kid__tab:focus-visible,
+.kid__back:focus-visible,
+.kid-more:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Dải 7 ngày */
+.kid-week {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.kid-week__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+}
+
+.kid h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.kid-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.kid-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kid-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.kid-legend i[data-level='high'],
+.kid-week__bar[data-level='high'] { background: var(--high); }
+.kid-legend i[data-level='mid'],
+.kid-week__bar[data-level='mid'] { background: var(--mid); }
+.kid-legend i[data-level='low'],
+.kid-week__bar[data-level='low'] { background: var(--low); }
+
+.kid-week__days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kid-week__days li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.kid-week__count {
+  min-height: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.kid-week__track {
+  position: relative;
+  width: 100%;
+  max-width: 64px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.kid-week__bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 6px 6px 0 0;
+  transition: height 320ms var(--ease-out);
+}
+
+.kid-week__days li[data-today='true'] .kid-week__track {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.kid-week__days li[data-future='true'] .kid-week__track {
+  background: transparent;
+  outline: 1px dashed var(--control);
+  outline-offset: -1px;
+}
+
+.kid-week__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kid-week__day small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.kid-week__days li[data-today='true'] .kid-week__day {
+  color: var(--color-brand-deep);
+}
+
+.kid-week__loading {
+  height: 168px;
+  border-radius: 8px;
+  background: var(--well);
+}
+
+/* Bốn chỉ số trong một khối, chia bằng đường 1px */
+.kid-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 16px 0;
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+.kid-stats > div {
+  padding: 14px 20px;
+}
+
+.kid-stats > div + div {
+  border-left: 1px solid var(--border);
+}
+
+.kid-stats dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.kid-stats dd {
+  min-height: 34px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.kid-stats dd small {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.kid-stats p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.kid-delta {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.kid-delta[data-sign='1'] { color: var(--good); }
+.kid-delta[data-sign='-1'] { color: var(--bad); }
+
+.kid-dash {
+  color: var(--muted);
+}
+
+/* Bảng từng trò */
+.kid-games {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kid-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 14px;
+}
+
+.kid-table th,
+.kid-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.kid-table tr:last-child th,
+.kid-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.kid-table thead th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.kid-table .num {
+  text-align: right;
+}
+
+.kid-table td small {
+  color: var(--muted);
+}
+
+.kid-table tbody th {
+  font-weight: 600;
+}
+
+.kid-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kid-game::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--game);
+}
+
+.kid-flag {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffedea;
+  color: #831c1e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Gợi ý: một dải ngang, lời gợi ý bên trái và việc cần làm bên phải; rồi các ván trong tuần */
+.kid-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.kid-tip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.kid-tip__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kid-tip__text {
+  max-width: 680px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.kid-tip__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.kid-tip__together {
+  grid-column: 1 / -1;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.kid-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Các ván xếp hai cột để danh sách không kéo dài trang */
+.kid-recent__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 32px;
+}
+
+.kid-recent__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+
+.kid-recent__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kid-recent__main strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.kid-recent__main span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.kid-recent__score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.kid-recent__score small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.kid-more {
+  align-self: flex-start;
+  border: 0;
+  background: none;
+  color: var(--color-brand-deep);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .kid-tip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kid-tip__actions {
+    justify-content: flex-start;
+  }
+
+  .kid-recent__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* "Hôm nay" chỉ hiện đủ chữ khi cột đủ rộng */
+.kid-narrow {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .kid-wide {
+    display: none;
+  }
+
+  .kid-narrow {
+    display: inline;
+  }
+
+  /* Bảng từng trò thành danh sách hai dòng: tên và % đúng ở dòng 1, các số còn lại ở dòng 2 */
+  .kid-table thead {
+    display: none;
+  }
+
+  .kid-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .kid-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .kid-table th,
+  .kid-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .kid-table tbody th {
+    flex: 1 1 calc(100% - 64px);
+  }
+
+  .kid-table .kid-table__acc {
+    order: -0;
+    width: 64px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .kid-table td[data-label] {
+    margin: 4px 14px 0 16px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: left;
+  }
+
+  .kid-table td[data-label] + td[data-label] {
+    margin-left: 0;
+  }
+
+  .kid-table td[data-label]::before {
+    content: attr(data-label) ' ';
+  }
+
+  .kid-table tbody th,
+  .kid-table .kid-table__acc {
+    order: 0;
+  }
+
+  .kid-table td[data-label] {
+    order: 1;
+  }
+
+  .kid__summary {
+    font-size: 16px;
+  }
+
+  .kid-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kid-stats > div:nth-child(3) {
+    border-left: 0;
+  }
+
+  .kid-stats > div:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+
+  .kid-week__days {
+    gap: 4px;
+  }
+
+  .kid-week__track {
+    height: 96px;
+  }
+
+  .kid-week__count {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kid-week__bar {
+    transition: none;
+  }
+}
+
+/* =====================================================================
+   Sống động: dải đầu trang màu mint với avatar lớn của con, cột ngày mọc lên,
+   thẻ gợi ý trên nền nắng với tranh minh hoạ của phương pháp.
+   ===================================================================== */
+
+.kid__head {
+  align-items: center;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: var(--color-mint);
+}
+
+.kid__hero-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--color-brand-deep);
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.kid__hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kid__title {
+  flex: 1;
+  min-width: 240px;
+}
+
+.kid__meta {
+  color: var(--color-ink-soft);
+}
+
+.kid-tip.panel {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  background: var(--color-sun-field);
+}
+
+.kid-tip__art {
+  width: 104px;
+  height: auto;
+}
+
+.kid-tip__together {
+  border-top-color: rgb(31 41 55 / 0.14);
+  color: var(--color-ink-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kid__hero-avatar {
+    animation: kid-pop 560ms var(--ease-expo) both;
+  }
+
+  /* Cột từng ngày mọc lên lần lượt từ đáy */
+  .kid-week__bar {
+    transform-origin: bottom;
+    animation: kid-grow 760ms var(--ease-expo) calc(var(--i) * 70ms + 120ms) both;
+  }
+
+  .kid-week__count {
+    animation: kid-fade 400ms var(--ease-out) calc(var(--i) * 70ms + 420ms) both;
+  }
+
+  .kid-flag {
+    display: inline-block;
+    animation: kid-pop 520ms var(--ease-expo) 500ms both;
+  }
+
+  .kid-table tbody tr,
+  .kid-recent__list li {
+    animation: kid-rise 420ms var(--ease-out) both;
+  }
+
+  .kid-table tbody tr:nth-child(2),
+  .kid-recent__list li:nth-child(2) { animation-delay: 50ms; }
+  .kid-table tbody tr:nth-child(3),
+  .kid-recent__list li:nth-child(3) { animation-delay: 100ms; }
+  .kid-table tbody tr:nth-child(4),
+  .kid-recent__list li:nth-child(4) { animation-delay: 150ms; }
+  .kid-table tbody tr:nth-child(5),
+  .kid-recent__list li:nth-child(5) { animation-delay: 200ms; }
+}
+
+@keyframes kid-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes kid-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes kid-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes kid-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 860px) {
+  .kid-tip.panel {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .kid-tip__art {
+    width: 72px;
+  }
+
+  .kid-tip__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .kid__head {
+    padding: 18px 16px;
+  }
+
+  .kid__hero-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+}

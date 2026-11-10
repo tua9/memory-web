@@ -6,12 +6,16 @@ const SHORT_LIST = 8;
 
 type Entry = Leaderboard['entries'][number];
 
+const Avatar = ({ entry }: { entry: Entry }) => (
+    <span className="cups__avatar" aria-hidden="true">
+        {entry.avatarUrl ? <img src={entry.avatarUrl} alt="" /> : entry.username.charAt(0).toUpperCase()}
+    </span>
+);
+
 const Row = ({ entry }: { entry: Entry }) => (
-    <li className="cups__row" data-me={entry.isMe} data-place={entry.rank <= 3 ? entry.rank : undefined}>
+    <li className="cups__row" data-me={entry.isMe}>
         <span className="cups__rank num">{entry.rank}</span>
-        <span className="cups__avatar" aria-hidden="true">
-            {entry.avatarUrl ? <img src={entry.avatarUrl} alt="" /> : entry.username.charAt(0).toUpperCase()}
-        </span>
+        <Avatar entry={entry} />
         <span className="cups__name">{entry.isMe ? `${entry.username} (bạn)` : entry.username}</span>
         <span className="cups__count num" aria-label={`${entry.cups} cúp`}>
             {entry.cups} <Trophy size={14} aria-hidden="true" />
@@ -19,36 +23,53 @@ const Row = ({ entry }: { entry: Entry }) => (
     </li>
 );
 
-// Bảng xếp hạng cúp: mỗi trận thắng một cúp. Mặc định hiện 8 hạng đầu và luôn có dòng của bạn.
+// Bảng xếp hạng cúp: ba người đầu đứng trên bục (hạng 1 ở giữa, cao nhất), từ hạng 4 là danh sách.
+// Mặc định hiện 8 người đầu và luôn có dòng của bạn.
 export const CupLeaderboard = ({ board, failed, onRetry }: { board: Leaderboard | null; failed: boolean; onRetry: () => void }) => {
     const [expanded, setExpanded] = useState(false);
     const entries = board?.entries ?? [];
-    const shown = expanded ? entries : entries.slice(0, SHORT_LIST);
+    const podium = entries.slice(0, 3);
+    const rest = entries.slice(3);
+    const shown = expanded ? rest : rest.slice(0, SHORT_LIST - 3);
     const mine = entries.find((entry) => entry.isMe);
-    const pinMine = !expanded && mine && !shown.includes(mine);
+    const pinMine = !expanded && mine && !podium.includes(mine) && !shown.includes(mine);
 
     return (
         <section className="panel cups" aria-labelledby="cups-title">
             <h2 id="cups-title">Bảng xếp hạng cúp</h2>
 
-            {!board && !failed && (
-                <ol className="cups__list" aria-hidden="true">
-                    {[0, 1, 2].map((index) => <li key={index} className="cups__row cups__row--loading"><span /><span /></li>)}
-                </ol>
-            )}
+            {!board && !failed && <div className="cups__loading" aria-hidden="true" />}
             {failed && (
                 <p className="cups__note">Chưa tải được bảng xếp hạng. <button type="button" className="cups__retry" onClick={onRetry}>Thử lại</button></p>
             )}
             {board && entries.length === 0 && <p className="cups__note">Chưa ai có cúp. Thắng trận đầu tiên để đứng đầu bảng.</p>}
 
-            {entries.length > 0 && (
-                <ol className="cups__list">
+            {podium.length > 0 && (
+                <ol className="podium" aria-label="Ba hạng đầu">
+                    {podium.map((entry, index) => (
+                        <li key={entry._id} className="podium__step" data-place={index + 1} data-me={entry.isMe}
+                            style={{ '--i': index } as React.CSSProperties}>
+                            <Avatar entry={entry} />
+                            <span className="podium__name">{entry.isMe ? 'Bạn' : entry.username}</span>
+                            <span className="podium__block">
+                                <span className="podium__rank num">{entry.rank}</span>
+                                <span className="podium__cups num" aria-label={`${entry.cups} cúp`}>
+                                    {entry.cups} <Trophy size={12} aria-hidden="true" />
+                                </span>
+                            </span>
+                        </li>
+                    ))}
+                </ol>
+            )}
+
+            {(shown.length > 0 || pinMine) && (
+                <ol className="cups__list" start={4}>
                     {shown.map((entry) => <Row key={entry._id} entry={entry} />)}
                     {pinMine && <li className="cups__gap" aria-hidden="true">…</li>}
                     {pinMine && <Row entry={mine} />}
                 </ol>
             )}
-            {entries.length > SHORT_LIST && (
+            {rest.length > SHORT_LIST - 3 && (
                 <button type="button" className="cups__retry cups__more" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>
                     {expanded ? 'Thu gọn' : `Xem top ${entries.length}`}
                 </button>
