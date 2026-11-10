@@ -27,6 +27,7 @@ export type RoomView = {
     // Người thắng các trận đã xong trong phòng: userId hoặc 'draw'
     history: { winner: string }[];
 };
+export type MatchStatus = { status: 'idle' } | { status: 'searching'; gameName: string; since: string } | { status: 'matched'; code: string };
 export type RoomStats = { matches: number; wins: number; losses: number; draws: number; cups: number };
 export type Leaderboard = {
     entries: { _id: string; username: string; avatarUrl: string | null; cups: number; wins: number; matches: number; rank: number; isMe: boolean }[];
@@ -41,6 +42,10 @@ export const roomsApi = {
     create: (body: unknown) => data<RoomView>(apiClient.post('/rooms', body)),
     stats: () => data<RoomStats>(apiClient.get('/rooms/stats')),
     leaderboard: () => data<Leaderboard>(apiClient.get('/rooms/leaderboard')),
+    // Ghép trận tự động
+    findMatch: (gameName: string) => data<MatchStatus>(apiClient.post('/rooms/matchmaking', { gameName })),
+    pollMatch: () => data<MatchStatus>(apiClient.get('/rooms/matchmaking')),
+    cancelMatch: () => data<MatchStatus>(apiClient.delete('/rooms/matchmaking')),
     get: (code: string) => data<RoomView>(apiClient.get(at(code))),
     join: (code: string) => post(code, 'join'),
     leave: (code: string) => post(code, 'leave'),

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Trophy } from 'lucide-react';
 import type { Leaderboard } from '../api/rooms.api';
 
-const SHORT_LIST = 5;
+const SHORT_LIST = 8;
 
 type Entry = Leaderboard['entries'][number];
 
@@ -19,7 +19,7 @@ const Row = ({ entry }: { entry: Entry }) => (
     </li>
 );
 
-// Bảng xếp hạng cúp: mỗi trận thắng một cúp. Mặc định hiện 5 hạng đầu và luôn có dòng của bạn.
+// Bảng xếp hạng cúp: mỗi trận thắng một cúp. Mặc định hiện 8 hạng đầu và luôn có dòng của bạn.
 export const CupLeaderboard = ({ board, failed, onRetry }: { board: Leaderboard | null; failed: boolean; onRetry: () => void }) => {
     const [expanded, setExpanded] = useState(false);
     const entries = board?.entries ?? [];

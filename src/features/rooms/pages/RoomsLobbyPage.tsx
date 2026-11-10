@@ -5,13 +5,14 @@ import { Header } from '@/components/layout/Header';
 import { roomsApi, type Leaderboard } from '../api/rooms.api';
 import { RoomSetupForm, type RoomSetup } from '../components/RoomSetupForm';
 import { CupLeaderboard } from '../components/CupLeaderboard';
+import { QuickMatch } from '../components/QuickMatch';
 import '@/styles/app-screen.css';
 import '../rooms.css';
 
 const messageOf = (cause: unknown, fallback: string) => (cause as { message?: string })?.message ?? fallback;
 
-// Sảnh Đấu trí nhớ trên lưới 12 cột: dải chỉ số 12, rồi form tạo phòng 9 + cột phải 3 (vào phòng, bảng xếp hạng).
-// Trên điện thoại ô nhập mã lên đầu, vì vào phòng bằng mã là việc làm nhiều nhất.
+// Sảnh Đấu trí nhớ trên lưới 12 cột: dải chỉ số 12; rồi tìm trận nhanh 9 + vào phòng bằng mã 3;
+// rồi tạo phòng 9 + bảng xếp hạng 3. Trên điện thoại: tìm trận, vào phòng, tạo phòng, bảng xếp hạng.
 export const RoomsLobbyPage = () => {
     const navigate = useNavigate();
     const [board, setBoard] = useState<Leaderboard | null>(null);
@@ -78,6 +79,10 @@ export const RoomsLobbyPage = () => {
                 {error && <p role="alert" className="rooms__alert">{error}</p>}
 
                 <div className="lobby__grid">
+                    <div className="lobby__quick">
+                        <QuickMatch />
+                    </div>
+
                     <form className="panel lobby__join" onSubmit={join} aria-labelledby="join-title">
                         <h2 id="join-title">Vào phòng bằng mã</h2>
                         <label className="sr-only" htmlFor="room-code">Mã phòng 6 ký tự</label>
