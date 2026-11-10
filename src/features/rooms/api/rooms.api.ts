@@ -18,9 +18,18 @@ export type RoomView = {
         memorizeEndsAt: string; recallEndsAt: string; items?: RoomItem[]; recallOptions?: RoomItem[]; myAnswers?: (string | null)[];
         result?: { outcome: string | null; expected: RoomItem[]; players: RoomPlayerResult[] };
     };
-    pointsEarned: number | null;
+    // Người thắng từng vòng đã chơi: userId, 'draw', hoặc null khi vòng đang diễn ra
+    roundOutcomes: (string | null)[];
+    // Người nhận cúp của trận vừa xong (null khi hoà hoặc có vòng một người bỏ trống)
+    cupWinnerId: string | null;
+    // Người thắng các trận đã xong trong phòng: userId hoặc 'draw'
+    history: { winner: string }[];
 };
-export type RoomStats = { matches: number; wins: number; losses: number; draws: number; points: number };
+export type RoomStats = { matches: number; wins: number; losses: number; draws: number; cups: number };
+export type Leaderboard = {
+    entries: { _id: string; username: string; avatarUrl: string | null; cups: number; wins: number; matches: number; rank: number; isMe: boolean }[];
+    me: RoomStats & { rank: number | null };
+};
 
 const data = <T>(request: Promise<unknown>) => (request as Promise<ApiSuccessResponse<T>>).then((response) => response.data);
 const at = (code: string, action = '') => `/rooms/${encodeURIComponent(code)}${action && `/${action}`}`;
@@ -29,6 +38,7 @@ const post = (code: string, action: string, body?: unknown) => data<RoomView>(ap
 export const roomsApi = {
     create: (body: unknown) => data<RoomView>(apiClient.post('/rooms', body)),
     stats: () => data<RoomStats>(apiClient.get('/rooms/stats')),
+    leaderboard: () => data<Leaderboard>(apiClient.get('/rooms/leaderboard')),
     get: (code: string) => data<RoomView>(apiClient.get(at(code))),
     join: (code: string) => post(code, 'join'),
     leave: (code: string) => post(code, 'leave'),
@@ -39,4 +49,6 @@ export const roomsApi = {
     submit: (code: string, answers: (string | null)[]) => post(code, 'submit', { answers }),
     next: (code: string) => post(code, 'next'),
     finish: (code: string) => post(code, 'finish'),
+    // Không gửi cài đặt: chơi lại trò cũ; gửi cài đặt: đổi trò
+    rematch: (code: string, setup?: unknown) => post(code, 'rematch', setup ?? {}),
 };
