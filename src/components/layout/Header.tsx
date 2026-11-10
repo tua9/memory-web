@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Menu, X, User, LogOut, Loader2, Sparkles, Gamepad2 } from "lucide-react";
+import { BarChart3, Menu, X, User, LogOut, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import memioLogo from "@/assets/memio/Logo/Memio.svg";
 import { UserMenu } from "./UserMenu";
-import { ParentUserMenu } from "./ParentUserMenu";
 import { prefetchDashboard } from "@/features/dashboard/hooks/useDashboardData";
-
-const PARENT_NAV_LINKS = [
-  { label: "Tổng quan", href: "/parent" },
-  { label: "Hồ sơ của con", href: "/parent/child-profile" },
-  { label: "Chơi cùng con", href: "/parent/room" },
-];
 
 // Nút đăng nhập/đăng ký mang cùng view-transition-name với tấm vé xanh ở trang auth, nên khi chuyển trang nó "nở" thành tấm vé
 const morphIntoAuthCard = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,8 +19,8 @@ const NAV_LINKS = [
   { label: "Phương pháp", href: "/methods" },
   { label: "Trò chơi", href: "/games" },
   { label: "Thử thách", href: "/daily" },
-  // Phòng chơi cùng ba mẹ cần tài khoản đã liên kết, khách chưa đăng nhập không thấy mục này
-  { label: "Chơi cùng ba mẹ", href: "/family-room", authOnly: true },
+  // Phòng đấu cần tài khoản để ghi kết quả trận, khách chưa đăng nhập không thấy mục này
+  { label: "Đấu trí nhớ", href: "/rooms", authOnly: true },
 ];
 
 export const Header = () => {
@@ -36,7 +29,7 @@ export const Header = () => {
   const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
-  const navLinks = NAV_LINKS.filter((link) => !link.authOnly || isAuthenticated);
+  const navLinks = NAV_LINKS.filter((link) => !("authOnly" in link) || isAuthenticated);
 
   // Mục đang mở: trang hiện tại hoặc trang con của nó (/methods/story-linking thuộc "Phương pháp")
   const { pathname } = useLocation();
@@ -88,159 +81,6 @@ export const Header = () => {
       setIsLoggingOut(false);
     }
   };
-
-  if (user?.role === 'parent') {
-    return (
-      <header className="site-header sticky top-0 z-50 bg-wall" data-tint={tint ?? undefined}>
-        <div className="page-col flex h-[84px] items-center justify-between">
-          {/* Logo */}
-          <Link to="/parent" viewTransition aria-label="Memio, khu vực phụ huynh" className="flex items-center gap-3 z-50">
-            <img
-              src={memioLogo}
-              alt=""
-              className="h-[40px] w-auto object-contain"
-            />
-          </Link>
-
-          {/* Desktop Nav & Actions */}
-          <div className="hidden items-center gap-10 lg:flex">
-            <nav className="flex items-center gap-10">
-              {PARENT_NAV_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  viewTransition
-                  aria-current={isCurrent(link.href) ? "page" : undefined}
-                  className="nav-link text-body font-medium text-ink"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-
-            <div className="flex items-center gap-6">
-              <ParentUserMenu />
-            </div>
-          </div>
-
-          {/* Mobile Right Buttons */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <Link
-              to="/parent/room"
-              viewTransition
-              className="btn btn--brand h-11 px-5"
-            >
-              Chơi cùng con
-            </Link>
-            <button
-              className="flex h-11 w-11 items-center justify-center rounded-ui bg-step text-ink transition-transform active:scale-95"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-expanded={isMenuOpen}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-
-          {/* Mobile Nav Overlay */}
-          <div
-            className={cn(
-              "fixed inset-0 top-[84px] z-40 bg-wall px-6 py-8 transition-[transform,visibility] duration-300 ease-in-out lg:hidden",
-              isMenuOpen ? "visible translate-x-0" : "invisible translate-x-full",
-            )}
-          >
-            <nav className="flex flex-col gap-6 text-left">
-              {PARENT_NAV_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  viewTransition
-                  onClick={() => setIsMenuOpen(false)}
-                  aria-current={isCurrent(link.href) ? "page" : undefined}
-                  className="text-[18px] font-medium text-ink aria-[current=page]:font-bold aria-[current=page]:text-brand-deep"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="h-2" />
-              <div className="flex flex-col gap-3 mt-2">
-                {/* Mobile Parent Card */}
-                <div className="flex items-center gap-3 rounded-ui bg-step p-3.5">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF8EF] text-sm font-bold text-[#2E7D32]">
-                    {user?.username?.charAt(0)?.toUpperCase() || "P"}
-                  </span>
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="text-[15px] font-bold text-[#1F2937] truncate">
-                      {user?.username || "Phụ huynh"}
-                    </span>
-                    {user?.email && (
-                      <span className="text-[12px] text-[#667085] truncate">
-                        {user.email}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {logoutError && (
-                  <div
-                    role="alert"
-                    className="rounded-ui bg-[#ffe4df] p-3 text-[14px] text-[#8f1d14]"
-                  >
-                    {logoutError}
-                  </div>
-                )}
-
-                {/* Mobile Links */}
-                <Link
-                  to="/parent/profile"
-                  viewTransition
-                  onClick={() => setIsMenuOpen(false)}
-                  className="btn btn--quiet w-full"
-                >
-                  <User size={18} className="text-[#2E7D32]" aria-hidden="true" />
-                  <span>Hồ sơ phụ huynh</span>
-                </Link>
-
-                <Link
-                  to="/parent/child-profile"
-                  viewTransition
-                  onClick={() => setIsMenuOpen(false)}
-                  className="btn btn--quiet w-full"
-                >
-                  <Sparkles size={18} className="text-[#2E7D32]" aria-hidden="true" />
-                  <span>Hồ sơ của con</span>
-                </Link>
-
-                <Link
-                  to="/parent/room"
-                  viewTransition
-                  onClick={() => setIsMenuOpen(false)}
-                  className="btn btn--quiet w-full"
-                >
-                  <Gamepad2 size={18} className="text-[#2E7D32]" aria-hidden="true" />
-                  <span>Phòng chơi cùng con</span>
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="btn btn--quiet w-full text-[#b42318] disabled:opacity-50"
-                >
-                  {isLoggingOut ? (
-                    <Loader2 size={18} className="animate-spin text-[#DC2626]" />
-                  ) : (
-                    <LogOut size={18} aria-hidden="true" />
-                  )}
-                  <span>{isLoggingOut ? "Đang đăng xuất..." : "Đăng xuất"}</span>
-                </button>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </header>
-    );
-  }
 
   return (
     <header className="site-header sticky top-0 z-50 bg-wall" data-tint={tint ?? undefined}>

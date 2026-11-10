@@ -1,0 +1,878 @@
+/* Đấu trí nhớ: sảnh tạo/vào phòng và màn trận đấu. Dùng biến màu của .dash (app-screen.css). */
+
+.rooms__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-bottom: 24px;
+}
+
+.rooms__head h1 {
+  font-size: clamp(30px, 3.4vw, 44px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.rooms__head p {
+  max-width: 620px;
+  margin-top: 8px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.rooms__stats {
+  display: flex;
+  gap: 28px;
+}
+
+.rooms__stats dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.rooms__stats dd {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+.rooms__alert {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #ffe4df;
+  color: #8f1d14;
+  font-size: 15px;
+}
+
+.rooms__muted {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.rooms__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.rooms__join,
+.rooms__create {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rooms__join h2,
+.rooms__create h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+/* Vào phòng: khối xanh đậm để người có mã thấy ngay chỗ nhập */
+.rooms__join {
+  position: sticky;
+  top: 100px;
+  background: var(--color-brand);
+}
+
+.rooms__join h2,
+.rooms__join .rooms__muted {
+  color: #fff;
+}
+
+.rooms__code-input {
+  width: 100%;
+  height: 64px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.rooms__code-input::placeholder {
+  color: #9aa8a0;
+  font-size: 18px;
+  letter-spacing: 0.12em;
+}
+
+.rooms__code-input:focus-visible {
+  outline: 3px solid var(--color-sun);
+  outline-offset: 2px;
+}
+
+.rooms__join .btn--brand {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+.rooms__wide {
+  width: 100%;
+  justify-content: center;
+}
+
+.rooms__field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.rooms__field legend {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.rooms__games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+/* Mỗi trò một màu riêng (GAME_META.color), dùng cho dải bên trái khi đang chọn */
+.rooms__game {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 4px 0 0 transparent;
+  transition: box-shadow 200ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.rooms__game strong {
+  font-size: 15px;
+}
+
+.rooms__game span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.rooms__game[aria-pressed='true'] {
+  box-shadow: inset 5px 0 0 var(--game), inset 0 0 0 2px var(--game);
+}
+
+.rooms__game:active,
+.rooms__chip:active {
+  transform: scale(0.97);
+}
+
+.rooms__seg {
+  align-self: flex-start;
+}
+
+.rooms__levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 6px;
+}
+
+.rooms__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rooms__chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 40px;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.rooms__chip strong {
+  font-size: 17px;
+}
+
+.rooms__chip span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.rooms__chip[aria-pressed='true'] {
+  background: var(--color-brand-deep);
+  color: #fff;
+}
+
+.rooms__chip[aria-pressed='true'] span {
+  color: #d9eadc;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rooms__chip[aria-pressed='false']:hover,
+  .rooms__game[aria-pressed='false']:hover {
+    background: var(--color-step);
+  }
+}
+
+.rooms__range {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.rooms__range input {
+  accent-color: var(--color-brand-deep);
+}
+
+.rooms__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.rooms__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+}
+
+/* ---------- Màn trận đấu ---------- */
+
+.room__bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.room__back {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--color-ink);
+}
+
+.room__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.room__title h1 {
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.room__title p {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.room__game {
+  font-weight: 700;
+  color: var(--game);
+}
+
+.room__link {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bad);
+}
+
+.room__link[data-ok='true'] {
+  color: var(--good);
+}
+
+.room__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.room__actions .settings__action {
+  margin-left: 0;
+}
+
+.room__actions--quiet {
+  margin-top: -4px;
+}
+
+/* Hai người chơi đối mặt, đồng hồ ở giữa */
+.room-versus {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.room-versus > :nth-child(2) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.room-versus__mid {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 84px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.room-versus__vs {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.room-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--panel);
+  transition: background-color 300ms var(--ease-out);
+  animation: room-rise 420ms var(--ease-out) both;
+}
+
+.room-versus > :nth-child(2).room-player {
+  flex-direction: row-reverse;
+  text-align: right;
+  animation-delay: 80ms;
+}
+
+.room-player[data-me='true'] {
+  background: var(--color-mint);
+}
+
+.room-player[data-done='true'] .room-player__who span {
+  color: var(--good);
+  font-weight: 700;
+}
+
+.room-player--empty {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--well);
+}
+
+.room-player__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-brand-deep);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.room-player__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-player__who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.room-player__who strong {
+  overflow: hidden;
+  font-size: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-player__who span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.room-player__wins {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+/* Đồng hồ vòng tròn; đổi màu khi còn 5 giây */
+.room-timer {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+}
+
+.room-timer svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.room-timer circle {
+  fill: none;
+  stroke-width: 6;
+}
+
+.room-timer__track {
+  stroke: var(--well);
+}
+
+.room-timer__fill {
+  stroke: var(--color-brand);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 250ms linear, stroke 200ms;
+}
+
+.room-timer[data-low='true'] .room-timer__fill {
+  stroke: var(--bad);
+}
+
+.room-timer strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.room-timer[data-low='true'] strong {
+  color: var(--bad);
+  animation: room-pulse 1s var(--ease-in-out) infinite;
+}
+
+/* Phòng chờ: mã to bên trái, sẵn sàng bên phải */
+.room-wait {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+}
+
+.room-wait__code,
+.room-wait__go {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.room-wait h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.room-tiles {
+  display: flex;
+  gap: 8px;
+}
+
+.room-tiles span {
+  display: grid;
+  place-items: center;
+  width: clamp(42px, 8vw, 64px);
+  aspect-ratio: 4 / 5;
+  border-radius: 12px;
+  background: var(--color-brand);
+  color: #fff;
+  font-size: clamp(24px, 4.4vw, 38px);
+  font-weight: 800;
+  animation: room-flip 460ms var(--ease-out) both;
+}
+
+.room-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 18px;
+  list-style: disc;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Ghi nhớ */
+.room-play {
+  width: 100%;
+  margin: 0;
+}
+
+.room-play__head {
+  text-align: center;
+}
+
+.room-play__head h2 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 800;
+}
+
+.room-play__head p {
+  font-size: 14px;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.room-play__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.room-play__items li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: room-rise 360ms var(--ease-out) both;
+}
+
+.room-play__items li > span:first-child {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.room-play__go {
+  min-width: 220px;
+  justify-content: center;
+}
+
+.room-digit {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--color-ink);
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.room-digit[data-size='lg'] {
+  width: 80px;
+  height: 80px;
+  font-size: 36px;
+}
+
+.room-digit[data-size='sm'],
+.room-digit[data-size='xs'] {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-step);
+  font-size: 17px;
+}
+
+.room-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.room-face span,
+.room-word {
+  max-width: 120px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Trả lời */
+.room-recall {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.room-recall__submit {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 15px;
+  box-shadow: 0 10px 30px rgb(15 23 42 / 0.25);
+}
+
+/* Kết quả vòng */
+.room-result {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: room-rise 420ms var(--ease-out) both;
+}
+
+.room-result h2 {
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.room-result[data-outcome='win'] h2 {
+  color: var(--good);
+}
+
+.room-result__scores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.room-result__scores > div {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.room-result__scores > div[data-win='true'] {
+  box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+
+.room-result__scores strong {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.room-result__scores span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.room-compare {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.room-compare th,
+.room-compare td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.room-compare thead th {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.room-compare tbody th {
+  width: 64px;
+  font-weight: 800;
+}
+
+.room-compare td[data-right='true'] {
+  background: #e6f4e9;
+}
+
+.room-compare td[data-right='false'] {
+  background: #fdecea;
+}
+
+.room-compare__blank {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Kết thúc, chờ, huỷ */
+.room-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.room-end h1,
+.room-end h2 {
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.room-final {
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  margin-top: 20px;
+  padding-block: 32px;
+  text-align: center;
+}
+
+.room-final[data-outcome='win'] {
+  background: var(--color-mint);
+}
+
+.room-final__score {
+  font-size: clamp(48px, 7vw, 80px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  animation: room-pop 520ms var(--ease-expo) both;
+}
+
+@keyframes room-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes room-flip {
+  from {
+    opacity: 0;
+    transform: translateY(16px) rotateX(75deg);
+  }
+}
+
+@keyframes room-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes room-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 900px) {
+  .rooms__grid,
+  .room-wait {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rooms__join {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .rooms__pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .room-versus {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .room-versus__mid {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .room-versus > :first-child {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .room-versus > :nth-child(2) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .room-player {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .room-versus > :nth-child(2).room-player {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .room-player__who strong {
+    white-space: normal;
+  }
+
+  .room__link {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-player,
+  .room-tiles span,
+  .room-play__items li,
+  .room-result,
+  .room-final__score,
+  .room-timer[data-low='true'] strong {
+    animation: none;
+  }
+
+  .room-timer__fill {
+    transition: none;
+  }
+}
