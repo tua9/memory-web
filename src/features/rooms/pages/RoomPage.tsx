@@ -278,6 +278,8 @@ export const RoomPage = () => {
     const deadline = room?.phase === 'memorizing' ? round?.memorizeEndsAt : round?.recallEndsAt;
     const remaining = deadline ? Math.max(0, Math.ceil((new Date(deadline).getTime() - tick - offset.current) / 1000)) : null;
     const phaseTotal = room ? (room.phase === 'memorizing' ? room.rules.memorizeLimitSec : room.rules.recallLimitSec) : 0;
+    const startsIn = room?.state === 'waiting' && room.startsAt
+        ? Math.max(0, Math.ceil((new Date(room.startsAt).getTime() - tick - offset.current) / 1000)) : null;
 
     // Ô gõ chữ giữ nguyên dấu cách khi đang gõ; khoảng trắng thừa chỉ bị bỏ lúc nộp
     const submit = () => roomsApi.submit(code, answers.map((answer) => answer?.trim() || null));
@@ -290,6 +292,12 @@ export const RoomPage = () => {
         void act(submit);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [remaining, room?.phase, room?.roundIndex]);
+
+    useEffect(() => {
+        if (startsIn !== 0) return;
+        roomsApi.get(code).then(apply).catch(() => undefined);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startsIn === 0]);
 
     // Enter trong ô gõ chữ: sang ô kế tiếp
     const focusNext = (index: number) => {
@@ -405,7 +413,7 @@ export const RoomPage = () => {
         const quiet = 'duel-btn';
         const primary = 'duel-btn duel-btn--primary';
         if (room.state === 'waiting') {
-            const allReady = room.players.length === room.capacity && room.players.every((player) => player.ready);
+            const full = room.players.length === room.capacity;
             return (
                 <>
                     {room.isHost && opponent && (
@@ -419,9 +427,10 @@ export const RoomPage = () => {
                         <LogOut size={16} aria-hidden="true" /> {room.isHost ? 'Huỷ phòng' : 'Rời phòng'}
                     </button>
                     {me?.ready && <button type="button" className={quiet} disabled={busy} onClick={() => void act(() => roomsApi.ready(code, false))}>Huỷ sẵn sàng</button>}
-                    {!me?.ready && <button type="button" className={primary} disabled={busy} onClick={() => void act(() => roomsApi.ready(code, true))}>Sẵn sàng</button>}
-                    {me?.ready && room.isHost && (
-                        <button type="button" className={primary} disabled={busy || !allReady} onClick={() => void act(() => roomsApi.start(code))}>Bắt đầu trận</button>
+                    {!me?.ready && (
+                        <button type="button" className={primary} disabled={busy} onClick={() => void act(() => roomsApi.ready(code, true))}>
+                            {full ? 'Sẵn sàng, vào ngay' : 'Sẵn sàng'}
+                        </button>
                     )}
                 </>
             );
@@ -471,10 +480,9 @@ export const RoomPage = () => {
 
     // Dòng nhắc người chơi đang phải làm gì, ngay dưới dải đối đầu
     const hint = !room ? '' : room.state === 'waiting'
-        ? room.players.length < room.capacity ? 'Gửi mã phòng cho người chơi cùng.'
-            : !me?.ready ? 'Bấm Sẵn sàng khi bạn đã sẵn sàng.'
-            : room.isHost ? (room.players.every((p) => p.ready) ? 'Cả hai đã sẵn sàng. Bấm Bắt đầu trận.' : `Chờ ${opponent?.username} sẵn sàng.`)
-            : `Chờ ${host?.username ?? 'chủ phòng'} bắt đầu trận.`
+        ? room.players.length < room.capacity ? 'Gửi mã phòng cho người chơi cùng. Đủ hai người thì trận tự bắt đầu sau 30 giây.'
+            : !me?.ready ? `Trận tự bắt đầu sau ${startsIn ?? 30} giây. Bấm Sẵn sàng nếu muốn vào ngay.`
+            : `Bạn đã sẵn sàng. Trận bắt đầu khi ${opponent?.username ?? 'đối thủ'} sẵn sàng hoặc sau ${startsIn ?? 30} giây.`
         : room.phase === 'memorizing' ? 'Ghi nhớ thứ tự. Nhớ xong thì bấm trả lời, hoặc nhấn Enter.'
         : room.phase === 'recalling' ? 'Xếp lại theo đúng thứ tự. Hết giờ sẽ tự nộp những gì bạn đã điền.'
         : room.phase === 'waiting_for_other' ? `Đã nộp. Đang chờ ${opponent?.username ?? 'đối thủ'} nộp bài hoặc hết giờ.`
@@ -525,7 +533,9 @@ export const RoomPage = () => {
                         <div className="duel__board">
                             <Lane room={room} player={seats[0]} side="me" />
                             <div className="duel__mid">
-                                {(room.phase === 'memorizing' || room.phase === 'recalling') && remaining !== null
+                                {startsIn !== null
+                                    ? <TimerRing remaining={startsIn} total={30} />
+                                    : (room.phase === 'memorizing' || room.phase === 'recalling') && remaining !== null
                                     ? <TimerRing remaining={remaining} total={phaseTotal} />
                                     : <span className="duel__vs num" aria-label={room.roundIndex >= 0 ? `Tỉ số vòng ${me?.score.wins ?? 0} – ${opponent?.score.wins ?? 0}` : undefined}>
                                         {room.roundIndex >= 0 ? `${me?.score.wins ?? 0} – ${opponent?.score.wins ?? 0}` : 'VS'}
@@ -546,8 +556,9 @@ export const RoomPage = () => {
                 {!room && <p className="dash-note">Đang vào phòng...</p>}
 
                 {room && room.state === 'waiting' && (
-                    <section className="panel room-wait" aria-labelledby="wait-title">
-                        <div className="room-wait__code">
+                    <section className="panel room-wait" aria-labelledby={room.players.length < room.capacity ? 'wait-title' : undefined}
+                        aria-label={room.players.length < room.capacity ? undefined : 'Luật trận'} data-full={room.players.length >= room.capacity}>
+                        {room.players.length < room.capacity && <div className="room-wait__code">
                             <h2 id="wait-title">Mã phòng</h2>
                             <p className="room-tiles num" aria-label={`Mã ${code.split('').join(' ')}`}>
                                 {code.split('').map((char, index) => <span key={index}>{char}</span>)}
@@ -562,11 +573,11 @@ export const RoomPage = () => {
                                     {copied === 'link' ? 'Đã sao chép' : 'Sao chép link'}
                                 </button>
                             </div>
-                        </div>
+                        </div>}
                         <div className="room-wait__rules">
                             <h2>Luật trận</h2>
                             <ul>
-                                <li>{room.roundCount} vòng. Mỗi vòng hai người ghi nhớ cùng một đề trong {room.rules.memorizeLimitSec} giây rồi trả lời trong {room.rules.recallLimitSec} giây.</li>
+                                <li>{room.roundCount} vòng {meta?.label}, {totalItems} {meta?.unit} mỗi vòng. Ghi nhớ trong {room.rules.memorizeLimitSec} giây rồi trả lời trong {room.rules.recallLimitSec} giây.</li>
                                 <li>Nhiều vị trí đúng hơn thì thắng vòng; bằng nhau thì ai nhanh hơn thắng.</li>
                                 <li>Thắng nhiều vòng hơn thì thắng trận và nhận 1 cúp, khi cả hai đều có trả lời ở mọi vòng.</li>
                             </ul>

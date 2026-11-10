@@ -783,6 +783,10 @@
   gap: 24px;
 }
 
+.room-wait[data-full='true'] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .room-wait h2,
 .room-compare-panel h2,
 .room-note h2 {

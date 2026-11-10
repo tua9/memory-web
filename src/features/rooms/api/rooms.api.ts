@@ -20,6 +20,8 @@ export type RoomView = {
     };
     // Người thắng từng vòng đã chơi: userId, 'draw', hoặc null khi vòng đang diễn ra
     roundOutcomes: (string | null)[];
+    // Phòng chờ đủ người: giờ trận tự bắt đầu (30 giây sau khi người thứ hai vào)
+    startsAt: string | null;
     // Người nhận cúp của trận vừa xong (null khi hoà hoặc có vòng một người bỏ trống)
     cupWinnerId: string | null;
     // Người thắng các trận đã xong trong phòng: userId hoặc 'draw'
