@@ -73,9 +73,6 @@ const RenderGameItem = ({ gameName, item, size = 'md', showLabel = true }: {
 
 // Bạn luôn đứng đầu với màu mint, người khác màu xanh trời: màu nhận diện, không phải dữ liệu
 type Side = 'me' | 'opp';
-
-// Cúp theo hạng, theo số người vào trận (khớp CUP_TABLE ở backend)
-const CUP_RULE = '2 người +2/−1 · 3 người +2/0/−1 · 4 người +2/+1/0/−1 · 5 người +2/+1/0/−1/−2';
 const signed = (value: number) => (value > 0 ? `+${value}` : value < 0 ? `−${-value}` : '0');
 
 const Avatar = ({ player, side }: { player: Pick<RoomPlayer, 'username' | 'avatarUrl'>; side: Side }) => (
@@ -669,7 +666,7 @@ export const RoomPage = () => {
                                 <li>Phòng tối đa {room.capacity} người. Từ 2 người trở lên, mọi người đều sẵn sàng thì trận tự bắt đầu sau 5 giây.</li>
                                 <li>{room.roundCount} vòng {meta?.label}, {totalItems} {meta?.unit} mỗi vòng. Ghi nhớ trong {room.rules.memorizeLimitSec} giây rồi trả lời trong {room.rules.recallLimitSec} giây.</li>
                                 <li>Mỗi vòng, nhiều vị trí đúng hơn thì xếp trên (bằng nhau thì ai nhanh hơn); xếp trên mỗi người được 1 điểm.</li>
-                                <li>Cúp theo hạng cả trận: {CUP_RULE}. Rời trận giữa chừng bị xếp cuối.</li>
+                                <li>Về nhất +2 cúp, về bét bị trừ cúp. Rời trận giữa chừng bị xếp cuối.</li>
                             </ul>
                         </div>
                     </section>

@@ -250,91 +250,239 @@
 .setup {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-.setup h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-ink);
-}
-
-.rooms__field {
+/* Trò chơi: tab một dòng; mỗi trò một màu riêng ở chấm nhỏ, đang chọn thì nền trắng viền màu trò */
+.setup__games {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.setup__game {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
+  height: 40px;
+  padding: 0 14px 0 12px;
   border: 0;
-}
-
-.rooms__field legend {
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-ink);
-}
-
-.rooms__games {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-}
-
-/* Mỗi trò một màu riêng (GAME_META.color), chỉ ở chấm nhỏ và viền khi đang chọn */
-.rooms__game {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 10px 12px 10px 28px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  border-radius: 999px;
+  background: var(--well);
   color: var(--color-ink);
   font: inherit;
-  text-align: left;
+  font-size: 14px;
   cursor: pointer;
-  transition: border-color 150ms var(--ease-out), outline-color 150ms var(--ease-out), transform 120ms var(--ease-out);
+  transition: background-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 120ms var(--ease-out);
 }
 
-.rooms__game::before {
+.setup__game::before {
   content: '';
-  position: absolute;
-  top: 16px;
-  left: 12px;
   width: 8px;
   height: 8px;
   border-radius: 999px;
   background: var(--game);
 }
 
-.rooms__game strong {
-  font-size: 14px;
+.setup__game strong {
   font-weight: 600;
 }
 
-.rooms__game span {
+.setup__game span {
   font-size: 12px;
   color: var(--muted);
 }
 
-.rooms__game[aria-pressed='true'] {
-  border-color: var(--game);
-  outline: 1px solid var(--game);
-  outline-offset: -1px;
+.setup__game[aria-pressed='true'] {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--game);
 }
 
-.rooms__seg {
-  align-self: flex-start;
+.setup__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.rooms__levels {
+.setup__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* Độ khó: số lượng đang chọn bên trái, thang cấp bên phải */
+.setup__difficulty {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 6px;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 20px;
+  padding: 14px 16px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.setup__readout {
+  display: flex;
+  flex-direction: column;
+  min-width: 84px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.setup__readout span {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.setup__readout strong {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-brand-deep);
+}
+
+.setup__ladder {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  height: 64px;
+}
+
+.setup__step {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.setup__bar {
+  width: 100%;
+  height: var(--h);
+  border-radius: 4px;
+  background: var(--control);
+  transform-origin: bottom;
+  transition: background-color 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+
+.setup__step[data-on='true'] .setup__bar {
+  background: #8fcf9f;
+}
+
+.setup__step[aria-pressed='true'] .setup__bar {
+  background: var(--color-brand-deep);
+  transform: scaleY(1.06);
+}
+
+.setup__no {
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.setup__step[aria-pressed='true'] .setup__no {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.setup__range {
+  width: 100%;
+  margin: 0 0 8px;
+  accent-color: var(--color-brand-deep);
+}
+
+/* Ghi nhớ, số vòng, số người: ba nhóm nút liền khối trên một hàng */
+.setup__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+}
+
+.setup__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setup .seg__option {
+  height: 32px;
+  padding: 0 12px;
+}
+
+.setup__game:active,
+.setup__step:active .setup__bar {
+  transform: scale(0.97);
+}
+
+.setup__game:focus-visible,
+.setup__step:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .setup__game[aria-pressed='false']:hover {
+    background: var(--control);
+  }
+
+  .setup__step[aria-pressed='false']:hover .setup__bar {
+    background: var(--color-brand);
+  }
+}
+
+@media (max-width: 560px) {
+  .setup__difficulty {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .setup__readout {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .setup__readout strong {
+    font-size: 26px;
+  }
+
+  .setup__game {
+    flex: none;
+    height: 36px;
+    padding: 0 12px 0 10px;
+    scroll-snap-align: start;
+  }
+
+  /* Năm trò trên một hàng vuốt ngang thay vì xuống bốn dòng */
+  .setup__games {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding: 2px;
+    margin: -2px;
+  }
+
+  .setup__games::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.setup h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink);
 }
 
 .rooms__chips {
@@ -361,10 +509,6 @@
   transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out), transform 120ms var(--ease-out);
 }
 
-.rooms__levels .rooms__chip {
-  min-height: 44px;
-}
-
 .rooms__chip strong {
   font-size: 15px;
   font-variant-numeric: tabular-nums;
@@ -386,41 +530,20 @@
   color: #dcefdf;
 }
 
-.rooms__game:active,
 .rooms__chip:active {
   transform: scale(0.97);
 }
 
-.rooms__game:focus-visible,
 .rooms__chip:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rooms__chip[aria-pressed='false']:hover,
-  .rooms__game[aria-pressed='false']:hover {
+  .rooms__chip[aria-pressed='false']:hover {
     border-color: var(--control);
     background: #f6faf7;
   }
-}
-
-.rooms__range {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.rooms__range input {
-  accent-color: var(--color-brand-deep);
-}
-
-.rooms__pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
 }
 
 .rooms__summary {
@@ -429,8 +552,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+  padding-top: 4px;
   font-size: 14px;
 }
 
@@ -1374,7 +1496,6 @@
 }
 
 @media (max-width: 720px) {
-  .rooms__pair,
   .room-wait {
     grid-template-columns: minmax(0, 1fr);
   }
