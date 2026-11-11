@@ -182,8 +182,9 @@ body {
 [data-reveal='line'] {
   display: block;
   overflow: clip;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
+  /* Chừa chỗ cho dấu tiếng Việt chồng hai tầng (ể, ở…) nhô khỏi dòng cao 0.98, không đổi khoảng cách dòng */
+  padding-block: 0.25em 0.1em;
+  margin-block: -0.25em -0.1em;
 }
 
 /* Chuyển trang (View Transitions): trang cũ mờ nhanh, trang mới trồi lên, header đứng yên */
@@ -399,25 +400,11 @@ body {
   70% { transform: translateY(0) scaleY(0.96); }
 }
 
-/* Linh vật Memio chớp mắt mỗi vài giây: chuyển động lặp duy nhất của trang */
-.mascot svg {
+/* Linh vật Memio (<Mascot>): tự nhảy, vẫy tay, chớp mắt bằng CSS bên trong file SVG */
+.mascot {
   display: block;
-  width: 100%;
   height: auto;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .mascot svg > path:nth-of-type(3),
-  .mascot svg > path:nth-of-type(4) {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: mascot-blink 5.5s ease-in-out infinite;
-  }
-}
-
-@keyframes mascot-blink {
-  0%, 92%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
+  user-select: none;
 }
 
 /* Menu tài khoản trên header: nút mang chữ cái đầu và tên; menu mở từ góc nút, luôn có trong DOM (inert khi đóng)

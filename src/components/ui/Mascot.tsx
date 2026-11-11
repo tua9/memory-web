@@ -1,6 +1,10 @@
-import mascotSvg from "@/assets/memio/mascot.svg?raw";
-
-// Linh vật Memio nhúng thẳng SVG để mắt có thể chớp (CSS .mascot trong index.css)
-export const Mascot = ({ className = "" }: { className?: string }) => (
-    <span className={`mascot ${className}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: mascotSvg }} />
+// Linh vật Memio: chuyển động nằm sẵn trong file SVG (public/), nên chỉ cần <img>
+export const Mascot = ({ className = "", celebrating = false }: { className?: string; celebrating?: boolean }) => (
+    <img
+        className={`mascot ${className}`}
+        src={celebrating ? "/profile-mascot-celebrating.svg" : "/profile-mascot.svg"}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+    />
 );

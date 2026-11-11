@@ -1007,7 +1007,7 @@ export const RoomPage = () => {
                 {room && round?.result && (
                     <RoomDialog open={roundDialogOpen} labelledBy="round-result-title" onClose={() => setDismissed(resultKey)}>
                         <div className="result" data-outcome={outcomeFor(round.result.outcome)}>
-                            <Mascot className="result__mascot" />
+                            <Mascot className="result__mascot" celebrating={outcomeFor(round.result.outcome) === 'win'} />
                             <p className="result__over">Vòng {room.roundIndex + 1}/{room.roundCount}</p>
                             <h2 id="round-result-title">
                                 {round.result.outcome === 'draw' ? 'Vòng này hoà' : `${nameOf(round.result.outcome)} thắng vòng này`}
@@ -1045,7 +1045,7 @@ export const RoomPage = () => {
                     <RoomDialog open={matchDialogOpen} labelledBy="match-result-title" onClose={() => setDismissed(resultKey)}>
                         <div className="result result--match" data-outcome={finalOutcome}>
                             {finalOutcome === 'win' && <Confetti />}
-                            <Mascot className="result__mascot" />
+                            <Mascot className="result__mascot" celebrating={finalOutcome === 'win'} />
                             <p className="result__over">Trận thứ {room.history.length}</p>
                             <h2 id="match-result-title">
                                 {finalOutcome === 'win' ? 'Bạn thắng trận!' : finalOutcome === 'lose' ? `${opponent?.username ?? 'Đối thủ'} thắng trận` : 'Trận đấu hoà'}

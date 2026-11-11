@@ -1777,10 +1777,6 @@
     animation-delay: 0.9s;
   }
 
-  .quick__mascot {
-    animation: lively-bob 1.2s var(--ease-in-out) infinite;
-  }
-
   .podium__step {
     animation: lively-rise 560ms var(--ease-expo) calc(var(--i) * 120ms) both;
   }
@@ -1807,11 +1803,6 @@
     animation: deal-in 460ms var(--ease-expo) calc(var(--i) * 60ms) both;
   }
 
-  .room-wait__mascot,
-  .result[data-outcome='draw'] .result__mascot {
-    animation: lively-bob 1.6s var(--ease-in-out) infinite;
-  }
-
   .result[data-outcome='win'] .result__mascot {
     animation: lively-hop 900ms var(--ease-out) 200ms 2 both;
   }
@@ -1836,12 +1827,6 @@
   from {
     opacity: 0;
     transform: translateY(40px);
-  }
-}
-
-@keyframes lively-bob {
-  50% {
-    transform: translateY(-6px);
   }
 }
 
