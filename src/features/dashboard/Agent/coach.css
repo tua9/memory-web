@@ -1,0 +1,1120 @@
+/* Huấn luyện viên AI trên trang Tiến độ. Câu hỏi của khối: "Tuần này tôi tập gì, hôm nay đã tập chưa?"
+   Lộ trình tuần là khối lớn nhất; chat nằm cạnh và cao bằng cột trái; màu game chỉ đánh dấu buổi tập. */
+
+.coach__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 16px;
+}
+
+.coach__head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.coach__finding {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Mở hộp chat nổi; chat không còn nhúng trong khối nên lộ trình tuần rộng toàn khối */
+.coach__chat {
+  height: 40px;
+  padding-inline: 16px;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.coach__main {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ── Lộ trình tuần ── */
+
+.coach-week,
+.coach-skills {
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.coach-week {
+  padding: 20px;
+  container-type: inline-size;
+}
+
+.coach-week__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.coach-week__head h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.coach-week__meta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.coach-week__progress p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.coach-week__progress strong {
+  color: var(--color-ink);
+  font-size: 24px;
+  font-weight: 750;
+}
+
+.coach-meter {
+  width: 168px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--well);
+}
+
+.coach-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-brand);
+  transform: scaleX(var(--ratio));
+  transform-origin: left;
+  transition: transform 700ms var(--ease-out);
+  animation: coach-fill 900ms var(--ease-out) both;
+}
+
+.coach-week__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 16px;
+}
+
+.coach-week__actions .btn,
+.coach-today__play {
+  height: 44px;
+  padding-inline: 20px;
+  font-size: 15px;
+}
+
+.coach-week__error {
+  width: 100%;
+  margin: 0;
+  color: var(--bad);
+  font-size: 13px;
+}
+
+/* Dải 7 ngày; hẹp hơn 600px (khung chat, điện thoại) thì thành danh sách dọc, bỏ ngày nghỉ */
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.week__day {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 136px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  background: #f4f8f5;
+}
+
+.week__day[data-today] {
+  background: #ffffff;
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
+
+.week__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 0 2px;
+  font-size: 12px;
+}
+
+.week__short {
+  font-weight: 700;
+}
+
+.week__long {
+  display: none;
+  font-weight: 700;
+}
+
+.week__date {
+  color: var(--muted);
+}
+
+.week__day[data-today] .week__label {
+  color: var(--color-brand-deep);
+}
+
+.week ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.week__session {
+  animation: coach-pop 520ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+.week__link {
+  display: grid;
+  gap: 2px;
+  padding: 7px 7px 8px 9px;
+  border-left: 3px solid var(--game);
+  border-radius: 4px 6px 6px 4px;
+  background: #ffffff;
+  color: var(--color-ink);
+  font-size: 12px;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: transform 180ms var(--ease-out), background-color 180ms ease;
+}
+
+.week__link strong {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.week__link span {
+  color: var(--color-ink-soft);
+}
+
+.week__session[data-state='done'] .week__link {
+  background: #e2f2e6;
+}
+
+.week__result {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 700;
+}
+
+.week__session[data-state='done'] .week__result {
+  color: var(--good);
+}
+
+/* Buổi đã qua mà chưa tập: nhạt đi, viền nét đứt */
+.week__session[data-state='missed'] .week__link {
+  border-left-style: dashed;
+  background: transparent;
+  outline: 1px solid var(--rule);
+  outline-offset: -1px;
+}
+
+/* Ngày trước khi áp dụng lộ trình: chỉ nhạt đi, không phải lỗi của người chơi */
+.week__session[data-state='before'] .week__link {
+  background: #f6f8f7;
+  border-left-color: #b9c4bd;
+}
+
+.week__session[data-state='before'] strong,
+.week__session[data-state='before'] span,
+.week__session[data-state='missed'] strong,
+.week__session[data-state='missed'] span {
+  color: var(--muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .week__link:hover {
+    transform: translateY(-2px);
+    background: #eaf3ec;
+  }
+}
+
+.week__link:focus-visible {
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 2px;
+}
+
+/* Trong dải 7 cột, mục tiêu chỉ hiện ở phần Hôm nay; dạng danh sách có chỗ thì hiện */
+.week__target {
+  display: none;
+}
+
+.week__rest {
+  margin: auto 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+@container (max-width: 600px) {
+  .week {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 12px;
+  }
+
+  .week__day {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 0;
+    padding: 8px 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .week__day + .week__day {
+    border-top: 1px solid var(--rule);
+  }
+
+  .week__day[data-today] {
+    margin-inline: -8px;
+    padding-inline: 8px;
+    border-radius: 8px;
+  }
+
+  .week__day[data-rest] {
+    display: none;
+  }
+
+  .week__label {
+    flex: 0 0 76px;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 7px;
+    font-size: 13px;
+  }
+
+  .week__short {
+    display: none;
+  }
+
+  .week__long {
+    display: inline;
+  }
+
+  .week ul {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .week__link {
+    background: #f4f8f5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+    font-size: 13px;
+  }
+
+  .week__link strong {
+    flex-basis: 100%;
+  }
+
+  .week__target {
+    display: inline;
+  }
+}
+
+/* ── Hôm nay ── */
+
+.coach-today {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.coach-today li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding-left: 12px;
+  border-left: 3px solid var(--game);
+  animation: coach-rise 480ms var(--ease-out) 200ms both;
+}
+
+.coach-today__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.coach-today__tip {
+  max-width: 62ch;
+  margin: 3px 0 0;
+  color: var(--color-ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.coach-today__action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+}
+
+.coach-today__done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--good);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.coach-today__done span {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.coach-today--rest {
+  display: block;
+}
+
+/* ── Năng lực theo trò: một thẻ chia cột, không phải năm thẻ rời ── */
+
+.coach-skills {
+  padding: 16px 20px 18px;
+}
+
+.coach-skills h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* subgrid: tên dài xuống dòng không làm lệch hàng số của các cột bên cạnh */
+.coach-skills ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coach-skills li {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  align-content: start;
+  padding: 0 14px;
+}
+
+.coach-skills li:first-child {
+  padding-left: 0;
+}
+
+.coach-skills li + li {
+  border-left: 1px solid var(--rule);
+}
+
+.coach-skills p {
+  margin: 0;
+}
+
+.coach-skills__name {
+  display: flex;
+  align-self: end;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--color-ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.coach-skills__name::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--game);
+}
+
+.coach-skills__value {
+  margin-top: 4px !important;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.coach-skills__value[data-empty] {
+  color: var(--muted);
+}
+
+.coach-skills__meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coach-skills__tag {
+  justify-self: start;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.coach-skills__tag[data-tag='focus'] {
+  background: #fff1cc;
+  color: #7a4100;
+}
+
+.coach-skills__tag[data-tag='strong'] {
+  background: #dcfae5;
+  color: #0d4a22;
+}
+
+/* ── Hộp chat nổi trên mọi trang: nút linh vật ở góc phải dưới, hộp thoại mở ra từ chính nút đó ── */
+
+/* Token của trang ứng dụng (.dash) khai báo lại vì hộp chat nằm ngoài .dash trên các trang khác */
+.coach-dock {
+  --dock-gap: 20px;
+  --rule: #d3dfd6;
+  --muted: #4b5563;
+  --good: #1f6b2a;
+  --bad: #b42318;
+  position: fixed;
+  right: var(--dock-gap);
+  bottom: var(--dock-gap);
+  z-index: 50;
+}
+
+.coach-dock__launcher {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: var(--color-brand-deep);
+  color: #ffffff;
+  cursor: pointer;
+  animation: coach-launch 620ms var(--ease-expo) 400ms both;
+  transition: transform 220ms var(--ease-out), background-color 220ms ease;
+}
+
+.coach-dock__launcher > * {
+  grid-area: 1 / 1;
+  transition: transform 320ms var(--ease-out), opacity 200ms ease;
+}
+
+.coach-dock__launcher-face {
+  width: 46px;
+  transform-origin: 50% 90%;
+}
+
+.coach-dock__launcher-close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+
+.coach-dock__launcher[data-open] {
+  background: var(--color-brand);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .coach-dock__launcher:not([data-open]):hover {
+    background: var(--color-brand);
+  }
+}
+
+.coach-dock__launcher[data-open] .coach-dock__launcher-face {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+
+.coach-dock__launcher[data-open] .coach-dock__launcher-close {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .coach-dock__launcher:hover {
+    transform: translateY(-3px);
+  }
+
+  .coach-dock__launcher:not([data-open]):hover .coach-dock__launcher-face {
+    animation: coach-wave 700ms var(--ease-out);
+  }
+}
+
+.coach-dock__launcher:active {
+  transform: scale(0.94);
+}
+
+.coach-dock__launcher:focus-visible {
+  outline: 3px solid var(--color-brand-deep);
+  outline-offset: 3px;
+}
+
+.coach-dock__unread {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #d92d20;
+  animation: coach-pop 360ms var(--ease-out) both;
+}
+
+/* Hộp thoại luôn trong cây (giữ hội thoại); đóng thì mờ, thu về phía nút và không bấm được (inert) */
+.coach-dock__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 14px);
+  width: min(400px, calc(100vw - 2 * var(--dock-gap)));
+  height: min(620px, calc(100dvh - 120px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(16, 32, 22, 0.26), 0 0 0 1px rgba(16, 32, 22, 0.06);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.92);
+  transform-origin: calc(100% - 32px) calc(100% + 46px);
+  transition: opacity 200ms ease, transform 260ms var(--ease-exit), visibility 0s linear 260ms;
+}
+
+.coach-dock__panel[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 220ms ease, transform 420ms var(--ease-expo), visibility 0s;
+}
+
+.coach-dock__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px 14px 16px;
+  background: var(--color-step);
+}
+
+.coach-dock__avatar {
+  flex: 0 0 auto;
+  width: 40px;
+}
+
+.coach-dock__head div {
+  flex: 1;
+  min-width: 0;
+}
+
+.coach-dock__head h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.coach-dock__head p {
+  margin: 1px 0 0;
+  color: var(--color-ink-soft);
+  font-size: 13px;
+}
+
+.coach-dock__close {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.coach-dock__close:hover {
+  background: #d6e6da;
+}
+
+.coach-dock__close:focus-visible {
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 1px;
+}
+
+.coach-dock__privacy {
+  margin: 0;
+  padding: 0 16px 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coach-chat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px;
+}
+
+.coach-chat__reset {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-brand-deep);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.coach-chat__thread {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding: 4px 2px 8px;
+  overscroll-behavior: contain;
+}
+
+/* Nội dung bám đáy khung như ứng dụng chat: khoảng trống nằm trên, không chen giữa lời chào và gợi ý */
+.coach-chat__thread > :first-child {
+  margin-top: auto;
+}
+
+.coach-chat__welcome {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f4f8f5;
+  color: var(--color-ink-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.coach-msg {
+  display: grid;
+  gap: 6px;
+  max-width: 92%;
+  animation: coach-rise 320ms var(--ease-out) both;
+}
+
+.coach-msg--user {
+  align-self: flex-end;
+  justify-items: end;
+}
+
+.coach-msg--assistant {
+  align-self: flex-start;
+  width: 100%;
+  max-width: none;
+}
+
+.coach-msg__bubble {
+  margin: 0;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.coach-msg--user .coach-msg__bubble {
+  border-bottom-right-radius: 4px;
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.coach-msg--assistant .coach-msg__bubble {
+  justify-self: start;
+  border-bottom-left-radius: 4px;
+  background: #eef3ef;
+}
+
+/* Bản nháp lộ trình ngay trong chat */
+.coach-draft {
+  padding: 12px 14px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #ffffff;
+  container-type: inline-size;
+  animation: coach-rise 440ms var(--ease-out) 90ms both;
+}
+
+.coach-draft__goal {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.coach-draft__meta {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coach-draft__apply {
+  width: 100%;
+  height: 44px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.coach-draft__apply:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.coach-draft__applied {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: var(--good);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.coach-draft__applied a {
+  margin-left: auto;
+  color: var(--color-brand-deep);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.coach-typing {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px 14px 14px 4px;
+  background: #eef3ef;
+}
+
+.coach-typing span[aria-hidden] {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: coach-dot 1s ease-in-out infinite;
+}
+
+.coach-typing span[aria-hidden]:nth-child(2) { animation-delay: 140ms; }
+.coach-typing span[aria-hidden]:nth-child(3) { animation-delay: 280ms; }
+
+.coach-chat__error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  color: var(--bad);
+  font-size: 13px;
+}
+
+.coach-chat__error button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-brand-deep);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coach-chat__prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.coach-chat__prompts button {
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 99px;
+  background: #ffffff;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  animation: coach-rise 360ms var(--ease-out) both;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 140ms var(--ease-out);
+}
+
+.coach-chat__prompts button:nth-child(2) { animation-delay: 60ms; }
+.coach-chat__prompts button:nth-child(3) { animation-delay: 120ms; }
+
+@media (hover: hover) and (pointer: fine) {
+  .coach-chat__prompts button:hover {
+    border-color: var(--color-brand);
+    background: #f4f8f5;
+  }
+}
+
+.coach-chat__prompts button:active {
+  transform: scale(0.97);
+}
+
+.coach-chat__form {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 4px;
+  border: 1px solid #b9c9bd;
+  border-radius: 12px;
+  background: #ffffff;
+  transition: border-color 160ms ease;
+}
+
+.coach-chat__form:focus-within {
+  border-color: var(--color-brand-deep);
+  outline: 2px solid color-mix(in oklab, var(--color-brand) 30%, transparent);
+}
+
+.coach-chat__form input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 10px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.coach-chat__form input::placeholder {
+  color: #5b6572;
+  opacity: 1;
+}
+
+.coach-chat__form button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: var(--color-brand);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 140ms var(--ease-out);
+}
+
+.coach-chat__form button:hover:not(:disabled) {
+  background: var(--color-brand-deep);
+}
+
+.coach-chat__form button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.coach-chat__form button:disabled {
+  background: #8fa596;
+  cursor: not-allowed;
+}
+
+.coach-chat button:focus-visible,
+.coach-week button:focus-visible,
+.coach-today a:focus-visible {
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 2px;
+}
+
+.coach-spin {
+  animation: coach-spin 900ms linear infinite;
+}
+
+/* ── Chuyển động: chỉ transform và opacity ── */
+
+@keyframes coach-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+}
+
+@keyframes coach-rise {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes coach-fill {
+  from { transform: scaleX(0); }
+}
+
+@keyframes coach-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+@keyframes coach-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes coach-launch {
+  from { opacity: 0; transform: translateY(24px) scale(0.6); }
+}
+
+@keyframes coach-wave {
+  30% { transform: rotate(-10deg); }
+  60% { transform: rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coach-dock__launcher,
+  .coach-dock__launcher:not([data-open]):hover .coach-dock__launcher-face,
+  .coach-dock__unread,
+  .week__session,
+  .coach-today li,
+  .coach-msg,
+  .coach-draft,
+  .coach-chat__prompts button,
+  .coach-meter span {
+    animation: none;
+  }
+
+  .coach-typing span[aria-hidden],
+  .coach-spin {
+    animation: none;
+    opacity: 1;
+  }
+
+  .week__link,
+  .coach-meter span,
+  .coach-dock__launcher > *,
+  .coach-dock__panel,
+  .coach-dock__panel[data-open] {
+    transition: none;
+  }
+
+  .coach-dock__panel {
+    transform: none;
+  }
+}
+
+/* ── Điện thoại: hộp chat chiếm cả màn hình, nút mở nhỏ hơn ── */
+
+@media (max-width: 640px) {
+  .coach-dock {
+    --dock-gap: 16px;
+  }
+
+  .coach-dock__launcher {
+    width: 56px;
+    height: 56px;
+  }
+
+  .coach-dock__launcher-face {
+    width: 40px;
+  }
+
+  /* Đang mở thì hộp che cả màn hình và có nút đóng riêng, nên ẩn nút tròn */
+  .coach-dock__launcher[data-open] {
+    visibility: hidden;
+  }
+
+  .coach-dock__panel {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: 100dvh;
+    border-radius: 0;
+    transform: translateY(24px);
+    transform-origin: center bottom;
+  }
+
+  .coach-week {
+    padding: 16px;
+  }
+
+  .coach-week__progress p {
+    text-align: left;
+  }
+
+  /* Năm trò thành năm hàng: tên và số ván bên trái, độ chính xác bên phải */
+  .coach-skills ul {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .coach-skills li,
+  .coach-skills li:first-child {
+    grid-row: auto;
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+    padding: 10px 0;
+  }
+
+  .coach-skills li + li {
+    border-top: 1px solid var(--rule);
+    border-left: 0;
+  }
+
+  .coach-skills__value {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    margin-top: 0 !important;
+    font-size: 20px;
+  }
+
+  .coach-skills__tag {
+    justify-self: start;
+  }
+
+  .coach-today li {
+    align-items: flex-start;
+  }
+}

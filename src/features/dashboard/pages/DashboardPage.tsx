@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { AccuracyChart } from '../components/AccuracyChart';
 import { BlockState } from '../components/BlockState';
+import { CoachPanel } from '../Agent/CoachPanel';
 import { GameHistoryTable } from '../components/GameHistoryTable';
 import { LevelLadder } from '../components/LevelLadder';
 import { PeriodStats } from '../components/PeriodStats';
@@ -9,7 +10,7 @@ import { MonthView } from '../components/PracticeCalendar';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GAME_IDS, GAME_META } from '../constants';
 import { useDashboardData } from '../hooks/useDashboardData';
-import { useCatalog, useProfile, useRecentSessions } from '../hooks/useOverview';
+import { useCatalog, useCoach, useProfile, useRecentSessions } from '../hooks/useOverview';
 import { monthOf, sameMonth, shiftMonth } from '../utils/calendar';
 import { PROGRESS_TIME_ZONE, dayKey, describePeriod, formatPercent } from '../utils/format';
 import type { DashboardSummary, GameId, Period } from '../types';
@@ -52,6 +53,7 @@ export const DashboardPage = () => {
     const profile = useProfile();
     const catalog = useCatalog();
     const recent = useRecentSessions();
+    const coach = useCoach();
     const timeline = useDashboardData(period, 'all');
 
     const timeZone = timeline.state.status === 'ready' ? timeline.state.data.timeZone : PROGRESS_TIME_ZONE;
@@ -89,6 +91,7 @@ export const DashboardPage = () => {
                 </header>
 
                 <div className="dash__grid">
+                    <CoachPanel request={coach.state} onRetry={coach.reload} />
                     <MonthView
                         key={`${month.year}-${month.month}`}
                         month={month}

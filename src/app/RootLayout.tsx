@@ -1,5 +1,7 @@
 import { useLayoutEffect } from "react";
 import { Outlet, useLocation, useNavigationType } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/store/authStore";
+import { CoachDock } from "@/features/dashboard/Agent/CoachDock";
 
 // Router không tự cuộn khi chuyển trang: trang mới hiện ở đúng vị trí cuộn của trang cũ.
 // Không dùng <ScrollRestoration /> vì nó cuộn theo scroll-behavior: smooth của trang (trượt từ cuối lên đầu).
@@ -17,10 +19,15 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Khung chung bọc mọi trang
-export const RootLayout = () => (
-  <>
-    <ScrollToTop />
-    <Outlet />
-  </>
-);
+// Khung chung bọc mọi trang. Hộp chat Huấn luyện viên AI chỉ hiện khi đã đăng nhập;
+// đăng xuất thì bỏ khỏi cây nên hội thoại cũng mất theo
+export const RootLayout = () => {
+  const showCoach = useAuthStore((state) => !state.isLoading && state.user !== null);
+  return (
+    <>
+      <ScrollToTop />
+      <Outlet />
+      {showCoach && <CoachDock />}
+    </>
+  );
+};

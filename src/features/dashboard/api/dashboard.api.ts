@@ -62,6 +62,63 @@ export interface ApiHistoryPage {
     nextCursor: string | null;  // null khi đã hết dữ liệu
 }
 
+export interface ApiCoachGame {
+    gameName: ApiGameName;
+    played: number;
+    accuracy: number | null;
+    unlockedLevel: number;
+    bestLevel: number | null;
+    perfect: number;
+}
+
+export interface ApiCoachPlanStep {
+    day: number;
+    focus: 'practice' | 'maintain' | 'review';
+    gameName: ApiGameName;
+    level: number;
+    targetAccuracy: number;
+    tip: string;
+}
+
+export interface ApiCoachAnalysis {
+    totalPlayed: number;
+    overallAccuracy: number | null;
+    skillLevel: 'new' | 'early' | 'building' | 'steady' | 'advanced';
+    strongestGame: ApiGameName | null;
+    focusGame: ApiGameName | null;
+    games: ApiCoachGame[];
+    plan: ApiCoachPlanStep[];
+}
+
+export interface ApiCoachChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+// Lộ trình tuần: day 1 là Thứ 2, ..., 7 là Chủ nhật
+export interface ApiPlanSession {
+    day: number;
+    minutes: number;
+    gameName: ApiGameName;
+    level: number;
+    targetAccuracy: number;
+    tip: string;
+}
+
+export interface ApiCoachPlan {
+    goal: string;
+    minutesPerDay: number;
+    sessions: ApiPlanSession[];
+}
+
+// Lộ trình đã lưu kèm tiến độ tuần hiện tại (giờ Việt Nam); bestAccuracy null là buổi chưa tập
+export interface ApiSavedCoachPlan extends ApiCoachPlan {
+    savedAt: string;
+    weekStart: string;
+    today: number;
+    sessions: (ApiPlanSession & { bestAccuracy: number | null })[];
+}
+
 // Không truyền from/to thì backend trả các ván mới nhất (tối đa 50 mỗi trang)
 export interface HistoryQuery {
     from?: string;
@@ -87,5 +144,22 @@ export const dashboardApi = {
         return apiClient.get('/game-sessions', {
             params: query,
         }) as unknown as Promise<ApiSuccessResponse<ApiHistoryPage>>;
+    },
+
+    getCoach: (): Promise<ApiSuccessResponse<{ analysis: ApiCoachAnalysis }>> => {
+        return apiClient.get('/progress/coach') as unknown as Promise<ApiSuccessResponse<{ analysis: ApiCoachAnalysis }>>;
+    },
+
+    // draft: lộ trình đang bàn để AI sửa tiếp; plan trong kết quả là bản nháp, chỉ lưu khi người dùng bấm Áp dụng
+    chatWithCoach: (messages: ApiCoachChatMessage[], draft: ApiCoachPlan | null): Promise<ApiSuccessResponse<{ reply: string; plan: ApiCoachPlan | null }>> => {
+        return apiClient.post('/progress/coach/chat', { messages, draft }, { timeout: 125_000 }) as unknown as Promise<ApiSuccessResponse<{ reply: string; plan: ApiCoachPlan | null }>>;
+    },
+
+    getCoachPlan: (): Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan | null }>> => {
+        return apiClient.get('/progress/coach/plan') as unknown as Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan | null }>>;
+    },
+
+    saveCoachPlan: (plan: ApiCoachPlan): Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan }>> => {
+        return apiClient.put('/progress/coach/plan', plan) as unknown as Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan }>>;
     },
 };
