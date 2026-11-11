@@ -190,18 +190,8 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .family__mascot {
-    animation: family-bob 1.8s var(--ease-in-out) infinite;
-  }
-
   .family-invite__mascot {
     animation: family-hop 900ms var(--ease-out) 300ms 2 both;
-  }
-}
-
-@keyframes family-bob {
-  50% {
-    transform: translateY(-5px);
   }
 }
 

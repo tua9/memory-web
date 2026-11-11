@@ -438,10 +438,6 @@
 /* ── Chuyển động ── */
 
 @media (prefers-reduced-motion: no-preference) {
-  .today-hello__mascot {
-    animation: today-bob 2600ms ease-in-out infinite;
-  }
-
   .today__grid>* {
     animation: today-rise 560ms var(--ease-expo) both;
   }
@@ -473,18 +469,6 @@
 
   .goals__item[data-done='true'] .goals__mark {
     animation: today-pop 420ms var(--ease-expo) both;
-  }
-}
-
-@keyframes today-bob {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  35% {
-    transform: translateY(-5px) rotate(-2deg);
-  }
-  75% {
-    transform: translateY(-2px) rotate(2deg);
   }
 }
 

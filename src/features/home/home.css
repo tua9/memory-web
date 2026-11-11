@@ -131,13 +131,6 @@
     animation: island-bob 6s ease-in-out infinite alternate;
   }
 
-  .mascot-body > path:nth-of-type(4),
-  .mascot-body > path:nth-of-type(5) {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: mascot-blink 5.5s ease-in-out infinite;
-  }
-
   .islands__art svg > g[clip-path] > g:nth-of-type(2) {
     animation-delay: -2s;
   }
