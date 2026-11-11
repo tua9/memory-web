@@ -2,10 +2,15 @@ import { apiClient } from '@/lib/api-client';
 import type { ApiSuccessResponse } from '@/types/auth.types';
 
 export type RoomItem = { code: string; label?: string; imageUrl?: string };
-export type RoomScore = { wins: number; losses: number; draws: number; points: number };
+// wins: số vòng thắng; points: mỗi vòng 1 điểm cho mỗi người mình xếp trên (đấu 2 người thì bằng số vòng thắng)
+export type RoomScore = { wins: number; points: number };
 export type RoomPlayer = {
     _id: string; username: string; avatarUrl: string | null; ready: boolean; isHost: boolean; isMe: boolean;
+    // Đã rời giữa trận: xếp cuối, vẫn hiện tới hết trận
+    left: boolean;
     inRecall: boolean; submitted: boolean; score: RoomScore;
+    // Hạng và cúp cộng/trừ của trận vừa xong; null khi trận chưa xong
+    place: number | null; cups: number | null;
     // Giới thiệu ngắn: tổng số trận đã đấu và số cúp
     stats: { matches: number; cups: number };
 };
@@ -22,15 +27,15 @@ export type RoomView = {
     };
     // Người thắng từng vòng đã chơi: userId, 'draw', hoặc null khi vòng đang diễn ra
     roundOutcomes: (string | null)[];
-    // Phòng chờ đủ người: giờ trận tự bắt đầu (30 giây sau khi người thứ hai vào)
+    // Từ 2 người trở lên và tất cả đã sẵn sàng: giờ trận tự bắt đầu (5 giây sau)
     startsAt: string | null;
-    // Người nhận cúp của trận vừa xong (null khi hoà hoặc có vòng một người bỏ trống)
-    cupWinnerId: string | null;
+    // Phòng đang mở cho ghép trận nhanh tới lúc này (chủ phòng bấm tìm người chơi, 60 giây)
+    searchEndsAt: string | null;
     // Người thắng các trận đã xong trong phòng: userId hoặc 'draw'
     history: { winner: string }[];
 };
-// gameName 'any' là tìm bất kỳ trò nào; roomCode có khi chủ phòng đang tìm người chơi cho phòng của mình
-export type MatchStatus = { status: 'idle' } | { status: 'searching'; gameName: string; since: string; roomCode?: string | null } | { status: 'matched'; code: string };
+// gameName 'any' là tìm bất kỳ trò nào
+export type MatchStatus = { status: 'idle' } | { status: 'searching'; gameName: string; since: string } | { status: 'matched'; code: string };
 export type RoomStats = { matches: number; wins: number; losses: number; draws: number; cups: number };
 export type Leaderboard = {
     entries: { _id: string; username: string; avatarUrl: string | null; cups: number; wins: number; matches: number; rank: number; isMe: boolean }[];
@@ -49,14 +54,13 @@ export const roomsApi = {
     findMatch: (gameName: string) => data<MatchStatus>(apiClient.post('/rooms/matchmaking', { gameName })),
     pollMatch: () => data<MatchStatus>(apiClient.get('/rooms/matchmaking')),
     cancelMatch: () => data<MatchStatus>(apiClient.delete('/rooms/matchmaking')),
-    // Chủ phòng tìm một người chơi ngẫu nhiên vào phòng của mình
-    findRoomPlayer: (code: string) => data<MatchStatus>(apiClient.post(at(code, 'find-player'))),
+    // Chủ phòng bật/tắt tìm người chơi ngẫu nhiên: phòng mở cho ghép trận nhanh 60 giây
+    setSearching: (code: string, searching: boolean) => post(code, 'find-player', { searching }),
     get: (code: string) => data<RoomView>(apiClient.get(at(code))),
     join: (code: string) => post(code, 'join'),
     leave: (code: string) => post(code, 'leave'),
     kick: (code: string, userId: string) => post(code, 'kick', { userId }),
     ready: (code: string, ready: boolean) => post(code, 'ready', { ready }),
-    start: (code: string) => post(code, 'start'),
     recall: (code: string) => post(code, 'recall'),
     submit: (code: string, answers: (string | null)[]) => post(code, 'submit', { answers }),
     next: (code: string) => post(code, 'next'),

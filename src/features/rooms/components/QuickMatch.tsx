@@ -12,8 +12,8 @@ const choiceLabel = (choice: Choice) => (choice === ANY ? 'bất kỳ trò nào'
 
 const messageOf = (cause: unknown, fallback: string) => (cause as { message?: string })?.message ?? fallback;
 
-// Tìm trận nhanh: chọn trò rồi chờ người khác cũng đang tìm trò đó. Ghép được thì vào phòng ngay,
-// trận tự bắt đầu sau 30 giây. Rời trang khi đang tìm thì huỷ vé để không ai bị ghép với người đã đi.
+// Tìm trận nhanh: vào ngẫu nhiên một phòng đang mở tìm người, không có thì ghép với người cũng đang tìm
+// thành phòng mới (tối đa 5 người). Rời trang khi đang tìm thì huỷ vé để không ai bị ghép với người đã đi.
 export const QuickMatch = () => {
     const navigate = useNavigate();
     // Mặc định tìm bất kỳ trò nào: nhiều người để ghép nhất, chờ ít nhất
@@ -31,13 +31,12 @@ export const QuickMatch = () => {
             return;
         }
         setStatus(next);
-        if (next.status === 'searching' && !next.roomCode) setGameName(next.gameName as Choice);
+        if (next.status === 'searching') setGameName(next.gameName as Choice);
     };
 
-    // Mở lại trang khi đang tìm dở (tải lại trang): tiếp tục chờ với vé cũ.
-    // Vé tìm người cho một phòng có sẵn thì thuộc về trang phòng đó, không tiếp tục ở đây.
+    // Mở lại trang khi đang tìm dở (tải lại trang): tiếp tục chờ với vé cũ
     useEffect(() => {
-        roomsApi.pollMatch().then((next) => { if (!(next.status === 'searching' && next.roomCode)) apply(next); }).catch(() => undefined);
+        roomsApi.pollMatch().then(apply).catch(() => undefined);
         return () => {
             if (searching.current) void roomsApi.cancelMatch().catch(() => undefined);
         };
@@ -81,7 +80,7 @@ export const QuickMatch = () => {
         <section className="panel quick" aria-labelledby="quick-title" data-searching={status.status === 'searching'}>
             <div className="quick__head">
                 <h2 id="quick-title">Tìm trận nhanh</h2>
-                <p>Ghép với người đang tìm cùng trò, hoặc chọn bất kỳ trò nào để ghép nhanh nhất. Ghép xong, trận tự bắt đầu sau 30 giây.</p>
+                <p>Vào ngay một phòng đang tìm người, hoặc ghép với người đang tìm cùng trò. Phòng tối đa 5 người; mọi người sẵn sàng là vào trận.</p>
             </div>
 
             {status.status === 'searching' ? (
