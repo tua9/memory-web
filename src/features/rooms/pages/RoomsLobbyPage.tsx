@@ -71,7 +71,7 @@ export const RoomsLobbyPage = () => {
                 <header className="lobby-hero">
                     <div className="lobby-hero__text">
                         <h1>Đấu trí nhớ</h1>
-                        <p>2 đến 5 người ghi nhớ cùng một đề. Xếp hạng càng cao càng được nhiều cúp: nhất +2, bét bị trừ cúp.</p>
+                        <p>Đối đầu tối đa 4 đối thủ trên cùng một đề. Ai nhớ chuẩn hơn sẽ giành top và gom cúp. Về nhất +2 cúp, về bét bị trừ cúp. Bạn dám thử không?</p>
                         <dl className="lobby-hero__stats" aria-label="Thành tích đấu của bạn">
                             {stats.map((stat) => (
                                 <div key={stat.label}>

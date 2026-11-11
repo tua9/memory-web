@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useId, useState, type FormEvent } from 'react';
 import { gamesApi, type GameCatalogItem } from '@/features/shared-game/api/games.api';
 import { GAME_META, type GameName } from '@/features/shared-game/registry';
 import { formatSeconds } from '@/features/shared-game/utils/formatTime';
@@ -6,7 +6,8 @@ import { formatSeconds } from '@/features/shared-game/utils/formatTime';
 export type RoomSetup = { gameName: GameName; mode: 'level' | 'custom'; roundCount: number; memorizeSec: number; gameLevel?: number; itemCount?: number; capacity?: number };
 
 const ROUND_CHOICES = [1, 3, 5];
-const PLAYER_CHOICES = [2, 3, 4, 5];
+// Phòng 5 chỗ vẫn chơi được với 2–4 người, nên chỉ cần hai lựa chọn
+const PLAYER_CHOICES = [{ value: 2, label: '2 người' }, { value: 5, label: 'Tối đa 5' }];
 
 // Chọn trò, độ khó, thời gian ghi nhớ và số vòng. Dùng khi tạo phòng (kèm số người) và khi chơi lại với trò khác.
 export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, withPlayers = false, onSubmit, onError }: {
@@ -57,99 +58,99 @@ export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, 
         onSubmit({ gameName, mode, roundCount, memorizeSec, ...(mode === 'level' ? { gameLevel: level } : { itemCount }), ...(withPlayers ? { capacity } : {}) });
     };
 
+    const maxLevel = game?.levels.length ?? 1;
+    const difficultyId = useId();
+
     return (
         <form className="setup" onSubmit={submit} aria-label={title}>
             <h2 id={titleId}>{title}</h2>
 
-            <fieldset className="rooms__field">
-                <legend>Trò chơi</legend>
-                <div className="rooms__games">
-                    {games.map((item) => (
-                        <button key={item.gameName} type="button" className="rooms__game"
-                            aria-pressed={item.gameName === gameName}
-                            style={{ '--game': GAME_META[item.gameName].color } as React.CSSProperties}
-                            onClick={() => choose(item)}>
-                            <strong>{GAME_META[item.gameName].label}</strong>
-                            <span>Bạn đã mở cấp {item.player?.unlockedLevel ?? 1}</span>
-                        </button>
-                    ))}
-                </div>
-            </fieldset>
+            <div className="setup__games" role="group" aria-label="Trò chơi">
+                {games.map((item) => (
+                    <button key={item.gameName} type="button" className="setup__game"
+                        aria-pressed={item.gameName === gameName}
+                        style={{ '--game': GAME_META[item.gameName].color } as React.CSSProperties}
+                        title={`Bạn đã mở cấp ${item.player?.unlockedLevel ?? 1}`}
+                        onClick={() => choose(item)}>
+                        <strong>{GAME_META[item.gameName].label}</strong>
+                        <span className="num">cấp {item.player?.unlockedLevel ?? 1}</span>
+                    </button>
+                ))}
+            </div>
 
             {game && (
-                <fieldset className="rooms__field">
-                    <legend>Độ khó</legend>
-                    {game.customItems && (
-                        <div className="seg rooms__seg" role="group" aria-label="Cách chọn độ khó">
-                            <button type="button" className="seg__option" aria-pressed={mode === 'level'} onClick={() => setMode('level')}>Theo cấp</button>
-                            <button type="button" className="seg__option" aria-pressed={mode === 'custom'} onClick={() => setMode('custom')}>Tự chọn số lượng</button>
-                        </div>
-                    )}
-                    {mode === 'level' ? (
-                        <div className="rooms__levels">
-                            {game.levels.map((item) => (
-                                <button key={item.level} type="button" className="rooms__chip" aria-pressed={item.level === level}
-                                    aria-label={`Cấp ${item.level}, ${item.itemCount} ${meta.unit}`} onClick={() => setLevel(item.level)}>
-                                    <strong>{item.level}</strong>
-                                    <span>{item.itemCount} {meta.unit}</span>
-                                </button>
-                            ))}
-                        </div>
-                    ) : game.customItems && (
-                        <label className="rooms__range">
-                            <span>{itemCount} {meta.unit}</span>
-                            <input type="range" min={game.customItems.min} max={game.customItems.max} value={itemCount}
-                                onChange={(event) => setItemCount(Number(event.target.value))} />
-                        </label>
-                    )}
-                </fieldset>
-            )}
-
-            {game && (
-                <div className="rooms__pair">
-                    <fieldset className="rooms__field">
-                        <legend>Thời gian ghi nhớ</legend>
-                        <div className="rooms__chips">
-                            {game.memorizeSecOptions.map((value) => (
-                                <button key={value} type="button" className="rooms__chip" aria-pressed={value === memorizeSec} onClick={() => setMemorizeSec(value)}>
-                                    {formatSeconds(value)}
-                                </button>
-                            ))}
-                        </div>
-                    </fieldset>
-                    <fieldset className="rooms__field">
-                        <legend>Số vòng</legend>
-                        <div className="rooms__chips">
-                            {ROUND_CHOICES.map((value) => (
-                                <button key={value} type="button" className="rooms__chip" aria-pressed={value === roundCount} onClick={() => setRoundCount(value)}>
-                                    {value} vòng
-                                </button>
-                            ))}
-                        </div>
-                    </fieldset>
-                </div>
-            )}
-
-            {game && withPlayers && (
-                <fieldset className="rooms__field">
-                    <legend>Số người chơi</legend>
-                    <div className="rooms__chips">
-                        {PLAYER_CHOICES.map((value) => (
-                            <button key={value} type="button" className="rooms__chip" aria-pressed={value === capacity} onClick={() => setCapacity(value)}>
-                                {value} người
-                            </button>
-                        ))}
+                <div className="setup__field" role="group" aria-labelledby={difficultyId}>
+                    <div className="setup__head">
+                        <span id={difficultyId} className="setup__label">Độ khó</span>
+                        {game.customItems && (
+                            <div className="seg" role="group" aria-label="Cách chọn độ khó">
+                                <button type="button" className="seg__option" aria-pressed={mode === 'level'} onClick={() => setMode('level')}>Theo cấp</button>
+                                <button type="button" className="seg__option" aria-pressed={mode === 'custom'} onClick={() => setMode('custom')}>Tự chọn</button>
+                            </div>
+                        )}
                     </div>
-                </fieldset>
+                    <div className="setup__difficulty">
+                        <p className="setup__readout num" aria-live="polite">
+                            {mode === 'level' && <span>Cấp {level}</span>}
+                            <strong>{items ?? '…'}</strong> {meta.unit}
+                        </p>
+                        {mode === 'level' ? (
+                            // Thang cấp: cột cao dần theo cấp, các cấp tới cấp đang chọn được tô màu
+                            <div className="setup__ladder">
+                                {game.levels.map((item) => (
+                                    <button key={item.level} type="button" className="setup__step"
+                                        aria-pressed={item.level === level} data-on={item.level <= level}
+                                        style={{ '--h': `${30 + (70 * item.level) / maxLevel}%` } as React.CSSProperties}
+                                        aria-label={`Cấp ${item.level}, ${item.itemCount} ${meta.unit}`} onClick={() => setLevel(item.level)}>
+                                        <span className="setup__bar" aria-hidden="true" />
+                                        <span className="setup__no num" aria-hidden="true">{item.level}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        ) : game.customItems && (
+                            <input className="setup__range" type="range" min={game.customItems.min} max={game.customItems.max} value={itemCount}
+                                aria-label={`Số ${meta.unit}`} onChange={(event) => setItemCount(Number(event.target.value))} />
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {game && (
+                <div className="setup__row">
+                    <OptionGroup label="Ghi nhớ" options={game.memorizeSecOptions.map((value) => ({ value, label: formatSeconds(value) }))}
+                        value={memorizeSec} onChange={setMemorizeSec} />
+                    <OptionGroup label="Số vòng" options={ROUND_CHOICES.map((value) => ({ value, label: `${value} vòng` }))}
+                        value={roundCount} onChange={setRoundCount} />
+                    {withPlayers && <OptionGroup label="Người chơi" options={PLAYER_CHOICES} value={capacity} onChange={setCapacity} />}
+                </div>
             )}
 
             <div className="rooms__summary">
                 <p>
                     <strong>{meta.label}</strong> · {items ?? '…'} {meta.unit} · {formatSeconds(memorizeSec)} ghi nhớ · {roundCount} vòng
-                    {withPlayers && <> · tối đa {capacity} người</>}
+                    {withPlayers && <> · {capacity === 2 ? '2 người' : 'tối đa 5 người'}</>}
                 </p>
                 <button className="btn btn--brand" disabled={busy || !game}>{submitLabel}</button>
             </div>
         </form>
     );
 };
+
+// Một nhóm lựa chọn liền khối có nhãn: thời gian ghi nhớ, số vòng, số người
+const OptionGroup = ({ label, options, value, onChange }: {
+    label: string;
+    options: { value: number; label: string }[];
+    value: number;
+    onChange: (value: number) => void;
+}) => (
+    <div className="setup__group">
+        <span className="setup__label">{label}</span>
+        <div className="seg" role="group" aria-label={label}>
+            {options.map((option) => (
+                <button key={option.value} type="button" className="seg__option" aria-pressed={option.value === value} onClick={() => onChange(option.value)}>
+                    {option.label}
+                </button>
+            ))}
+        </div>
+    </div>
+);
