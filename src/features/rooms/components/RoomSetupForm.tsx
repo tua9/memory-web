@@ -3,17 +3,19 @@ import { gamesApi, type GameCatalogItem } from '@/features/shared-game/api/games
 import { GAME_META, type GameName } from '@/features/shared-game/registry';
 import { formatSeconds } from '@/features/shared-game/utils/formatTime';
 
-export type RoomSetup = { gameName: GameName; mode: 'level' | 'custom'; roundCount: number; memorizeSec: number; gameLevel?: number; itemCount?: number };
+export type RoomSetup = { gameName: GameName; mode: 'level' | 'custom'; roundCount: number; memorizeSec: number; gameLevel?: number; itemCount?: number; capacity?: number };
 
 const ROUND_CHOICES = [1, 3, 5];
+const PLAYER_CHOICES = [2, 3, 4, 5];
 
-// Chọn trò, độ khó, thời gian ghi nhớ và số vòng. Dùng khi tạo phòng và khi chơi lại với trò khác.
-export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, onSubmit, onError }: {
+// Chọn trò, độ khó, thời gian ghi nhớ và số vòng. Dùng khi tạo phòng (kèm số người) và khi chơi lại với trò khác.
+export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, withPlayers = false, onSubmit, onError }: {
     title: string;
     titleId?: string;
     submitLabel: string;
     busy: boolean;
     initialGame?: string;
+    withPlayers?: boolean;
     onSubmit: (setup: RoomSetup) => void;
     onError: (message: string) => void;
 }) => {
@@ -24,6 +26,7 @@ export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, 
     const [itemCount, setItemCount] = useState(5);
     const [memorizeSec, setMemorizeSec] = useState(60);
     const [roundCount, setRoundCount] = useState(3);
+    const [capacity, setCapacity] = useState(2);
 
     const choose = (game: GameCatalogItem) => {
         setGameName(game.gameName);
@@ -51,7 +54,7 @@ export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, 
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        onSubmit({ gameName, mode, roundCount, memorizeSec, ...(mode === 'level' ? { gameLevel: level } : { itemCount }) });
+        onSubmit({ gameName, mode, roundCount, memorizeSec, ...(mode === 'level' ? { gameLevel: level } : { itemCount }), ...(withPlayers ? { capacity } : {}) });
     };
 
     return (
@@ -127,9 +130,23 @@ export const RoomSetupForm = ({ title, titleId, submitLabel, busy, initialGame, 
                 </div>
             )}
 
+            {game && withPlayers && (
+                <fieldset className="rooms__field">
+                    <legend>Số người chơi</legend>
+                    <div className="rooms__chips">
+                        {PLAYER_CHOICES.map((value) => (
+                            <button key={value} type="button" className="rooms__chip" aria-pressed={value === capacity} onClick={() => setCapacity(value)}>
+                                {value} người
+                            </button>
+                        ))}
+                    </div>
+                </fieldset>
+            )}
+
             <div className="rooms__summary">
                 <p>
                     <strong>{meta.label}</strong> · {items ?? '…'} {meta.unit} · {formatSeconds(memorizeSec)} ghi nhớ · {roundCount} vòng
+                    {withPlayers && <> · tối đa {capacity} người</>}
                 </p>
                 <button className="btn btn--brand" disabled={busy || !game}>{submitLabel}</button>
             </div>

@@ -71,7 +71,7 @@ export const RoomsLobbyPage = () => {
                 <header className="lobby-hero">
                     <div className="lobby-hero__text">
                         <h1>Đấu trí nhớ</h1>
-                        <p>Hai người ghi nhớ cùng một đề. Thắng nhiều vòng hơn thì thắng trận và nhận 1 cúp.</p>
+                        <p>2 đến 5 người ghi nhớ cùng một đề. Xếp hạng càng cao càng được nhiều cúp: nhất +2, bét bị trừ cúp.</p>
                         <dl className="lobby-hero__stats" aria-label="Thành tích đấu của bạn">
                             {stats.map((stat) => (
                                 <div key={stat.label}>
@@ -112,7 +112,7 @@ export const RoomsLobbyPage = () => {
                     </form>
 
                     <div className="panel lobby__create">
-                        <RoomSetupForm title="Tạo phòng mới" busy={busy !== null} initialGame={params.get('game') ?? undefined}
+                        <RoomSetupForm title="Tạo phòng mới" withPlayers busy={busy !== null} initialGame={params.get('game') ?? undefined}
                             submitLabel={busy === 'create' ? 'Đang tạo phòng...' : 'Tạo phòng và lấy mã'}
                             onSubmit={(setup) => void create(setup)} onError={setError} />
                     </div>
