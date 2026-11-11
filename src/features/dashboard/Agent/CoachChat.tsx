@@ -1,65 +1,82 @@
-import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
-import { BookmarkPlus, Bot, Check, ChevronDown, LoaderCircle, MessageCircle, RotateCw, Send } from 'lucide-react';
-import { dashboardApi, type ApiCoachChatMessage, type ApiSavedCoachPlan } from '../api/dashboard.api';
-import { QUICK_PROMPTS } from './tools/quickPrompts';
-import { SavedCoachPlan } from './SavedCoachPlan';
+import { useLayoutEffect, useRef, useState, type FormEvent, type RefObject } from 'react';
+import { Link } from 'react-router-dom';
+import { Check, LoaderCircle, RotateCcw, RotateCw, Send } from 'lucide-react';
+import { dashboardApi, type ApiCoachChatMessage, type ApiCoachPlan, type ApiSavedCoachPlan } from '../api/dashboard.api';
+import { FOLLOW_UP_PROMPTS, QUICK_PROMPTS } from './tools/quickPrompts';
+import { WeekPlan } from './WeekPlan';
 
+// Backend nhận tối đa 8 tin, bắt đầu và kết thúc bằng tin của người dùng
 const MAX_MESSAGES = 8;
 const MAX_MESSAGE_LENGTH = 1200;
+const KEEP_ON_SCREEN = 20;
+
+type ChatMessage = ApiCoachChatMessage & { plan?: ApiCoachPlan | null };
+
 const errorMessage = (error: unknown) =>
     typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string'
         ? error.message
         : 'Chưa gửi được yêu cầu. Vui lòng thử lại.';
 
+// Cắt còn 8 tin gần nhất; nếu tin đầu là của trợ lý thì bỏ, để hội thoại luôn mở đầu bằng người dùng
+const toRequestMessages = (conversation: ChatMessage[]): ApiCoachChatMessage[] => {
+    const recent = conversation.slice(-MAX_MESSAGES).map(({ role, content }) => ({ role, content }));
+    if (recent[0]?.role === 'assistant') recent.shift();
+    return recent;
+};
+
+const toPlan = ({ goal, minutesPerDay, sessions }: ApiCoachPlan): ApiCoachPlan => ({
+    goal,
+    minutesPerDay,
+    sessions: sessions.map(({ day, minutes, gameName, level, targetAccuracy, tip }) => ({ day, minutes, gameName, level, targetAccuracy, tip })),
+});
+
 interface CoachChatProps {
-    onSavedPlanChange: (plan: ApiSavedCoachPlan | null) => void;
+    savedPlan: ApiSavedCoachPlan | null;
+    onApply: (plan: ApiCoachPlan) => Promise<void>;
+    inputRef: RefObject<HTMLInputElement | null>;
+    // Báo cho hộp chat nổi khi có trả lời mới (để hiện chấm chưa đọc lúc hộp đang đóng)
+    onReply?: () => void;
 }
 
-export const CoachChat = ({ onSavedPlanChange }: CoachChatProps) => {
-    const [messages, setMessages] = useState<ApiCoachChatMessage[]>([]);
+export const CoachChat = ({ savedPlan, onApply, inputRef, onReply }: CoachChatProps) => {
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [draft, setDraft] = useState('');
     const [isSending, setIsSending] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [savedPlan, setSavedPlan] = useState<ApiSavedCoachPlan | null>(null);
-    const [savedMessageContent, setSavedMessageContent] = useState<string | null>(null);
-    const [planError, setPlanError] = useState<string | null>(null);
-    const [savingIndex, setSavingIndex] = useState<number | null>(null);
+    const [applying, setApplying] = useState<number | null>(null);
+    const [appliedIndex, setAppliedIndex] = useState<number | null>(null);
+    const [applyError, setApplyError] = useState<string | null>(null);
     const threadRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        dashboardApi.getCoachPlan()
-            .then(({ data }) => {
-                setSavedPlan(data.savedPlan);
-                onSavedPlanChange(data.savedPlan);
-            })
-            .catch((requestError: unknown) => setPlanError(errorMessage(requestError)));
-    }, [onSavedPlanChange]);
 
     useLayoutEffect(() => {
         const thread = threadRef.current;
         if (!thread) return;
-
         const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
         thread.scrollTo({ top: thread.scrollHeight, behavior });
-    }, [messages, isSending, error]);
+    }, [messages, isSending, error, applyError]);
 
-    const sendMessage = async (content: string, previousMessages: ApiCoachChatMessage[]) => {
+    // Lộ trình đang bàn: bản nháp gần nhất trong chat, nếu chưa có thì lộ trình đã lưu
+    const latestDraft = messages.findLast((message) => message.plan)?.plan ?? null;
+    const planInContext = latestDraft ?? (savedPlan ? toPlan(savedPlan) : null);
+
+    const sendMessage = async (content: string) => {
         const userMessage = content.trim();
         if (!userMessage || isSending) return;
 
-        const isRetry = previousMessages.at(-1)?.role === 'user' && previousMessages.at(-1)?.content === userMessage;
-        const conversation = isRetry
-            ? previousMessages
-            : [...previousMessages, { role: 'user' as const, content: userMessage }];
-        setMessages(conversation.slice(-20));
+        const last = messages.at(-1);
+        const isRetry = last?.role === 'user' && last.content === userMessage;
+        const conversation = isRetry ? messages : [...messages, { role: 'user' as const, content: userMessage }];
+        setMessages(conversation.slice(-KEEP_ON_SCREEN));
         setDraft('');
+        // Ô nhập không bị khoá lúc chờ trả lời, nên giữ focus ở đó để gõ tiếp (kể cả khi vừa bấm nút gợi ý)
+        inputRef.current?.focus({ preventScroll: true });
         setError(null);
         setIsSending(true);
 
         try {
-            const requestMessages = conversation.slice(-MAX_MESSAGES);
-            const { data } = await dashboardApi.chatWithCoach(requestMessages);
-            setMessages((current) => [...current, { role: 'assistant' as const, content: data.reply }].slice(-20));
+            const { data } = await dashboardApi.chatWithCoach(toRequestMessages(conversation), planInContext);
+            setMessages((current) => [...current, { role: 'assistant' as const, content: data.reply, plan: data.plan }].slice(-KEEP_ON_SCREEN));
+            onReply?.();
         } catch (requestError) {
             setError(errorMessage(requestError));
         } finally {
@@ -67,123 +84,127 @@ export const CoachChat = ({ onSavedPlanChange }: CoachChatProps) => {
         }
     };
 
-    const submit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        void sendMessage(draft, messages);
-    };
-
-    const savePlan = async (content: string, index: number) => {
-        if (!window.confirm('AI sẽ phân tích đoạn chat để tạo lộ trình cập nhật. Lộ trình đang lưu sẽ bị thay thế.')) return;
-
-        setSavingIndex(index);
-        setPlanError(null);
+    const apply = async (plan: ApiCoachPlan, index: number) => {
+        setApplying(index);
+        setApplyError(null);
         try {
-            const conversation = messages
-                .slice(0, index + 1)
-                .slice(-MAX_MESSAGES);
-            if (conversation[0]?.role === 'assistant') conversation.shift();
-            const { data: planDraft } = await dashboardApi.generateCoachPlan(conversation.slice(-(MAX_MESSAGES - 1)));
-            const { data } = await dashboardApi.saveCoachPlan(planDraft.plan);
-            setSavedPlan(data.savedPlan);
-            onSavedPlanChange(data.savedPlan);
-            setSavedMessageContent(content);
+            await onApply(plan);
+            setAppliedIndex(index);
         } catch (requestError) {
-            setPlanError(errorMessage(requestError));
+            setApplyError(errorMessage(requestError));
         } finally {
-            setSavingIndex(null);
+            setApplying(null);
         }
     };
 
-    const lastMessage = messages.at(-1);
+    const reset = () => {
+        setMessages([]);
+        setError(null);
+        setApplyError(null);
+        setAppliedIndex(null);
+    };
+
+    const submit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        void sendMessage(draft);
+    };
+
+    const last = messages.at(-1);
+    const prompts = messages.length === 0 ? QUICK_PROMPTS : last?.plan ? FOLLOW_UP_PROMPTS : [];
 
     return (
-        <details className="coach-chat">
-            <summary>
-                <MessageCircle className="coach-chat__summary-icon" size={19} aria-hidden="true" />
-                <span className="coach-chat__summary-copy">
-                    <strong>Chat cùng Huấn luyện viên AI</strong>
-                    <span>Điều chỉnh lộ trình theo mục tiêu và thời gian của bạn</span>
-                </span>
-                <ChevronDown className="coach-chat__chevron" size={18} aria-hidden="true" />
-            </summary>
-            <div className="coach-chat__body">
-                <p className="coach-chat__hint">Chọn gợi ý hoặc nhập yêu cầu của bạn để bắt đầu.</p>
-                <div className="coach-chat__quick-prompts" role="group" aria-label="Gợi ý nhanh">
-                    {QUICK_PROMPTS.map((prompt) => (
-                        <button key={prompt} type="button" onClick={() => void sendMessage(prompt, messages)} disabled={isSending}>
+        <div className="coach-chat">
+            {messages.length > 0 && (
+                <button type="button" className="coach-chat__reset" onClick={reset} disabled={isSending}>
+                    <RotateCcw size={14} aria-hidden="true" /> Trò chuyện mới
+                </button>
+            )}
+
+            <div className="coach-chat__thread" ref={threadRef} aria-live="polite" aria-relevant="additions text">
+                {messages.length === 0 && (
+                    <p className="coach-chat__welcome">
+                        Cho huấn luyện viên biết bạn có bao nhiêu phút mỗi ngày, muốn tập ngày nào và muốn giỏi game nào.
+                        Lộ trình sẽ hiện ngay tại đây để bạn xem trước khi áp dụng.
+                    </p>
+                )}
+                {messages.map((message, index) => (
+                    <div className={`coach-msg coach-msg--${message.role}`} key={`${index}-${message.role}`}>
+                        <p className="coach-msg__bubble">
+                            <span className="sr-only">{message.role === 'assistant' ? 'Huấn luyện viên: ' : 'Bạn: '}</span>
+                            {message.content}
+                        </p>
+                        {message.plan && (
+                            <div className="coach-draft">
+                                <div className="coach-draft__head">
+                                    <p className="coach-draft__goal">{message.plan.goal}</p>
+                                    <p className="coach-draft__meta">
+                                        {message.plan.sessions.length} buổi · tối đa {message.plan.minutesPerDay} phút mỗi ngày
+                                    </p>
+                                </div>
+                                <WeekPlan sessions={message.plan.sessions} />
+                                {appliedIndex === index ? (
+                                    <p className="coach-draft__applied">
+                                        <Check size={15} aria-hidden="true" /> Đã áp dụng
+                                        <Link to="/dashboard">Xem lộ trình</Link>
+                                    </p>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn btn--brand coach-draft__apply"
+                                        onClick={() => message.plan && void apply(message.plan, index)}
+                                        disabled={applying !== null}
+                                    >
+                                        {applying === index
+                                            ? <><LoaderCircle size={16} className="coach-spin" aria-hidden="true" /> Đang áp dụng…</>
+                                            : savedPlan ? 'Thay lộ trình hiện tại' : 'Áp dụng lộ trình'}
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                ))}
+                {isSending && (
+                    <p className="coach-typing" role="status">
+                        <span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" />
+                        <span className="sr-only">Huấn luyện viên đang soạn trả lời</span>
+                    </p>
+                )}
+                {(error || applyError) && (
+                    <div className="coach-chat__error" role="alert">
+                        <span>{error ?? applyError}</span>
+                        {error && last?.role === 'user' && (
+                            <button type="button" onClick={() => void sendMessage(last.content)} disabled={isSending}>
+                                <RotateCw size={14} aria-hidden="true" /> Thử lại
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {prompts.length > 0 && !isSending && (
+                <div className="coach-chat__prompts" role="group" aria-label="Gợi ý nhanh">
+                    {prompts.map((prompt) => (
+                        <button key={prompt} type="button" onClick={() => void sendMessage(prompt)}>
                             {prompt}
                         </button>
                     ))}
                 </div>
-                {savedPlan && (
-                    <section className="coach-chat__saved-plan" aria-labelledby="coach-saved-plan-title">
-                        <h3 id="coach-saved-plan-title">Lộ trình đang lưu</h3>
-                        <SavedCoachPlan plan={savedPlan} />
-                    </section>
-                )}
-                {planError && <p className="coach-chat__plan-error" role="alert">{planError}</p>}
-                <div className="coach-chat__thread" ref={threadRef} aria-live="polite" aria-relevant="additions text">
-                    {messages.length === 0 ? (
-                        <div className="coach-chat__welcome">
-                            <Bot size={20} aria-hidden="true" />
-                            <p>Ví dụ: “Tôi có 15 phút mỗi ngày, hãy lập lịch luyện ghi nhớ số trong tuần này.”</p>
-                        </div>
-                    ) : messages.map((message, index) => (
-                        <div className={`coach-chat__message-wrap coach-chat__message-wrap--${message.role}`} key={`${index}-${message.role}`}>
-                            <p className={`coach-chat__message coach-chat__message--${message.role}`}>
-                                <span className="coach-chat__speaker">
-                                    {message.role === 'assistant' ? 'Huấn luyện viên' : 'Bạn'}
-                                </span>
-                                {message.content}
-                            </p>
-                            {message.role === 'assistant' && (
-                                <button
-                                    className="coach-chat__save"
-                                    type="button"
-                                    onClick={() => void savePlan(message.content, index)}
-                                    disabled={savingIndex !== null || savedPlan?.content === message.content || savedMessageContent === message.content}
-                                >
-                                    {savingIndex === index
-                                        ? <><LoaderCircle size={14} aria-hidden="true" /> Đang cập nhật…</>
-                                        : savedPlan?.content === message.content || savedMessageContent === message.content
-                                            ? <><Check size={14} aria-hidden="true" /> Đã lưu</>
-                                            : <><BookmarkPlus size={14} aria-hidden="true" /> Lưu lộ trình</>}
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    {isSending && (
-                        <p className="coach-chat__status" role="status">
-                            <LoaderCircle size={16} aria-hidden="true" />
-                            Đang xây dựng gợi ý…
-                        </p>
-                    )}
-                    {error && (
-                        <div className="coach-chat__error" role="alert">
-                            <span>{error}</span>
-                            {lastMessage?.role === 'user' && (
-                                <button type="button" onClick={() => void sendMessage(lastMessage.content, messages)} disabled={isSending}>
-                                    <RotateCw size={14} aria-hidden="true" /> Thử lại
-                                </button>
-                            )}
-                        </div>
-                    )}
-                </div>
-                <form className="coach-chat__form" onSubmit={submit}>
-                    <label className="sr-only" htmlFor="coach-chat-input">Yêu cầu lập lộ trình</label>
-                    <input
-                        id="coach-chat-input"
-                        value={draft}
-                        onChange={(event) => setDraft(event.target.value)}
-                        maxLength={MAX_MESSAGE_LENGTH}
-                        placeholder="Hỏi về lịch tập hoặc game bạn muốn cải thiện…"
-                        disabled={isSending}
-                    />
-                    <button type="submit" aria-label="Gửi yêu cầu" disabled={isSending || !draft.trim()}>
-                        <Send size={17} aria-hidden="true" />
-                    </button>
-                </form>
-            </div>
-        </details>
+            )}
+
+            <form className="coach-chat__form" onSubmit={submit}>
+                <label className="sr-only" htmlFor="coach-chat-input">Nhắn cho huấn luyện viên</label>
+                <input
+                    id="coach-chat-input"
+                    ref={inputRef}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    maxLength={MAX_MESSAGE_LENGTH}
+                    placeholder={planInContext ? 'Muốn đổi gì trong lộ trình?' : 'Ví dụ: 20 phút mỗi ngày, tập Thứ 2 đến Thứ 6'}
+                />
+                <button type="submit" aria-label="Gửi" disabled={isSending || !draft.trim()}>
+                    <Send size={17} aria-hidden="true" />
+                </button>
+            </form>
+        </div>
     );
 };

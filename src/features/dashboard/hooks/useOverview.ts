@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchQuery, peekQuery, prefetchQuery } from '@/lib/queryCache';
 import { profileApi, type UserProfile } from '@/features/profile/api/profile.api';
 import { gamesApi, type GameCatalogItem } from '@/features/shared-game/api/games.api';
-import { dashboardApi, type ApiCoachAnalysis } from '../api/dashboard.api';
+import { dashboardApi, type ApiCoachAnalysis, type ApiSavedCoachPlan } from '../api/dashboard.api';
 import { toGameSession } from './useGameHistory';
 import type { GameSession } from '../types';
 
@@ -48,6 +48,7 @@ const loadProfile = async (): Promise<UserProfile> => (await profileApi.getProfi
 
 const loadCatalog = async (): Promise<GameCatalogItem[]> => (await gamesApi.getGames()).data.games;
 const loadCoach = async (): Promise<ApiCoachAnalysis> => (await dashboardApi.getCoach()).data.analysis;
+const loadCoachPlan = async (): Promise<ApiSavedCoachPlan | null> => (await dashboardApi.getCoachPlan()).data.savedPlan;
 
 // Đủ để vẽ dải 14 ngày: lật trang (50 ván mỗi trang) tới khi qua mốc 14 ngày, tối đa 6 trang
 export const STRIP_DAYS = 14;
@@ -74,6 +75,7 @@ export const PROFILE_KEY = 'profile';
 const CATALOG_KEY = 'games';
 const RECENT_KEY = 'recent-sessions';
 const COACH_KEY = 'progress-coach';
+export const COACH_PLAN_KEY = 'progress-coach-plan';
 
 export const loadProfileQuery = loadProfile;
 
@@ -81,6 +83,7 @@ export const useProfile = () => useRequest(PROFILE_KEY, loadProfile, 'Không t�
 export const useCatalog = () => useRequest(CATALOG_KEY, loadCatalog, 'Không tải được danh sách trò chơi.');
 export const useRecentSessions = () => useRequest(RECENT_KEY, loadRecent, 'Không tải được các ván gần đây.');
 export const useCoach = () => useRequest(COACH_KEY, loadCoach, 'Không thể phân tích tiến độ. Vui lòng thử lại.');
+export const useCoachPlan = () => useRequest(COACH_PLAN_KEY, loadCoachPlan, 'Không tải được lộ trình đã lưu.');
 
 // Tải trước khi người dùng rê chuột / focus vào link, để lúc bấm trang hiện đủ ngay
 export const prefetchProfilePage = () => {
@@ -92,4 +95,5 @@ export const prefetchDashboardBase = () => {
     prefetchProfilePage();
     prefetchQuery(RECENT_KEY, loadRecent);
     prefetchQuery(COACH_KEY, loadCoach);
+    prefetchQuery(COACH_PLAN_KEY, loadCoachPlan);
 };
