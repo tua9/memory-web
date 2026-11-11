@@ -781,24 +781,7 @@
   width: clamp(70px, 8.5vw, 96px);
   height: auto;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.14));
-  animation: mascot-celebrate 2.4s ease-in-out infinite;
-  transform-origin: 50% 100%;
   display: block;
-}
-
-@keyframes mascot-celebrate {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-6px) rotate(-2.5deg);
-  }
-  50% {
-    transform: translateY(-2px) rotate(0deg);
-  }
-  75% {
-    transform: translateY(-6px) rotate(2.5deg);
-  }
 }
 
 @media (max-width: 560px) {

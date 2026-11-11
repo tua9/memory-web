@@ -182,8 +182,9 @@ body {
 [data-reveal='line'] {
   display: block;
   overflow: clip;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
+  /* Chừa chỗ cho dấu tiếng Việt chồng hai tầng (ể, ở…) nhô khỏi dòng cao 0.98, không đổi khoảng cách dòng */
+  padding-block: 0.25em 0.1em;
+  margin-block: -0.25em -0.1em;
 }
 
 /* Chuyển trang (View Transitions): trang cũ mờ nhanh, trang mới trồi lên, header đứng yên */
@@ -399,25 +400,11 @@ body {
   70% { transform: translateY(0) scaleY(0.96); }
 }
 
-/* Linh vật Memio chớp mắt mỗi vài giây: chuyển động lặp duy nhất của trang */
-.mascot svg {
+/* Linh vật Memio (<Mascot>): tự nhảy, vẫy tay, chớp mắt bằng CSS bên trong file SVG */
+.mascot {
   display: block;
-  width: 100%;
   height: auto;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .mascot svg > path:nth-of-type(3),
-  .mascot svg > path:nth-of-type(4) {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: mascot-blink 5.5s ease-in-out infinite;
-  }
-}
-
-@keyframes mascot-blink {
-  0%, 92%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
+  user-select: none;
 }
 
 /* Menu tài khoản trên header: nút mang chữ cái đầu và tên; menu mở từ góc nút, luôn có trong DOM (inert khi đóng)
@@ -655,4 +642,49 @@ body {
   background: #ffe4df;
   color: #8f1d14;
   font-size: 13px;
+}
+
+/* Chữ số lăn tới giá trị (RollingFigure, RollingNumber): mỗi chữ số là một cột 0–9 lăn khi [data-reveal] bao ngoài nhận .is-in */
+.roll {
+  display: inline-flex;
+  white-space: pre;
+}
+
+.roll__col {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  overflow: clip;
+}
+
+.roll__size {
+  visibility: hidden;
+}
+
+.roll__strip {
+  position: absolute;
+  inset: 0 0 auto;
+  line-height: 1;
+  text-align: center;
+  white-space: pre;
+  transform: translateY(calc(var(--n) * -1em));
+}
+
+.roll__strip::before {
+  content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9';
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal]:not(.is-in) .roll__strip {
+    transform: none;
+  }
+
+  .js [data-reveal].is-in .roll__strip {
+    transition: transform 1200ms var(--ease-expo) calc(200ms + var(--i) * 110ms);
+  }
+}
+
+/* RollingNumber: khối inline để hiệu ứng hiện dần (dịch lên) có tác dụng */
+.rolling {
+  display: inline-block;
 }

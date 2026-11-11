@@ -131,13 +131,6 @@
     animation: island-bob 6s ease-in-out infinite alternate;
   }
 
-  .mascot-body > path:nth-of-type(4),
-  .mascot-body > path:nth-of-type(5) {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: mascot-blink 5.5s ease-in-out infinite;
-  }
-
   .islands__art svg > g[clip-path] > g:nth-of-type(2) {
     animation-delay: -2s;
   }
@@ -535,45 +528,6 @@
 }
 
 /* Số lăn: mỗi chữ số là một dải 0–9 cao 10em, dịch lên --n em để hiện đúng số */
-.roll {
-  display: inline-flex;
-  white-space: pre;
-}
-
-.roll__col {
-  position: relative;
-  display: inline-block;
-  height: 1em;
-  overflow: clip;
-}
-
-.roll__size {
-  visibility: hidden;
-}
-
-.roll__strip {
-  position: absolute;
-  inset: 0 0 auto;
-  line-height: 1;
-  text-align: center;
-  white-space: pre;
-  transform: translateY(calc(var(--n) * -1em));
-}
-
-.roll__strip::before {
-  content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9';
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal]:not(.is-in) .roll__strip {
-    transform: none;
-  }
-
-  .js [data-reveal].is-in .roll__strip {
-    transition: transform 1200ms var(--ease-expo) calc(200ms + var(--i) * 110ms);
-  }
-}
-
 @media (max-width: 900px) {
   .facts__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,19 +1,119 @@
-<svg width="512" height="512" viewBox="0 0 64 74" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M32 16.5V9" stroke="#399A7C" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M32 10.5C29 7.2 24.5 6.5 21 8.2C21.8 11.2 24.8 13.5 27.8 13.5C29.8 13.5 31.2 11.8 32 10.5Z" fill="#72D29F" stroke="#2D8569" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M23 8.8C25.5 9.2 28.5 10.2 30.5 11" stroke="#B8F3D3" stroke-width="1" stroke-linecap="round"/>
-  <circle cx="24.8" cy="8.2" r="0.6" fill="#FFF385" opacity="0.9"/>
-  <path d="M32 10.5C35 7.2 39.5 6.5 43 8.2C42.2 11.2 39.2 13.5 36.2 13.5C34.2 13.5 32.8 11.8 32 10.5Z" fill="#8CE0B0" stroke="#2D8569" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M41 8.8C38.5 9.2 35.5 10.2 33.5 11" stroke="#D8F5E5" stroke-width="1" stroke-linecap="round"/>
-  <circle cx="39.2" cy="8.2" r="0.6" fill="#FFF385" opacity="0.9"/>
-  <path d="M14.8865 54.3053L8.05078 62.5082M49.0651 54.3053L55.9008 62.5082M23.7729 63.1917L21.7222 70.0274M40.1786 63.1917L42.2294 70.0274" stroke="#399A7C" stroke-width="4.10143" stroke-linecap="round"/>
-  <path d="M37.4444 16.0253H26.5072C18.9567 16.0253 12.8358 22.1462 12.8358 29.6968V50.2039C12.8358 57.7544 18.9567 63.8753 26.5072 63.8753H37.4444C44.9949 63.8753 51.1158 57.7544 51.1158 50.2039V29.6968C51.1158 22.1462 44.9949 16.0253 37.4444 16.0253Z" fill="#A7E4C7" stroke="#399A7C" stroke-width="2.2"/>
-  <path d="M24.4565 39.2668C25.5891 39.2668 26.5072 38.3486 26.5072 37.2161C26.5072 36.0835 25.5891 35.1653 24.4565 35.1653C23.3239 35.1653 22.4058 36.0835 22.4058 37.2161C22.4058 38.3486 23.3239 39.2668 24.4565 39.2668Z" fill="#264A3D"/>
-  <circle cx="25.2" cy="36.3" r="0.7" fill="#FFFFFF"/>
-  <path d="M39.4951 39.2668C40.6277 39.2668 41.5458 38.3486 41.5458 37.2161C41.5458 36.0835 40.6277 35.1653 39.4951 35.1653C38.3625 35.1653 37.4444 36.0835 37.4444 37.2161C37.4444 38.3486 38.3625 39.2668 39.4951 39.2668Z" fill="#264A3D"/>
-  <circle cx="40.2" cy="36.3" r="0.7" fill="#FFFFFF"/>
-  <ellipse cx="20.5" cy="41.5" rx="2.5" ry="1.5" fill="#FFB7B2" opacity="0.6"/>
-  <ellipse cx="43.5" cy="41.5" rx="2.5" ry="1.5" fill="#FFB7B2" opacity="0.6"/>
-  <path d="M26.5072 46.1025C30.1529 49.7482 33.7986 49.7482 37.4443 46.1025" stroke="#264A3D" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M21.7222 24.9117H36.7608" stroke="#D8F5E5" stroke-width="3.41786" stroke-linecap="round"/>
+<svg width="136" height="156" viewBox="-2 -4 68 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* Linh vật Memio tự chuyển động: 2 cú nhảy nghiêng trái/phải, rồi đứng vẫy tay, nhìn quanh, chớp mắt */
+    .hop { transform-origin: 32px 70px; animation: hop 4s ease-in-out infinite; }
+    .shadow { transform-origin: 32px 71.4px; animation: shadow 4s ease-in-out infinite; }
+    .sprout { transform-origin: 32px 16.5px; animation: sway 2s ease-in-out infinite; }
+    .leaf-l { transform-origin: 32px 10.5px; animation: flap-l 1s ease-in-out infinite; }
+    .leaf-r { transform-origin: 32px 10.5px; animation: flap-r 1s ease-in-out infinite; }
+    .arm-l { transform-origin: 14.9px 54.3px; animation: arm-l 4s ease-in-out infinite; }
+    .arm-r { transform-origin: 49.1px 54.3px; animation: arm-r 4s ease-in-out infinite; }
+    .eyes { animation: look 4s ease-in-out infinite; }
+    .eye { transform-box: fill-box; transform-origin: center; animation: blink 4s infinite; }
+    .mouth { transform-box: fill-box; transform-origin: 50% 0; animation: grin 4s ease-in-out infinite; }
+    .blush { animation: blush 4s ease-in-out infinite; }
+
+    @keyframes hop {
+      0%, 44%, 100% { transform: translateY(0) rotate(0) scale(1, 1); }
+      5% { transform: translateY(0) rotate(0) scale(1.07, .92); }
+      13% { transform: translateY(-5px) rotate(-5deg) scale(.95, 1.06); }
+      18% { transform: translateY(-5.5px) rotate(-5deg) scale(1, 1); }
+      24% { transform: translateY(0) rotate(0) scale(1.06, .93); }
+      29% { transform: translateY(0) rotate(0) scale(.98, 1.02); }
+      30% { transform: translateY(-4px) rotate(5deg) scale(.96, 1.05); }
+      35% { transform: translateY(-4.5px) rotate(5deg) scale(1, 1); }
+      40% { transform: translateY(0) rotate(0) scale(1.05, .95); }
+      60% { transform: translateY(0) rotate(-3deg) scale(1, 1); }
+      75% { transform: translateY(0) rotate(2deg) scale(1, 1); }
+      88% { transform: translateY(0) rotate(0) scale(1.02, .98); }
+    }
+    @keyframes shadow {
+      0%, 44%, 100% { transform: scale(1); opacity: .16; }
+      15%, 33% { transform: scale(.7); opacity: .08; }
+      24%, 40% { transform: scale(1.1); opacity: .18; }
+    }
+    @keyframes sway {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+    }
+    @keyframes flap-l {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(-12deg); }
+    }
+    @keyframes flap-r {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(12deg); }
+    }
+    @keyframes arm-l {
+      0%, 44%, 100% { transform: rotate(0); }
+      15%, 33% { transform: rotate(45deg); }
+      24%, 40% { transform: rotate(10deg); }
+    }
+    @keyframes arm-r {
+      0%, 44%, 100% { transform: rotate(0); }
+      15%, 33% { transform: rotate(-45deg); }
+      24%, 40% { transform: rotate(-10deg); }
+      52% { transform: rotate(-125deg); }
+      58%, 70% { transform: rotate(-100deg); }
+      64%, 76% { transform: rotate(-140deg); }
+      84% { transform: rotate(-110deg); }
+      94% { transform: rotate(0); }
+    }
+    @keyframes look {
+      0%, 48%, 92%, 100% { transform: translate(0, 0); }
+      54%, 80% { transform: translate(1.4px, -.4px); }
+      84%, 88% { transform: translate(-1.2px, 0); }
+    }
+    @keyframes blink {
+      0%, 45%, 49%, 95%, 99%, 100% { transform: scaleY(1); }
+      47%, 97% { transform: scaleY(.1); }
+    }
+    @keyframes grin {
+      0%, 44%, 100% { transform: scale(1, 1); }
+      15%, 33% { transform: scale(1.1, 1.6); }
+      60%, 80% { transform: scale(1.05, 1.3); }
+    }
+    @keyframes blush {
+      0%, 44%, 100% { opacity: .55; }
+      15%, 33%, 70% { opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+
+  <ellipse class="shadow" cx="32" cy="71.4" rx="12" ry="1.8" fill="#264A3D" opacity=".16"/>
+  <g class="hop">
+    <g class="sprout">
+      <path d="M32 16.5V9" stroke="#399A7C" stroke-width="2.4" stroke-linecap="round"/>
+      <g class="leaf-l">
+        <path d="M32 10.5C29 7.2 24.5 6.5 21 8.2C21.8 11.2 24.8 13.5 27.8 13.5C29.8 13.5 31.2 11.8 32 10.5Z" fill="#72D29F" stroke="#2D8569" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M23 8.8C25.5 9.2 28.5 10.2 30.5 11" stroke="#B8F3D3" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="24.8" cy="8.2" r="0.6" fill="#FFF385" opacity="0.9"/>
+      </g>
+      <g class="leaf-r">
+        <path d="M32 10.5C35 7.2 39.5 6.5 43 8.2C42.2 11.2 39.2 13.5 36.2 13.5C34.2 13.5 32.8 11.8 32 10.5Z" fill="#8CE0B0" stroke="#2D8569" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M41 8.8C38.5 9.2 35.5 10.2 33.5 11" stroke="#D8F5E5" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="39.2" cy="8.2" r="0.6" fill="#FFF385" opacity="0.9"/>
+      </g>
+    </g>
+    <path d="M23.7729 63.1917L21.7222 70.0274M40.1786 63.1917L42.2294 70.0274" stroke="#399A7C" stroke-width="4.10143" stroke-linecap="round"/>
+    <path class="arm-l" d="M14.8865 54.3053L8.05078 62.5082" stroke="#399A7C" stroke-width="4.10143" stroke-linecap="round"/>
+    <path class="arm-r" d="M49.0651 54.3053L55.9008 62.5082" stroke="#399A7C" stroke-width="4.10143" stroke-linecap="round"/>
+    <path d="M37.4444 16.0253H26.5072C18.9567 16.0253 12.8358 22.1462 12.8358 29.6968V50.2039C12.8358 57.7544 18.9567 63.8753 26.5072 63.8753H37.4444C44.9949 63.8753 51.1158 57.7544 51.1158 50.2039V29.6968C51.1158 22.1462 44.9949 16.0253 37.4444 16.0253Z" fill="#A7E4C7" stroke="#399A7C" stroke-width="2.2"/>
+    <path d="M21.7222 24.9117H36.7608" stroke="#D8F5E5" stroke-width="3.41786" stroke-linecap="round"/>
+    <g class="eyes">
+      <g class="eye">
+        <circle cx="24.4565" cy="37.2161" r="2.05" fill="#264A3D"/>
+        <circle cx="25.2" cy="36.3" r="0.7" fill="#FFFFFF"/>
+      </g>
+      <g class="eye">
+        <circle cx="39.4951" cy="37.2161" r="2.05" fill="#264A3D"/>
+        <circle cx="40.2" cy="36.3" r="0.7" fill="#FFFFFF"/>
+      </g>
+    </g>
+    <ellipse class="blush" cx="20.5" cy="41.5" rx="2.5" ry="1.5" fill="#FFB7B2" opacity="0.6"/>
+    <ellipse class="blush" cx="43.5" cy="41.5" rx="2.5" ry="1.5" fill="#FFB7B2" opacity="0.6"/>
+    <path class="mouth" d="M26.5072 46.1025C30.1529 49.7482 33.7986 49.7482 37.4443 46.1025" stroke="#264A3D" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
 </svg>

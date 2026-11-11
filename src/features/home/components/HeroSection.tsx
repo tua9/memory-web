@@ -13,16 +13,16 @@ const ISLANDS = [
 
 const CYCLE_MS = 3200;
 
-// Linh vật vốn nằm trong nhóm của đảo Câu chuyện (8 path bắt đầu bằng đôi chân).
-// Tách nó ra thành nhóm riêng ở cuối SVG, ngoài vùng clip-path, để nó đi được sang đảo khác
-// mà không bị cắt khi qua đỉnh vòng cung; file SVG gốc giữ nguyên.
+// Linh vật vốn vẽ sẵn trong nhóm của đảo Câu chuyện (8 path bắt đầu bằng đôi chân).
+// Bỏ bản vẽ đó, đặt linh vật động public/profile-mascot.svg (cùng tỉ lệ, chỉ lệch toạ độ) vào nhóm riêng
+// ở cuối SVG, ngoài vùng clip-path, để nó đi được sang đảo khác mà không bị cắt; file SVG gốc giữ nguyên.
 const ISLANDS_ART = (() => {
     const lines = islandsSvg.split(/\r?\n/);
     const start = lines.findIndex((line) => line.includes("M44.0178 199.769L37.1821 207.971L44.0178"));
     if (start < 0) return islandsSvg;
-    const mascot = lines.splice(start, 8);
+    lines.splice(start, 8);
     const close = lines.findLastIndex((line) => line.trim() === "</svg>");
-    lines.splice(close, 0, `<g class="mascot-walk"><g class="mascot-body">${mascot.join("")}</g></g>`);
+    lines.splice(close, 0, `<g class="mascot-walk"><image href="/profile-mascot.svg" x="27.1313" y="141.4637" width="68" height="78"/></g>`);
     return lines.join("\n");
 })();
 

@@ -1,5 +1,5 @@
 import { useLayoutEffect } from "react";
-import { Navigate, Outlet, useLocation, useNavigationType } from "react-router-dom";
+import { Outlet, useLocation, useNavigationType } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { CoachDock } from "@/features/dashboard/Agent/CoachDock";
 
@@ -19,16 +19,15 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Khung chung bọc mọi trang
+// Khung chung bọc mọi trang. Hộp chat Huấn luyện viên AI chỉ hiện khi đã đăng nhập;
+// đăng xuất thì bỏ khỏi cây nên hội thoại cũng mất theo
 export const RootLayout = () => {
-  const { pathname } = useLocation();
-  const { user, isLoading } = useAuthStore();
-  const parentPath = pathname.startsWith('/parent') || pathname.startsWith('/family-room') || pathname === '/forgot-password';
-  if (!isLoading && user?.role === 'parent' && !parentPath) {
-    return <Navigate to={user.isEmailVerified ? '/parent' : '/parent/pending'} replace />;
-  }
-  // Hộp chat Huấn luyện viên AI trên mọi trang, chỉ cho tài khoản người chơi đã đăng nhập;
-  // đăng xuất thì bỏ khỏi cây nên hội thoại cũng mất theo
-  const showCoach = !isLoading && user !== null && user.role !== 'parent';
-  return <><ScrollToTop /><Outlet />{showCoach && <CoachDock />}</>;
+  const showCoach = useAuthStore((state) => !state.isLoading && state.user !== null);
+  return (
+    <>
+      <ScrollToTop />
+      <Outlet />
+      {showCoach && <CoachDock />}
+    </>
+  );
 };
