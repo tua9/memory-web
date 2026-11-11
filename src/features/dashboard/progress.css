@@ -203,6 +203,587 @@
   font-size: 15px;
 }
 
+/* Huấn luyện viên: nhận định từ số liệu tài khoản và lộ trình có thể bắt đầu ngay */
+.coach__head {
+  margin-bottom: 16px;
+}
+
+.coach__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coach__title svg {
+  color: var(--color-brand-deep);
+}
+
+.coach__title h2,
+.coach__content h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.coach__privacy,
+.coach__session {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.coach__overview {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 20px;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.coach__level {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.coach__summary {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.coach__highlights {
+  display: grid;
+  gap: 8px;
+  min-width: 190px;
+}
+
+.coach__highlights p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.coach__highlights span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.coach__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(220px, 1fr);
+  gap: 28px;
+  margin-top: 20px;
+}
+
+.coach__content h3 {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.coach__plan ol,
+.coach__games ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coach__plan li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.coach__plan li + li,
+.coach__games li + li {
+  border-top: 1px solid var(--rule);
+}
+
+.coach__session {
+  margin: 0 0 3px;
+}
+
+.coach__plan h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.coach-schedule {
+  display: grid;
+  gap: 8px;
+}
+
+.coach-schedule__saved-at {
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coach-schedule__day {
+  padding: 12px 14px;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.coach-schedule__day-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.coach-schedule__day-head h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.coach-schedule__day-head > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coach-schedule__day ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coach-schedule__day li {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.coach__plan .coach-schedule__day li + li {
+  border-top: 0;
+}
+
+.coach-schedule__day li > span {
+  color: var(--color-brand-deep);
+  font-weight: 700;
+}
+
+.coach__plan .coach-schedule__day li p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.coach__plan li p:not(.coach__session) {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.coach__target {
+  color: var(--color-brand-deep);
+  font-weight: 700;
+}
+
+.coach__play {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0 8px 8px;
+  color: var(--color-brand-deep);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.coach__play:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.coach__games li {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) 64px minmax(90px, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  font-size: 13px;
+}
+
+.coach__games li span:nth-child(2) {
+  font-weight: 700;
+  text-align: right;
+}
+
+.coach__games li span:last-child {
+  color: var(--muted);
+  text-align: right;
+}
+
+.coach__game-detail {
+  display: grid;
+  gap: 2px;
+}
+
+.coach__game-detail strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.coach__game-detail small {
+  font-size: 12px;
+}
+
+.coach-chat {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+
+.coach-chat > summary {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--color-ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.coach-chat > summary::-webkit-details-marker {
+  display: none;
+}
+
+.coach-chat__summary-icon {
+  flex: 0 0 auto;
+  color: var(--color-brand-deep);
+}
+
+.coach-chat__summary-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.coach-chat__summary-copy strong {
+  font-size: 15px;
+}
+
+.coach-chat__summary-copy > span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.coach-chat__chevron {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 160ms ease;
+}
+
+.coach-chat[open] .coach-chat__chevron {
+  transform: rotate(180deg);
+}
+
+.coach-chat__body {
+  max-width: 800px;
+  margin-top: 8px;
+}
+
+.coach-chat__hint {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.coach-chat__quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.coach-chat__quick-prompts button,
+.coach-chat__save {
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-brand-deep);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.coach-chat__quick-prompts button:hover:not(:disabled),
+.coach-chat__save:hover:not(:disabled) {
+  background: var(--well);
+}
+
+.coach-chat__quick-prompts button:disabled,
+.coach-chat__save:disabled {
+  cursor: not-allowed;
+  color: var(--muted);
+  opacity: 1;
+}
+
+.coach-chat__saved-plan {
+  margin: 8px 0 12px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--well);
+}
+
+.coach-chat__saved-plan h3 {
+  margin: 0;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.coach-chat__saved-plan .coach-schedule__day {
+  padding: 10px 0;
+  background: transparent;
+}
+
+.coach-chat__saved-plan .coach-schedule__day + .coach-schedule__day {
+  border-top: 1px solid var(--rule);
+}
+
+.coach-chat__plan-error {
+  margin: 8px 0;
+  color: var(--bad);
+  font-size: 13px;
+}
+
+.coach-chat__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 176px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: #ffffff;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scroll-padding-block-end: 14px;
+}
+
+.coach-chat__message {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.coach-chat__welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 144px;
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.coach-chat__welcome svg {
+  flex: 0 0 auto;
+  color: var(--color-brand-deep);
+}
+
+.coach-chat__welcome p {
+  max-width: 440px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.coach-chat__message-wrap {
+  display: grid;
+  gap: 4px;
+  max-width: min(90%, 620px);
+}
+
+.coach-chat__message-wrap--user {
+  align-self: flex-end;
+  justify-items: end;
+}
+
+.coach-chat__message-wrap--assistant {
+  align-self: flex-start;
+  justify-items: start;
+}
+
+.coach-chat__message {
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #f3f6f3;
+}
+
+.coach-chat__message--user {
+  background: var(--well);
+}
+
+.coach-chat__speaker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.coach-chat__message-wrap--user .coach-chat__speaker {
+  text-align: right;
+}
+
+.coach-chat__save {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding-block: 4px;
+  font-size: 12px;
+}
+
+.coach-chat__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.coach-chat__status svg {
+  animation: coach-chat-spin 1s linear infinite;
+}
+
+@keyframes coach-chat-spin {
+  to { transform: rotate(360deg); }
+}
+
+.coach-chat__error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  color: var(--bad);
+  font-size: 13px;
+}
+
+.coach-chat__error button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  border: 0;
+  background: none;
+  color: var(--color-brand-deep);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coach-chat__form {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.coach-chat__form input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.coach-chat__form input::placeholder {
+  color: #596574;
+  opacity: 1;
+}
+
+.coach-chat__form button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-brand);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 140ms var(--ease-out);
+}
+
+.coach-chat button:focus-visible,
+.coach-chat > summary:focus-visible {
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 3px;
+}
+
+.coach-chat__form:focus-within {
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 2px;
+}
+
+.coach-chat__form button:hover:not(:disabled) {
+  background: var(--color-brand-deep);
+}
+
+.coach-chat__form button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.coach-chat__form button:disabled {
+  background: #566b5a;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coach-chat__thread {
+    scroll-behavior: auto;
+  }
+
+  .coach-chat__chevron {
+    transition: none;
+  }
+
+  .coach-chat__status svg {
+    animation: none;
+  }
+}
+
 /* ── Màn hình hẹp ── */
 
 @media (max-width: 1023px) {
@@ -213,6 +794,49 @@
 }
 
 @media (max-width: 640px) {
+  .coach__overview {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .coach__highlights {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .coach__content {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .coach-chat__thread {
+    max-height: 200px;
+  }
+
+  .coach__plan li {
+    align-items: flex-start;
+  }
+
+  .coach__play {
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .coach__play svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .coach__games li {
+    grid-template-columns: minmax(80px, 1fr) 54px minmax(74px, 1fr);
+    gap: 4px;
+    font-size: 12px;
+  }
+
   .cal__day {
     height: 38px;
     margin-inline: 2px;

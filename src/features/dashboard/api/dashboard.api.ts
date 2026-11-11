@@ -62,6 +62,44 @@ export interface ApiHistoryPage {
     nextCursor: string | null;  // null khi đã hết dữ liệu
 }
 
+export interface ApiCoachGame {
+    gameName: ApiGameName;
+    played: number;
+    accuracy: number | null;
+    unlockedLevel: number;
+    bestLevel: number | null;
+    perfect: number;
+}
+
+export interface ApiCoachPlanStep {
+    day: number;
+    focus: 'practice' | 'maintain' | 'review';
+    gameName: ApiGameName;
+    level: number;
+    targetAccuracy: number;
+    tip: string;
+}
+
+export interface ApiCoachAnalysis {
+    totalPlayed: number;
+    overallAccuracy: number | null;
+    skillLevel: 'new' | 'early' | 'building' | 'steady' | 'advanced';
+    strongestGame: ApiGameName | null;
+    focusGame: ApiGameName | null;
+    games: ApiCoachGame[];
+    plan: ApiCoachPlanStep[];
+}
+
+export interface ApiCoachChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+export interface ApiSavedCoachPlan {
+    content: string;
+    savedAt: string;
+}
+
 // Không truyền from/to thì backend trả các ván mới nhất (tối đa 50 mỗi trang)
 export interface HistoryQuery {
     from?: string;
@@ -87,5 +125,25 @@ export const dashboardApi = {
         return apiClient.get('/game-sessions', {
             params: query,
         }) as unknown as Promise<ApiSuccessResponse<ApiHistoryPage>>;
+    },
+
+    getCoach: (): Promise<ApiSuccessResponse<{ analysis: ApiCoachAnalysis }>> => {
+        return apiClient.get('/progress/coach') as unknown as Promise<ApiSuccessResponse<{ analysis: ApiCoachAnalysis }>>;
+    },
+
+    chatWithCoach: (messages: ApiCoachChatMessage[]): Promise<ApiSuccessResponse<{ reply: string }>> => {
+        return apiClient.post('/progress/coach/chat', { messages }, { timeout: 125_000 }) as unknown as Promise<ApiSuccessResponse<{ reply: string }>>;
+    },
+
+    generateCoachPlan: (messages: ApiCoachChatMessage[]): Promise<ApiSuccessResponse<{ plan: string }>> => {
+        return apiClient.post('/progress/coach/plan/generate', { messages }, { timeout: 125_000 }) as unknown as Promise<ApiSuccessResponse<{ plan: string }>>;
+    },
+
+    getCoachPlan: (): Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan | null }>> => {
+        return apiClient.get('/progress/coach/plan') as unknown as Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan | null }>>;
+    },
+
+    saveCoachPlan: (content: string): Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan }>> => {
+        return apiClient.put('/progress/coach/plan', { content }) as unknown as Promise<ApiSuccessResponse<{ savedPlan: ApiSavedCoachPlan }>>;
     },
 };
