@@ -24,16 +24,10 @@ import MethodsPage from "@/features/methods/pages/MethodsPage";
 import { RootLayout } from "./RootLayout";
 import { HomeRoute } from "./HomeRoute";
 import DailyPage from "@/features/daily/pages/DailyPage";
-import { ParentRoute } from './ParentRoute';
-import { ParentDashboardPage } from '@/features/parent/pages/ParentDashboardPage';
-import { ParentPendingPage } from '@/features/parent/pages/ParentPendingPage';
-import { ParentVerifyPage } from '@/features/parent/pages/ParentVerifyPage';
-import { ParentProfilePage } from '@/features/parent/pages/ParentProfilePage';
-import { ParentChildProfilePage } from '@/features/parent/pages/ParentChildProfilePage';
-import { FamilyRoomRoute } from './FamilyRoomRoute';
-import { FamilyRoomLobbyPage } from '@/features/parent/pages/FamilyRoomLobbyPage';
-import { FamilyRoomPage } from '@/features/parent/pages/FamilyRoomPage';
-import { PasswordRecoveryPage } from '@/features/auth/pages/PasswordRecoveryPage';
+import { ChildDashboardPage } from '@/features/family/pages/ChildDashboardPage';
+import { FamilyInvitePage } from '@/features/family/pages/FamilyInvitePage';
+import { RoomsLobbyPage } from '@/features/rooms/pages/RoomsLobbyPage';
+import { RoomPage } from '@/features/rooms/pages/RoomPage';
 
 // Mọi trang nằm dưới RootLayout (đưa về đầu trang khi chuyển trang)
 export const router = createBrowserRouter([
@@ -52,19 +46,8 @@ export const router = createBrowserRouter([
     path: "/daily",
     element: <DailyPage />,
   },
-  { path: '/parent/verify', element: <ParentVerifyPage /> },
-  { path: '/parent/reset-password', element: <PasswordRecoveryPage parent reset /> },
-  { element: <ParentRoute />, children: [
-    { path: '/parent/pending', element: <ParentPendingPage /> },
-    { path: '/parent', element: <ParentDashboardPage /> },
-    { path: '/parent/profile', element: <ParentProfilePage /> },
-    { path: '/parent/child-profile', element: <ParentChildProfilePage /> },
-  ] },
-  { element: <FamilyRoomRoute />, children: [
-    { path: '/parent/room', element: <FamilyRoomLobbyPage /> },
-    { path: '/family-room', element: <FamilyRoomLobbyPage /> },
-    { path: '/family-room/:code', element: <FamilyRoomPage /> },
-  ] },
+  // Trang mở từ email mời liên kết: công khai, tự bảo người nhận đăng nhập nếu cần
+  { path: '/family/invite', element: <FamilyInvitePage /> },
   {
     path: "/games/cards",
     element: <CardsGame />,
@@ -100,6 +83,9 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: <DashboardPage />,
       },
+      { path: '/family/:childId', element: <ChildDashboardPage /> },
+      { path: '/rooms', element: <RoomsLobbyPage /> },
+      { path: '/rooms/:code', element: <RoomPage /> },
     ],
   },
   {
